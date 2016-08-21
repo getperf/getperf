@@ -1,0 +1,20 @@
+{
+  "host_template": "Windows",
+  "host_title": "Windows - <node>",
+  "priority": 5,
+  "graphs": [
+    {
+      "graph_template": "WIN - Disk Util% - <devn> cols",
+      "graph_tree": "/HW/<node_path>/DiskUtil/",
+      "graph_title": "Windows - <node> - Disk Util%",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "chart_style": "line2",
+      "graph_items": ["PercentFree"],
+      "vertical_label": "Disk util %",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Windows - <node> - Disk Util% - <device>"
+    }
+  ]
+}

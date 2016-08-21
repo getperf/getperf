@@ -1,0 +1,685 @@
+use strict;
+use warnings;
+package Getperf::Site;
+use Cwd;
+use Digest::SHA1;
+use Sys::Hostname;
+use Getopt::Long;
+use Path::Class;
+use Template;
+use DBI;
+use Git::Repository;
+use Getperf::Config 'config';
+use parent qw(Class::Accessor::Fast);
+use Data::Dumper;
+use Log::Handler app => "LOG";
+use Getperf::Data::SiteInfo;
+
+__PACKAGE__->mk_accessors(qw/command/);
+
+sub new {
+	my ($class, $argv) = shift;
+
+	my $base = config('base');
+	my $use_influxdb = config('influx')->{GETUPERF_USE_INFLUXDB} || 0;
+
+	my $self = bless {
+		command           => undef,
+		home              => $base->{home},
+		mysql_passwd      => $base->{mysql_passwd},
+		staging_dir       => $base->{staging_dir},
+		site_dir          => undef,
+	 	site_home         => undef,
+		sitekey           => undef,
+		additional_sites  => undef,
+		site_config       => undef,
+		url               => undef,
+		update            => 0,
+		site_mysql_passwd => undef,
+		use_influxdb      => $use_influxdb,
+
+		@_,
+	}, $class;
+
+	$base->add_screen_log;
+	return $self;
+}
+
+sub run {
+	my $self = shift;
+
+	my $command = $self->command || undef;
+	return if (!$command);
+
+	if ($command eq 'init') {
+		if ($self->{update}) {
+	        return $self->update;
+		} else {
+	        return $self->init;
+		}
+	} elsif ($self->{additional_sites}) {
+		return $self->add_addtional_sites;
+	} elsif ($command eq 'list') {
+		return $self->list;
+	} else {
+		return;
+	}
+
+	return 1;
+}
+
+sub parse_command_option {
+	my ($self, $args) = @_;
+
+	my ($list_opt, $sitekeys_opt);
+	my $usage = 'Usage : initsite.pl {site_dir} [--update]|[--addsite="AAA,BBB"]|--list' . "\n";
+
+	push @ARGV, grep length, split /\s+/, $args if ($args);
+	GetOptions (
+		'--force'     => \$self->{force},
+		'--list'      => \$list_opt,
+		'--update'    => \$self->{update},
+		'--addsite=s' => \$sitekeys_opt,
+	);
+	if ($list_opt) {
+		$self->{command} = 'list';
+		return 1;
+	}
+	unless (@ARGV) {
+		print "No sitedir\n" . $usage;
+		return;
+	}
+	if ($sitekeys_opt) {
+		my @sitekeys = split(/,/, $sitekeys_opt);
+		for my $sitekey(@sitekeys) {
+			if ($sitekey!~/^[\w|\d|_|-|\.]+$/) {
+				print "Invarid sitekey: $sitekey\n" . $usage;
+				return;
+			}
+		}
+		$self->{additional_sites} = \@sitekeys;
+	}
+	my $site_dir = dir(shift(@ARGV))->absolute;
+
+	my $base = config('base');
+	my $hostname = $base->{ws_server_name};
+	my $sitekey = $site_dir->basename;
+	$self->{command}      = 'init';
+	$self->{site_dir}     = $site_dir->stringify;
+	$self->{site_home}    = $site_dir->parent->stringify;
+	$self->{sitekey}      = $sitekey;
+	$self->{url}          = "http://$hostname/$sitekey";
+	$self->{site_config}  = file($base->{site_config_dir}, "${sitekey}.json")->stringify;
+
+	return 1;
+}
+
+sub exec_command {
+	my ($self, $command) = @_;
+
+	my $result = readpipe("$command 2>&1");
+
+	LOG->notice($command);
+	if ($result=~/(Error|usage|failed)/) {
+		LOG->crit($result);
+		LOG->crit($command);
+		return;
+	}
+	return 1;
+}
+
+sub create_site_config_dir {
+	my $sefl = shift;
+	my $base = config('base');
+	my $site_config_dir = dir($base->{site_config_dir});
+	if (!-d $site_config_dir) {
+	    $site_config_dir->mkpath || die "$! : $site_config_dir";
+	}
+	return 1;
+}
+
+sub create_sumup_command_skel {
+	my $self = shift;
+	my $base = config('base');
+
+	# Copy Windows, Linux template from {getperf_home}/lib
+	#
+	# {getperf_home}/lib/Getperf/Command/Site/{domain}/... aggrigation script (step.1)
+	#                   /graph/{domain}/...                                   (step.1)
+	#                         /color/...                                      (step.1)
+	#                   /agent/{domain}/...                                   (step.1)
+	#                         /Zabbix/...                                     (step.1)
+	#
+	#                   /cacti/template/0.8.8e/cacti.dmp                      (step.2)
+	#                                  /0.8.8e/cacti_templates-{domain}.xml   (step.2)
+	#
+	#                   /site/Rexfile                                         (step.3)
+	#                   /site/script                                          (step.3)
+
+	for my $lib_base('Getperf/Command/Site', 'graph', 'agent') {
+		my @domains = qw/Windows Linux SystemInfo/;
+		push(@domains, 'color') if ($lib_base eq 'graph');
+		push(@domains, 'Zabbix') if ($lib_base eq 'agent');
+		for my $domain(@domains) {
+			my $lib_path = "/lib/${lib_base}/${domain}";
+			my $source = $base->{home} . $lib_path;
+			my $target = $self->{site_dir} . $lib_path;
+			if (!-d $target) {
+				my $copy_sumup_command = "mkdir -p $target; cp -rp $source/* $target/";
+				$self->exec_command($copy_sumup_command) || return;	
+			}
+		}
+	}
+
+	{
+		my $cacti_template_dir = config('cacti')->{GETPERF_CACTI_TEMPLATE_DIR};
+		my $lib_path = "/lib/cacti/${cacti_template_dir}";
+		my $sources = $base->{home} . $lib_path . '/cacti.dmp ';
+		for my $domain(qw/Windows Linux/) {
+			$sources .= $base->{home} . $lib_path . "/cacti-*${domain}.xml ";
+		}
+		my $target = $self->{site_dir} . $lib_path;
+		if (!-d $target) {
+			my $copy_sumup_command = "mkdir -p $target; cp -rp $sources $target/";
+			$self->exec_command($copy_sumup_command) || return;	
+		}
+	}
+
+	{
+		my $source = $base->{home} . '/lib/site';
+		my $target = $self->{site_dir};
+		my $copy_sumup_command = "cp -rp $source/* $target/";
+		$self->exec_command($copy_sumup_command) || return;	
+	}
+
+	return $self->git_push('create sumup command skel');
+}
+
+sub create_cacti_repository_db {
+	my $self = shift;
+
+	my $sitekey = $self->{sitekey};
+	my $rootpass = $self->{mysql_passwd};
+	my $sitepass = $self->{site_mysql_passwd};
+
+	my $drh = DBI->install_driver('mysql');
+
+	my $dbh;
+	if ($dbh = DBI->connect("dbi:mysql:${sitekey}",'root', $rootpass, 
+		{ PrintError => 0, PrintWarn => 0 })) {
+		if ($self->{force}) {
+			$drh->func('dropdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
+		} else {
+			die "$sitekey DB is already exists. Drop $sitekey or use --force option\n";
+		}
+		$dbh->disconnect();
+	} 
+	$drh->func('createdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
+	$dbh = DBI->connect("dbi:mysql:mysql", 'root', $rootpass);
+	$dbh->do("GRANT ALL ON $sitekey.* TO $sitekey\@localhost IDENTIFIED BY '$sitepass'");
+	$dbh->disconnect();
+
+	return 1;
+}
+
+sub regist_influx_site_db {
+	my $self = shift;
+	my $sitekey = $self->{sitekey};
+
+	if ($self->{use_influxdb}) {
+		return 1;
+	}
+	my $cmd = "influx -execute 'SHOW DATABASES'";
+	my @databases = `$cmd`;
+	if ($?) {
+		LOG->error("Command faild : $cmd\nSkip");
+		return;
+	} 
+	my @db_exists = grep { chomp($_); $_ =~ /^$sitekey+$/ } @databases;
+	if (@db_exists) {
+		LOG->notice("influx database aleady exists : ${sitekey}\nSkip");
+		return 1;
+	} 
+	return $self->exec_command("influx -execute 'CREATE DATABASE ${sitekey}'");
+}
+
+sub inform_site_complete {
+	my $self = shift;
+
+	my @messages = (
+		'',
+		'Welcome to Getperf monitoring site !',
+		'====================================',
+		'',
+		'Please memo these information.',
+		'',
+		'The site key is "' . $self->{sitekey} . '" .',
+		'The access key is "' . $self->{site_mysql_passwd} . '" .',
+		'',
+		'"' . $self->{site_dir} .'" has created as a site home directory .',
+		'Under this directory , it include the collected data , aggregated script , ',
+		'graph definition , and a monitoring site home page .',
+		'If you customize the site , you can edit each directory .',
+		'',
+		'If you want to clone the site remotely,',
+		'',
+		'git clone ' . $self->{git_url},
+		'',
+		'URL for Cacti monitoring will be following .',
+		'',
+		$self->{url},
+		'',
+		'login user is "admin",and password is "admin" , after login , please change the password .',
+		'',
+		'Thanks',
+		'',
+	);
+	print join("\n", @messages);
+
+	return 1;
+}
+
+sub init_git {
+	my $self = shift;
+	my $base = config('base');
+    my $cwd  = getcwd();
+    my $user = $base->{ws_tomcat_owner};
+
+	# cd $site_dir 
+	my $site_dir = $self->{site_dir};
+	my $sitekey  = $self->{sitekey};
+	my $git_dir  = $base->{home} . "/var/site/${sitekey}.git";
+
+	if (!-d $git_dir) {
+		dir($git_dir)->mkpath || die "$!";
+	}
+
+    # Create a new repo (mkdir project.git && cd project.git && git init --bare --shared=group).
+    {
+	    chdir $git_dir;
+		my $output = Git::Repository->run(qw/ init --bare /);
+		if ($? == 0) {
+		    LOG->notice("[git init ${sitekey}] '$output'");
+		} else {
+		    LOG->crit("[git init ${sitekey}] '$output' : $?");
+		    return;
+		}
+	    chdir $cwd;
+    }
+
+    # Clone the remote repo (git clone ssh://yourserver.com/var/gitroot/project.git)
+    {
+		my $server = $base->{ws_server_name};
+		my $url = "ssh://${user}\@${server}/${git_dir}";
+	    LOG->notice("[git init ${sitekey}] git clone $url");
+	    my $output = Git::Repository->run( clone => $url, $site_dir , { quiet => 1 } );
+		$self->{git_url} = $url;
+		if ($? == 0) {
+		    LOG->notice("[git clone ${url}] '$output'");
+		} else {
+		    LOG->crit("[git clone ${url}] '$output' : $?");
+		    return;
+		}
+    }
+
+	my @ignore_dir = map { "/$_/" } qw/analysis summary storage html/;
+	my $writer = file($site_dir, '.gitignore')->open('w') || die "$!";
+	my @ignores = (@ignore_dir, qw/ .pid .stdout .stderr /);
+	$writer->print(join("\n", @ignores));
+	$writer->close;
+    for my $dir(qw/analysis summary storage node view lib html/) {
+    	my $site_dir_child = dir($site_dir, $dir);
+    	mkdir $site_dir_child || die "$! : $site_dir_child";
+    }
+
+    return $self->git_push('first init');
+}
+
+sub git_push {
+	my ($self, $commit_message) = @_;
+
+	my $site_dir = $self->{site_dir};
+    my $git = Git::Repository->new( work_tree => $site_dir );
+	$git->run('add', '.');
+	$git->run('commit', '-a', '-m', $commit_message);
+	my $output = $git->run('push', 'origin', 'master', { quiet => 1 } );
+	if ($? != 0) {
+	    LOG->crit("[git push ${site_dir}] '$output' : $?");
+	    return;
+	}
+	return 1;
+}
+
+sub create_cacti_site {
+	my $self = shift;
+
+	my $cacti_conf = config('cacti');
+	my $sitekey    = $self->{sitekey};
+	my $rootpass   = $self->{mysql_passwd};
+	my $sitepass   = $self->{site_mysql_passwd};
+	my $site_html  = $self->{site_dir} . '/html';
+	my $cacti_home = $cacti_conf->{GETPERF_CACTI_HOME};
+
+	# Extract archive to Cacti site
+	{
+		my $cacti_archive_dir = $cacti_conf->{GETPERF_CACTI_ARCHIVE_DIR};
+		my $cacti_archive = $cacti_conf->{GETPERF_CACTI_ARCHIVE};
+		my $cacti_tar     = "$cacti_archive_dir/$cacti_archive";
+		my $cacti_module  = $cacti_archive;
+		$cacti_module=~s/.*(cacti-.*?)\.tar\.gz/$1/g;
+		my $extract_cacti = "cd ${site_html}; tar xvf ${cacti_tar}; ln -s ${cacti_module} cacti";
+		$self->exec_command($extract_cacti) || return;
+	}
+
+	# Create Cacti MySQL Repository
+	{
+		my $cacti_dump    = $cacti_conf->{GETPERF_CACTI_DUMP};
+		$self->create_cacti_repository_db || return;
+		my $import_cacti_repos = "mysql -uroot -p${rootpass} ${sitekey} < ${cacti_home}/${cacti_dump}";
+		$self->exec_command($import_cacti_repos) || return;
+	}
+
+	# Link Cacti site home to /var/www/html
+	{
+		my $cacti_html = $cacti_conf->{GETPERF_CACTI_HTML};
+		my $cacti_link = file($cacti_html, $sitekey);
+		if (-e $cacti_link) {
+			if ($self->{force}) {
+				unlink $cacti_link;
+			} else {
+				die "$cacti_link is already exists. Delete $cacti_link or use --force option\n";
+			}
+		}
+		my $link_html = "ln -s ${site_html}/cacti ${cacti_link}";
+		$self->exec_command($link_html) || return;
+	}
+
+	# Link storage home to Cacti rra
+	{
+		my $cacti_rra = "$site_html/cacti/rra";
+		if (-d $cacti_rra) {
+			my $remove_rra = "rm -r $cacti_rra";
+			$self->exec_command($remove_rra) || return;
+		}
+		my $link_rra = "cd ${site_html}/cacti; ln -s ../../storage rra";
+		$self->exec_command($link_rra) || return;
+	}
+
+	# Patch cacti/include/config.php
+	{
+		chdir($cacti_home);
+		my $config_template = $cacti_conf->{GETPERF_CACTI_CONFIG};
+		my $tt = Template->new;
+		my $vars = { 
+		    sitekey  => $sitekey, 
+		    sitepass => $sitepass, 
+		};
+
+		$tt->process($config_template, $vars, \my $output) || die $tt->error;
+		my $writer = file($site_html, 'cacti/include/config.php')->open('w');
+		unless ($writer) {
+	        LOG->crit("Could not write $site_html/cacti/include/config.php: $!");
+	        return;
+		}
+		$writer->print($output);
+		$writer->close;
+	}
+
+	return 1;
+}
+
+sub init {
+	my $self = shift;
+
+	# Defalut site setting
+	my $AUTO_AGGREGATE = 1;
+	my $AUTO_DEPLOY    = 1;
+
+	# Create site config file.
+	$self->create_site_config_dir;
+	my $sitekey    = $self->{sitekey};
+	my $site_config = file($self->{site_config});
+	my $site_dir    = dir($self->{site_dir});
+	my $staging_dir = $self->{staging_dir} . '/' . $sitekey;
+	my $site_mysql_passwd = Digest::SHA1::sha1_hex(rand() . $$ . {} . time);
+	$self->{site_mysql_passwd} = $site_mysql_passwd;
+
+	if (-f $site_config && !$self->{force}) {
+		die "$site_config is already exists. Remove $site_config or use --force option\n\n" .
+			"Actions:\n\n" .
+			"rm -rf $site_dir\n" .
+			"rm /var/www/html/$sitekey\n" .
+			"rm $site_config\n" .
+			"mysqladmin -u root -p drop $sitekey\n\n";
+	}
+	if (-d $site_dir) {
+		if ($self->{force}) {
+			$site_dir->rmtree || die "$! : $site_dir";
+		} else {
+			die "$site_dir is already exists. Remove $site_dir or use --force option\n";
+		}
+	}
+	if (!-d $staging_dir) {
+		mkdir $staging_dir || die "$! : $staging_dir";
+	}
+	my $domain_json = '';
+	if ($self->{domains}) {
+		my @lists = map { "\"$_\"" } @{$self->{domains}};
+		my $domains_text = join("," , @lists);
+		$domain_json = 		"	\"domains\": [$domains_text],";
+	}
+	# Get current process owner
+	my $user  = scalar getpwuid($>);
+	my $group = scalar getgrgid($));
+
+	my @config_json = (
+		"{" ,
+		"	\"site_key\":   \"$sitekey\"," ,
+		"	\"access_key\": \"$site_mysql_passwd\"," ,
+		"	\"home\":       \"$self->{site_dir}\"," ,
+		"	\"user\":       \"$user\"," ,
+		"	\"group\":      \"$group\"," ,
+		$domain_json,
+		"	\"auto_aggregate\": $AUTO_AGGREGATE," ,
+		"	\"auto_deploy\":    $AUTO_DEPLOY" ,
+		"}",
+	);
+	my $writer = file($site_config)->open('w') || die "$! : $site_config";
+	$writer->print(join("\n", @config_json));
+	$writer->close;
+
+    $self->init_git || return;
+    $self->create_sumup_command_skel || return;
+    $self->create_cacti_site || return;
+    $self->regist_influx_site_db || return;
+    $self->inform_site_complete || return;
+
+	return 1;
+}
+
+sub update {
+	my $self = shift;
+
+	# Defalut site setting
+	my $AUTO_AGGREGATE = 0;
+	my $AUTO_DEPLOY    = 0;
+
+	# Create site config file.
+	$self->create_site_config_dir;
+	my $sitekey    = $self->{sitekey};
+	my $site_config = file($self->{site_config});
+	my $site_dir    = dir($self->{site_dir});
+	my $staging_dir = $self->{staging_dir} . '/' . $sitekey;
+	my $site_mysql_passwd = Digest::SHA1::sha1_hex(rand() . $$ . {} . time);
+	$self->{site_mysql_passwd} = $site_mysql_passwd;
+
+	if (!-d $site_dir) {
+		LOG->error("Site directory not found : $site_dir");
+		return;
+	}
+	if (!-d $staging_dir) {
+		mkdir $staging_dir || die "$! : $staging_dir";
+	}
+	if (!-f $site_config) {
+		# Get current process owner
+		my $user  = scalar getpwuid($>);
+		my $group = scalar getgrgid($));
+
+		my @config_json = (
+			"{" ,
+			"	\"site_key\":   \"$sitekey\"," ,
+			"	\"access_key\": \"$site_mysql_passwd\"," ,
+			"	\"home\":       \"$self->{site_dir}\"," ,
+			"	\"user\":       \"$user\"," ,
+			"	\"group\":      \"$group\"," ,
+			"	\"auto_aggregate\": $AUTO_AGGREGATE," ,
+			"	\"auto_deploy\":    $AUTO_DEPLOY" ,
+			"}",
+		);
+		my $writer = file($site_config)->open('w') || die "$! : $site_config";
+		$writer->print(join("\n", @config_json));
+		$writer->close;
+	}
+
+    my $html_dir = $self->{site_dir} . '/html';
+	if (! -d $html_dir ) {
+		mkdir $html_dir || die "$! :$html_dir";
+    	$self->create_cacti_site || return;
+    }
+    my $cacti_dmp_file = $self->{site_dir} . "/${sitekey}.dmp";
+    if (-f $cacti_dmp_file) {
+		my $rootpass = $self->{mysql_passwd};
+		my $import_cacti_repos = "mysql -uroot -p${rootpass} ${sitekey} < $cacti_dmp_file";
+		$self->exec_command($import_cacti_repos) || return;
+    }
+    $self->regist_influx_site_db(force=>1);
+
+	return 1;
+}
+
+sub clone {
+	my $self = shift;
+
+	# Defalut site setting
+	my $AUTO_AGGREGATE = 0;
+	my $AUTO_DEPLOY    = 0;
+
+	# Create site config file.
+	$self->create_site_config_dir;
+	my $sitekey    = $self->{sitekey};
+	my $site_config = file($self->{site_config});
+	my $site_dir    = dir($self->{site_dir});
+	my $staging_dir = $self->{staging_dir} . '/' . $sitekey;
+	my $site_mysql_passwd = Digest::SHA1::sha1_hex(rand() . $$ . {} . time);
+	$self->{site_mysql_passwd} = $site_mysql_passwd;
+
+	if (-f $site_config && !$self->{force}) {
+		die "$site_config is already exists. Remove $site_config or use --force option\n\n" .
+			"Actions:\n\n" .
+			"rm -rf $site_dir\n" .
+			"rm /var/www/html/$sitekey\n" .
+			"rm $site_config\n" .
+			"mysqladmin -u root -p drop $sitekey\n\n";
+	}
+	if (-d $site_dir) {
+		if ($self->{force}) {
+			$site_dir->rmtree || die "$! : $site_dir";
+		} else {
+			die "$site_dir is already exists. Remove $site_dir or use --force option\n";
+		}
+	}
+	if (!-d $staging_dir) {
+		mkdir $staging_dir || die "$! : $staging_dir";
+	}
+	# Get current process owner
+	my $user  = scalar getpwuid($>);
+	my $group = scalar getgrgid($));
+
+	my @config_json = (
+		"{" ,
+		"	\"site_key\":   \"$sitekey\"," ,
+		"	\"access_key\": \"$site_mysql_passwd\"," ,
+		"	\"home\":       \"$self->{site_dir}\"," ,
+		"	\"user\":       \"$user\"," ,
+		"	\"group\":      \"$group\"," ,
+		"	\"auto_aggregate\": $AUTO_AGGREGATE," ,
+		"	\"auto_deploy\":    $AUTO_DEPLOY" ,
+		"}",
+	);
+	my $writer = file($site_config)->open('w') || die "$! : $site_config";
+	$writer->print(join("\n", @config_json));
+	$writer->close;
+
+    $self->clone_site_from_git_repository || return;
+    # $self->create_sumup_command_skel || return;
+    # $self->create_cacti_site || return;
+    # $self->inform_site_complete || return;
+
+	return 1;
+}
+
+sub list {
+	my $self = shift;
+
+	my $username = getpwuid($<);
+	my $base = config('base');
+	my @sites = dir($base->{site_config_dir})->children;
+
+	for my $site ( sort @sites ) {
+		my $uid = (stat $site)[4];
+		my $owner = (getpwuid $uid)[0];
+		if ($site=~m|.*/(.+?)\.json$| && $username eq $owner) {
+		    print "$1\n";
+		}
+	}
+	return 1;
+}
+
+sub clone_site {
+	my ($self, $src_sitekey, $dest_sitekey) = @_;
+
+	my $base = config('base');
+	my $dest_site_config_json = file($base->{site_config_dir}, "$dest_sitekey.json");
+
+	if (!$self->{force} && -f $dest_site_config_json) {
+		LOG->warning("File already exists '$dest_site_config_json'. SKIP");
+	} else {
+		my $site_config = Getperf::Data::SiteInfo::get_site_info( $src_sitekey );
+		my $access_key = $site_config->{access_key};
+		my $site_home  = $site_config->{home};
+
+		my @config_json = (
+			"{" ,
+			"	\"site_key\":   \"$dest_sitekey\"," ,
+			"	\"access_key\": \"$access_key\"," ,
+			"	\"home\":       \"$site_home\"" ,
+			"}",
+		);
+		LOG->notice("Write $dest_site_config_json");
+		my $writer = $dest_site_config_json->openw || die "$! : $dest_site_config_json";
+		$writer->print(join("\n", @config_json));
+		$writer->close;
+	}
+
+	my $dest_staging_dir = $self->{staging_dir} . '/' . $dest_sitekey;
+	if (!-d $dest_staging_dir ) {
+		mkdir( $dest_staging_dir );
+	}
+}
+
+sub add_addtional_sites {
+	my ($self, $opts) = @_;
+	
+	if (!defined($self->{additional_sites})) {
+		LOG->crit("No addtional site data");
+		return;
+	}
+	my @new_sitekeys = @{$self->{additional_sites}};
+
+	for my $new_sitekey(@new_sitekeys) {
+		$self->clone_site( $self->{sitekey}, $new_sitekey);
+	}
+	return 1;
+}
+
+1;

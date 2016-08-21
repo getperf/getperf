@@ -1,0 +1,50 @@
+{
+  "host_template": "Linux",
+  "host_title": "Linux - <node>",
+  "priority": 3,
+  "graphs": [
+    {
+      "graph_template": "Linux - Disk Busy% - <devn> cols",
+      "graph_tree": "/HW/<node_path>/DiskIO/",
+      "graph_title": "Linux - <node> - Disk Busy%",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["pct"],
+      "vertical_label": "Disk busy %",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Linux - <node> - Disk Busy% - <device>"
+    },
+    {
+      "graph_template": "Linux - Disk IO/sec",
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "Linux - <node> - Disk IO/s - <device>",
+      "graph_items": ["r_s", "w_s"],
+      "graph_item_texts": ["reads/sec", "writes/sec"],
+      "vertical_label": "IO/sec",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "datasource_title": "Linux - <node> - Disk IO/s - <device>"
+    },
+    {
+      "graph_template": "Linux - Disk MBs",
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "Linux - <node> - Disk Byte/s - <device>",
+      "graph_items": ["rkb_s", "wkb_s"],
+      "graph_item_texts": ["read transfers", "write transfers"],
+      "vertical_label": "Byte/sec",
+      "cdef": "Multiply by 1024",
+      "datasource_title": "Linux - <node> - Disk Byte/s - <device>"
+    },
+    {
+      "graph_template": "Linux - Disk Response",
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "Linux - <node> - Disk Response - <device>",
+      "graph_items": ["svctm"],
+      "graph_item_texts": ["disk latency"],
+      "upper_limit": 20,
+      "vertical_label": "msec",
+      "datasource_title": "Linux - <node> - Disk Response - <device>"
+    }
+  ]
+}

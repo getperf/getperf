@@ -1,0 +1,13 @@
+package Agent;
+
+use vars qw($PACKAGE $MAJOR_VERSION $BUILD);
+
+$PACKAGE       = "getperf";
+$MAJOR_VERSION = 2;
+$BUILD         = 4;
+
+use vars qw($URL_CM);
+
+$URL_CM = 'https://192.168.110.128:57443/axis2/services/GetperfService';
+
+return 1;

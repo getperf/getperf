@@ -1,0 +1,7 @@
+{
+	"INFLUX_CLI":      "/opt/influxdb/influx",
+	"INFLUX_HOST":     "[% INFLUX_HOST %]",
+	"INFLUX_PORT":     8086,
+	"VAR_LIB_INFLUXDB": "/var/lib/influxdb",
+	"GETPERF_USE_INFLUXDB": 0
+}

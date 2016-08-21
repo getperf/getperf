@@ -1,0 +1,22 @@
+[
+  {
+    "label" : "Daily",
+    "step" : 5,
+    "save_days" : 8
+  },
+  {
+    "label" : "Weekly",
+    "step" : 900,
+    "save_days" : 32
+  },
+  {
+    "label" : "Monthly",
+    "step" : 3600,
+    "save_days" : 194
+  },
+  {
+    "label" : "Yearly",
+    "step" : 86400,
+    "save_days" : 1850
+  }
+]

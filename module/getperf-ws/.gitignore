@@ -1,0 +1,7 @@
+target/**
+.gradle
+build/
+catalina.base_IS_UNDEFINED/
+
+# Ignore Gradle GUI config
+gradle-app.setting

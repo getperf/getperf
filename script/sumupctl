@@ -1,0 +1,60 @@
+#!/usr/bin/perl
+
+use strict;
+use FindBin;
+use Data::Dumper;
+use Daemon::Control;
+use Path::Class;
+BEGIN { push(@INC, $FindBin::Bin . '/../lib'); }
+use Getperf::Config 'config';
+use parent qw(Class::Accessor::Fast);
+use Log::Handler app => "LOG";
+
+if ($ARGV[0]!~/^(start|stop|restart|status)$/) {
+	print "Usage: sumupctl [start|stop|restart|status]\n";
+	exit 0;
+}
+
+my $base = config('base');
+my @sites = dir($base->{site_config_dir})->children;
+for my $site ( sort @sites ) {
+
+	if ($site=~m|.*/(.+?)\.json$|) {
+		my $sitekey = $1;
+		my $error = "'home', 'user', 'group' must be specified in $site.\n";
+		eval {
+			my $json  = Getperf::Config::read_site_config($sitekey);
+			my $home  = $json->{home}  || die $error;
+			my $user  = $json->{user}  || die $error;
+			my $group = $json->{group} || die $error;
+			if (!-d "$home/.git") {
+				die $error;
+			}
+			if ($json->{auto_aggregate}) {
+				$ENV{SITEHOME} = $home;
+				if (!fork()) {
+					my $daemon = Daemon::Control->new(
+					    name         => "Getperf Sumup Daemon::$sitekey",
+					    path         => $FindBin::Bin . "/sumup.pl",
+						directory    => $home,
+						user         => $user,
+						group        => $group,
+
+					    program      => 'perl',
+					    program_args => [
+							"-I$home/lib",
+							$FindBin::Bin . "/sumup.pl",
+							"--daemon",
+					    ],
+					    pid_file     => "$home/.pid",
+					);
+					$daemon->run;
+				}
+			}
+		};
+		if($@) {
+			LOG->notice("Invalid site config file[$sitekey]: $site. SKIP.\n$@");
+		}
+	}
+}
+exit;

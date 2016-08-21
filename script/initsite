@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Site initialize 
+#
+# Usage : initsite {site_dir}
+#         [--update] [--force] [--disable-git-clone] [--mysql-password=s]
+#         [--addsite="AAA,BBB"]
+#         [--cacti-templates="0.8.8b,0.8.8e"]
+
+LANG=C;export LANG
+CWD=`dirname $0`
+CMDNAME=`basename $0`
+
+perl $CWD/initsite.pl $*

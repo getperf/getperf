@@ -1,0 +1,4 @@
+open hogehoge@getperf.com
+put "%1%" /home/test/work/tmp/
+close
+exit

@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+
+use strict;
+use FindBin;
+use Data::Dumper;
+use Daemon::Control;
+use Path::Class;
+BEGIN { push(@INC, $FindBin::Bin . '/../lib'); }
+use Getperf::Config 'config';
+use parent qw(Class::Accessor::Fast);
+use Log::Handler app => "LOG";
+
+my $base = config('base');
+my @sites = dir($base->{site_config_dir})->children;
+for my $site ( sort @sites ) {
+
+	if ($site=~m|.*/(.+?)\.json$|) {
+		my $sitekey = $1;
+		my $error = "'home', 'user', 'group' must be specified.\n";
+		eval {
+			my $json  = Getperf::Config::read_site_config($sitekey);
+			my $home  = $json->{home}  || die $error;
+			my $user  = $json->{user}  || die $error;
+			my $group = $json->{group} || die $error;
+			if (!-d "$home/.git") {
+				die $error;
+			}
+			# Search {site home}/.pid. If not, site daemon is in stop, skip the process.
+			if (!-f "$home/.pid") {
+				next;
+			}
+			my $pid = file($home, '.pid')->slurp || die $@;
+			chomp($pid);
+			if (-d "/proc/$pid") {
+				LOG->info("check '$sitekey' is running");
+				next;
+			}
+			if ($json->{auto_aggregate}) {
+				LOG->crit("Site daemon is terminated abnormally, restart '$sitekey'");
+				$ARGV[0] = 'restart';
+				$ENV{SITEHOME} = $home;
+				if (!fork()) {
+					my $daemon = Daemon::Control->new(
+					    name         => "Getperf Sumup Daemon::$sitekey",
+					    path         => $FindBin::Bin . "/sumup.pl",
+						directory    => $home,
+						user         => $user,
+						group        => $group,
+
+					    program      => 'perl',
+					    program_args => [
+							"-I$home/lib",
+							$FindBin::Bin . "/sumup.pl",
+							"--daemon",
+					    ],
+					    pid_file     => "$home/.pid",
+					);
+					$daemon->run;
+				}
+			}
+		};
+		if($@) {
+			LOG->info("Invalid site config file[$sitekey]: SKIP.\n$@");
+		}
+	}
+}
+exit;

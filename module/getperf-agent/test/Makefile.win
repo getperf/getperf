@@ -1,0 +1,66 @@
+CC     = cl
+
+INCLOCAL   = ..\include
+LOCALDIR   = ..\win32
+COMMON_OBJ = ..\src\gpfcommon.obj
+SOAP_OBJ   = ..\src\gpfsoap.obj
+ZIP_OBJ    = ..\src\gpfzip.obj
+
+# SSLインストールディレクトリ
+#SSLDIR   = $(LOCALDIR)\ssl
+SSLDIR   = $(LOCALDIR)\OpenSSL-Win32
+INCSSL   = $(SSLDIR)\include
+LIBSSL   = $(SSLDIR)\lib
+
+# CUnitインストールディレクトリ
+CUNITDIR   = $(LOCALDIR)\CUnit
+INCCUNIT   = $(CUNITDIR)\include
+LIBCUNIT   = $(CUNITDIR)\lib
+
+CFLAG   = /nologo /MT /EHsc -W2 -O2 /wd4819 \
+	/I . /I $(INCLOCAL) /I $(INCSSL) /I $(INCCUNIT)  \
+	/D OSNAME_WINDOWS /D WITH_OPENSSL /D SSL_ENABLE /D WIN32 /D _WINDOWS
+
+RM      = del
+
+# 動的ライブラリ
+SSLLIB    = $(LIBSSL)\libeay32.lib $(LIBSSL)\ssleay32.lib
+#SSLLIB   = $(LIBSSL)\VC\libeay32MD.lib $(LIBSSL)\VC\ssleay32MD.lib
+CUNITLLIB = $(LIBCUNIT)\libcunit.lib
+
+TARGET=all
+
+SRCTEST=unit_test.c \
+test_gpf_admin.c \
+test_gpf_agent.c \
+test_gpf_common.c \
+test_gpf_config.c \
+test_gpf_log.c \
+test_gpf_json.c \
+test_gpf_param.c \
+test_gpf_process.c \
+test_gpf_soap_admin.c \
+test_gpf_soap_agent.c \
+test_gpf_soap_common.c 
+
+OBJTEST=$(SRCTEST:.c=.obj)
+OUTTEST=gpf_test.exe
+
+SRCTESTCMD=testcmd.c
+
+OBJTESTCMD=$(SRCTESTCMD:.c=.obj)
+OUTTESTCMD=testcmd.exe
+
+all: test testcmd
+
+test : $(OBJTEST) $(COMMON_OBJ)
+	$(CC) $(CFLAG) $(LDFLAGS) /Fe$(OUTTEST) $(OBJTEST) $(COMMON_OBJ) $(SOAP_OBJ) $(ZIP_OBJ) $(CUNITLLIB) User32.lib advapi32.lib
+
+testcmd : $(OBJTESTCMD) $(COMMON_OBJ) $(ZIP_OBJ)
+	$(CC) $(CFLAG) $(LDFLAGS) /Fe$(OUTTESTCMD) $(OBJTESTCMD) $(COMMON_OBJ) $(SOAP_OBJ) $(ZIP_OBJ) $(CUNITLLIB) User32.lib advapi32.lib
+
+.c.obj :
+ $(CC) $(CFLAG) /c $<
+ 
+clean:
+	-$(RM) $(COMMON_OBJ) core

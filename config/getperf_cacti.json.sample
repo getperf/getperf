@@ -1,0 +1,9 @@
+{
+	"GETPERF_CACTI_HTML":         "/var/www/html",
+	"GETPERF_CACTI_ARCHIVE_DIR":  "/home/psadmin/work/getperf/var/cacti",
+	"GETPERF_CACTI_ARCHIVE":      "cacti-0.8.8b.tar.gz",
+	"GETPERF_CACTI_HOME":         "/home/psadmin/work/getperf/lib/cacti",
+	"GETPERF_CACTI_TEMPLATE_DIR": "template/0.8.8b",
+	"GETPERF_CACTI_DUMP":         "template/cacti.dmp",
+	"GETPERF_CACTI_CONFIG":       "template/config.php.tpl"
+}

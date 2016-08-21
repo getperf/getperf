@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="GetperfService"
+ targetNamespace="http://perf.getperf.com"
+ xmlns:tns="http://perf.getperf.com"
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:ns1="http://perf.getperf.com"
+ xmlns:ns2="http://perf.getperf.com"
+ xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:HTTP="http://schemas.xmlsoap.org/wsdl/http/"
+ xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
+ xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
+ xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+ xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+<types>
+
+ <schema targetNamespace="http://perf.getperf.com"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:ns1="http://perf.getperf.com"
+  xmlns:ns2="http://perf.getperf.com"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  <import namespace="http://perf.getperf.com"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+ </schema>
+
+ <schema targetNamespace="http://perf.getperf.com"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:ns1="http://perf.getperf.com"
+  xmlns:ns2="http://perf.getperf.com"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  <import namespace="http://perf.getperf.com"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+ </schema>
+
+</types>
+
+<message name="checkLicenseRequest">
+ <part name="user" type="xsd:string"/><!-- ns2__checkLicense::_user -->
+ <part name="password" type="xsd:string"/><!-- ns2__checkLicense::_password -->
+ <part name="siteId" type="xsd:string"/><!-- ns2__checkLicense::_siteId -->
+</message>
+
+<message name="checkLicenseResponse">
+ <part name="checkLicenseReturn" type="xsd:string"/><!-- ns2__checkLicense::_checkLicenseReturn -->
+</message>
+
+<message name="checkDomainRequest">
+ <part name="user" type="xsd:string"/><!-- ns2__checkDomain::_user -->
+ <part name="password" type="xsd:string"/><!-- ns2__checkDomain::_password -->
+ <part name="siteId" type="xsd:string"/><!-- ns2__checkDomain::_siteId -->
+</message>
+
+<message name="checkDomainResponse">
+ <part name="checkDomainReturn" type="xsd:string"/><!-- ns2__checkDomain::_checkDomainReturn -->
+</message>
+
+<message name="checkVerifyCommandsRequest">
+ <part name="stat" type="xsd:string"/><!-- ns2__checkVerifyCommands::_stat -->
+ <part name="osname" type="xsd:string"/><!-- ns2__checkVerifyCommands::_osname -->
+</message>
+
+<message name="checkVerifyCommandsResponse">
+ <part name="checkVerifyCommandsReturn" type="xsd:string"/><!-- ns2__checkVerifyCommands::_checkVerifyCommandsReturn -->
+</message>
+
+<message name="checkSupportOSRequest">
+</message>
+
+<message name="checkSupportOSResponse">
+ <part name="ccheckSupportOS" type="xsd:string"/><!-- ns2__checkSupportOS::_ccheckSupportOS -->
+</message>
+
+<message name="registHostRequest">
+ <part name="user" type="xsd:string"/><!-- ns2__registHost::_user -->
+ <part name="password" type="xsd:string"/><!-- ns2__registHost::_password -->
+ <part name="siteId" type="xsd:int"/><!-- ns2__registHost::_siteId -->
+ <part name="category" type="xsd:string"/><!-- ns2__registHost::_category -->
+ <part name="domainId" type="xsd:int"/><!-- ns2__registHost::_domainId -->
+ <part name="hostname" type="xsd:string"/><!-- ns2__registHost::_hostname -->
+ <part name="osname" type="xsd:string"/><!-- ns2__registHost::_osname -->
+</message>
+
+<message name="registHostResponse">
+ <part name="registHostReturn" type="xsd:string"/><!-- ns2__registHost::_registHostReturn -->
+</message>
+
+<message name="checkHostStatusRequest">
+ <part name="user" type="xsd:string"/><!-- ns2__checkHostStatus::_user -->
+ <part name="password" type="xsd:string"/><!-- ns2__checkHostStatus::_password -->
+ <part name="siteKey" type="xsd:string"/><!-- ns2__checkHostStatus::_siteKey -->
+ <part name="hostname" type="xsd:string"/><!-- ns2__checkHostStatus::_hostname -->
+</message>
+
+<message name="checkHostStatusResponse">
+ <part name="checkHostStatusReturn" type="xsd:string"/><!-- ns2__checkHostStatus::_checkHostStatusReturn -->
+</message>
+
+<message name="requestCertifyHostRequest">
+ <part name="user" type="xsd:string"/><!-- ns2__requestCertifyHost::_user -->
+ <part name="password" type="xsd:string"/><!-- ns2__requestCertifyHost::_password -->
+ <part name="siteKey" type="xsd:string"/><!-- ns2__requestCertifyHost::_siteKey -->
+ <part name="hostname" type="xsd:string"/><!-- ns2__requestCertifyHost::_hostname -->
+ <part name="osname" type="xsd:string"/><!-- ns2__requestCertifyHost::_osname -->
+</message>
+
+<message name="requestCertifyHostResponse">
+ <part name="requestCertifyHostReturn" type="xsd:string"/><!-- ns2__requestCertifyHost::_requestCertifyHostReturn -->
+</message>
+
+<message name="checkCoreModuleBuildRequest">
+ <part name="osname" type="xsd:string"/><!-- ns2__checkCoreModuleBuild::_osname -->
+ <part name="arch" type="xsd:string"/><!-- ns2__checkCoreModuleBuild::_arch -->
+</message>
+
+<message name="checkCoreModuleBuildResponse">
+ <part name="checkCoreModuleBuildReturn" type="xsd:string"/><!-- ns2__checkCoreModuleBuild::_checkCoreModuleBuildReturn -->
+</message>
+
+<message name="checkStatModuleBuildRequest">
+ <part name="stat" type="xsd:string"/><!-- ns2__checkStatModuleBuild::_stat -->
+ <part name="ostag" type="xsd:string"/><!-- ns2__checkStatModuleBuild::_ostag -->
+</message>
+
+<message name="checkStatModuleBuildResponse">
+ <part name="checkStatModuleBuildReturn" type="xsd:string"/><!-- ns2__checkStatModuleBuild::_checkStatModuleBuildReturn -->
+</message>
+
+<message name="sendVerifyFileRequest">
+ <part name="user" type="xsd:string"/><!-- ns2__sendVerifyFile::_user -->
+ <part name="password" type="xsd:string"/><!-- ns2__sendVerifyFile::_password -->
+ <part name="siteKey" type="xsd:string"/><!-- ns2__sendVerifyFile::_siteKey -->
+ <part name="hostname" type="xsd:string"/><!-- ns2__sendVerifyFile::_hostname -->
+ <part name="fileName" type="xsd:string"/><!-- ns2__sendVerifyFile::_fileName -->
+</message>
+
+<message name="sendVerifyFileResponse">
+ <part name="sendVerifyFileReturn" type="xsd:string"/><!-- ns2__sendVerifyFile::_sendVerifyFileReturn -->
+</message>
+
+<message name="getPerfConfigFileCMRequest">
+ <part name="user" type="xsd:string"/><!-- ns2__getPerfConfigFileCM::_user -->
+ <part name="password" type="xsd:string"/><!-- ns2__getPerfConfigFileCM::_password -->
+ <part name="siteKey" type="xsd:string"/><!-- ns2__getPerfConfigFileCM::_siteKey -->
+ <part name="hostname" type="xsd:string"/><!-- ns2__getPerfConfigFileCM::_hostname -->
+ <part name="fileName" type="xsd:string"/><!-- ns2__getPerfConfigFileCM::_fileName -->
+</message>
+
+<message name="getPerfConfigFileCMResponse">
+ <part name="sendVerifyFileReturn" type="xsd:string"/><!-- ns2__getPerfConfigFileCM::_sendVerifyFileReturn -->
+</message>
+
+<message name="getModuleArchiveRequest">
+ <part name="ver" type="xsd:string"/><!-- ns2__getModuleArchive::_ver -->
+ <part name="fileName" type="xsd:string"/><!-- ns2__getModuleArchive::_fileName -->
+</message>
+
+<message name="getModuleArchiveResponse">
+ <part name="getModuleArchiveReturn" type="xsd:string"/><!-- ns2__getModuleArchive::_getModuleArchiveReturn -->
+</message>
+
+<message name="checkAgentRequest">
+ <part name="siteKey" type="xsd:string"/><!-- ns2__checkAgent::_siteKey -->
+ <part name="hostname" type="xsd:string"/><!-- ns2__checkAgent::_hostname -->
+ <part name="accessKey" type="xsd:string"/><!-- ns2__checkAgent::_accessKey -->
+</message>
+
+<message name="checkAgentResponse">
+ <part name="checkAgentReturn" type="xsd:string"/><!-- ns2__checkAgent::_checkAgentReturn -->
+</message>
+
+<message name="registAgentRequest">
+ <part name="siteKey" type="xsd:string"/><!-- ns2__registAgent::_siteKey -->
+ <part name="hostname" type="xsd:string"/><!-- ns2__registAgent::_hostname -->
+ <part name="accessKey" type="xsd:string"/><!-- ns2__registAgent::_accessKey -->
+</message>
+
+<message name="registAgentResponse">
+ <part name="registAgentReturn" type="xsd:string"/><!-- ns2__registAgent::_registAgentReturn -->
+</message>
+
+<message name="getLatestVersionRequest">
+</message>
+
+<message name="getLatestVersionResponse">
+ <part name="getLatestVersionReturn" type="xsd:string"/><!-- ns2__getLatestVersion::_getLatestVersionReturn -->
+</message>
+
+<message name="getLatestBuildRequest">
+ <part name="moduleTag" type="xsd:string"/><!-- ns2__getLatestBuild::_moduleTag -->
+ <part name="majorVer" type="xsd:int"/><!-- ns2__getLatestBuild::_majorVer -->
+</message>
+
+<message name="getLatestBuildResponse">
+ <part name="getLatestBuildReturn" type="xsd:string"/><!-- ns2__getLatestBuild::_getLatestBuildReturn -->
+</message>
+
+<message name="downloadUpdateModuleRequest">
+ <part name="moduleTag" type="xsd:string"/><!-- ns2__downloadUpdateModule::_moduleTag -->
+ <part name="majorVer" type="xsd:int"/><!-- ns2__downloadUpdateModule::_majorVer -->
+ <part name="build" type="xsd:int"/><!-- ns2__downloadUpdateModule::_build -->
+</message>
+
+<message name="downloadUpdateModuleResponse">
+ <part name="downloadUpdateModuleReturn" type="xsd:string"/><!-- ns2__downloadUpdateModule::_downloadUpdateModuleReturn -->
+</message>
+
+<portType name="GetperfServicePortType">
+ <operation name="checkLicense">
+  <documentation>Service definition of function ns2__checkLicense</documentation>
+  <input message="tns:checkLicenseRequest"/>
+  <output message="tns:checkLicenseResponse"/>
+ </operation>
+ <operation name="checkDomain">
+  <documentation>Service definition of function ns2__checkDomain</documentation>
+  <input message="tns:checkDomainRequest"/>
+  <output message="tns:checkDomainResponse"/>
+ </operation>
+ <operation name="checkVerifyCommands">
+  <documentation>Service definition of function ns2__checkVerifyCommands</documentation>
+  <input message="tns:checkVerifyCommandsRequest"/>
+  <output message="tns:checkVerifyCommandsResponse"/>
+ </operation>
+ <operation name="checkSupportOS">
+  <documentation>Service definition of function ns2__checkSupportOS</documentation>
+  <input message="tns:checkSupportOSRequest"/>
+  <output message="tns:checkSupportOSResponse"/>
+ </operation>
+ <operation name="registHost">
+  <documentation>Service definition of function ns2__registHost</documentation>
+  <input message="tns:registHostRequest"/>
+  <output message="tns:registHostResponse"/>
+ </operation>
+ <operation name="checkHostStatus">
+  <documentation>Service definition of function ns2__checkHostStatus</documentation>
+  <input message="tns:checkHostStatusRequest"/>
+  <output message="tns:checkHostStatusResponse"/>
+ </operation>
+ <operation name="requestCertifyHost">
+  <documentation>Service definition of function ns2__requestCertifyHost</documentation>
+  <input message="tns:requestCertifyHostRequest"/>
+  <output message="tns:requestCertifyHostResponse"/>
+ </operation>
+ <operation name="checkCoreModuleBuild">
+  <documentation>Service definition of function ns2__checkCoreModuleBuild</documentation>
+  <input message="tns:checkCoreModuleBuildRequest"/>
+  <output message="tns:checkCoreModuleBuildResponse"/>
+ </operation>
+ <operation name="checkStatModuleBuild">
+  <documentation>Service definition of function ns2__checkStatModuleBuild</documentation>
+  <input message="tns:checkStatModuleBuildRequest"/>
+  <output message="tns:checkStatModuleBuildResponse"/>
+ </operation>
+ <operation name="sendVerifyFile">
+  <documentation>Service definition of function ns2__sendVerifyFile</documentation>
+  <input message="tns:sendVerifyFileRequest"/>
+  <output message="tns:sendVerifyFileResponse"/>
+ </operation>
+ <operation name="getPerfConfigFileCM">
+  <documentation>Service definition of function ns2__getPerfConfigFileCM</documentation>
+  <input message="tns:getPerfConfigFileCMRequest"/>
+  <output message="tns:getPerfConfigFileCMResponse"/>
+ </operation>
+ <operation name="getModuleArchive">
+  <documentation>Service definition of function ns2__getModuleArchive</documentation>
+  <input message="tns:getModuleArchiveRequest"/>
+  <output message="tns:getModuleArchiveResponse"/>
+ </operation>
+ <operation name="checkAgent">
+  <documentation>Service definition of function ns2__checkAgent</documentation>
+  <input message="tns:checkAgentRequest"/>
+  <output message="tns:checkAgentResponse"/>
+ </operation>
+ <operation name="registAgent">
+  <documentation>Service definition of function ns2__registAgent</documentation>
+  <input message="tns:registAgentRequest"/>
+  <output message="tns:registAgentResponse"/>
+ </operation>
+ <operation name="getLatestVersion">
+  <documentation>Service definition of function ns2__getLatestVersion</documentation>
+  <input message="tns:getLatestVersionRequest"/>
+  <output message="tns:getLatestVersionResponse"/>
+ </operation>
+ <operation name="getLatestBuild">
+  <documentation>Service definition of function ns2__getLatestBuild</documentation>
+  <input message="tns:getLatestBuildRequest"/>
+  <output message="tns:getLatestBuildResponse"/>
+ </operation>
+ <operation name="downloadUpdateModule">
+  <documentation>Service definition of function ns2__downloadUpdateModule</documentation>
+  <input message="tns:downloadUpdateModuleRequest"/>
+  <output message="tns:downloadUpdateModuleResponse"/>
+ </operation>
+</portType>
+
+<binding name="GetperfService" type="tns:GetperfServicePortType">
+ <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+ <operation name="checkLicense">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="checkDomain">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="checkVerifyCommands">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="checkSupportOS">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="registHost">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="checkHostStatus">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="requestCertifyHost">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="checkCoreModuleBuild">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="checkStatModuleBuild">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="sendVerifyFile">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="getPerfConfigFileCM">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="getModuleArchive">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="checkAgent">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="registAgent">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="getLatestVersion">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="getLatestBuild">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+ <operation name="downloadUpdateModule">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="http://perf.getperf.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+</binding>
+
+<service name="GetperfService">
+ <documentation>gSOAP 2.8.16 generated service definition</documentation>
+ <port name="GetperfService" binding="tns:GetperfService">
+  <SOAP:address location="https://getperf.moi:47443/axis2/services/GetperfCMService"/>
+ </port>
+</service>
+
+</definitions>

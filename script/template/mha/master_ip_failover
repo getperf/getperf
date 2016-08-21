@@ -1,0 +1,136 @@
+#!/usr/bin/env perl
+
+#  Copyright (C) 2011 DeNA Co.,Ltd.
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#  Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+## Note: This is a sample script and is not complete. Modify the script based on your environment.
+
+use strict;
+use warnings FATAL => 'all';
+
+use Getopt::Long;
+use MHA::DBHelper;
+
+my (
+  $command,          $ssh_user,        
+  $orig_master_host, $orig_master_ip,
+  $orig_master_port, $new_master_host, $new_master_ip,    $new_master_port,
+####変数の追加
+  $virtual_ip,       $orig_master_vip_eth, $new_master_vip_eth
+####
+);
+GetOptions(
+  'command=s'          => \$command,
+  'ssh_user=s'         => \$ssh_user,
+  'orig_master_host=s' => \$orig_master_host,
+  'orig_master_ip=s'   => \$orig_master_ip,
+  'orig_master_port=i' => \$orig_master_port,
+  'new_master_host=s'  => \$new_master_host,
+  'new_master_ip=s'    => \$new_master_ip,
+  'new_master_port=i'  => \$new_master_port,
+
+####追加した変数への値代入
+  'virtual_ip=s'       => \$virtual_ip,
+  'orig_master_vip_eth=s'  => \$orig_master_vip_eth,
+  'new_master_vip_eth=s'   => \$new_master_vip_eth
+####
+);
+
+exit &main();
+
+sub main {
+# Print out parameters
+  if ( defined $command ) {print("command => $command\n")};
+  if ( defined $ssh_user ) {print("ssh_user=s => $ssh_user\n")};
+  if ( defined $orig_master_host ) {print("orig_master_host => $orig_master_host\n")};
+  if ( defined $orig_master_ip ) {print("orig_master_ip => $orig_master_ip\n")};
+  if ( defined $orig_master_port ) {print("orig_master_port => $orig_master_port\n")};
+  if ( defined $new_master_host ) {print("new_master_host => $new_master_host\n")};
+  if ( defined $new_master_ip ) {print("new_master_ip => $new_master_ip\n")};
+  if ( defined $new_master_port ) {print("new_master_port => $new_master_port\n")};
+
+####追加したパラメータの表示
+  if ( defined $virtual_ip ) {print("virtual_ip => $virtual_ip\n")};
+  if ( defined $orig_master_vip_eth ) {print("orig_master_vip_eth => $orig_master_vip_eth\n")};
+  if ( defined $new_master_vip_eth ) {print("new_master_vip_eth => $new_master_vip_eth\n")};
+####
+
+  if ( $command eq "stop" || $command eq "stopssh" ) {
+    my $exit_code = 1;
+    eval {
+
+####障害の発生したマスタに付加されている仮想IPを剥奪、もし接続できない場合はタイムアウトまで待つ
+        `ssh $orig_master_host -o "ConnectTimeout=5" '/etc/init.d/zabbix-server stop; /sbin/ifconfig $orig_master_vip_eth down; /etc/init.d/getperfagent restart'`;
+####
+        $exit_code = 0;
+
+    };
+    if ($@) {
+      warn "Got Error: $@\n";
+      exit $exit_code;
+    }
+    exit $exit_code;
+  }
+  elsif ( $command eq "start" ) {
+
+    # all arguments are passed.
+    # If you manage master ip address at global catalog database,
+    # activate new_master_ip here.
+    # You can also grant write access (create user, set read_only=0, etc) here.
+    my $exit_code = 10;
+    eval {
+####新マスタのリードオンリ停止など余分な部分は削除
+####ここでは新マスタへ仮想IP割り振ることのみを行う
+####仮想IPを割り振るNICの情報を取得
+      my $real_eth=$new_master_vip_eth;
+      $real_eth=~ s/:.*//g;
+      my $new_master_network= `ssh $new_master_host '/sbin/ifconfig $real_eth'`;
+####ネットマスクの取得
+      my $vip_netmask = join(".", $new_master_network =~ /Mask\:(\d+)\.(\d+)\.(\d+)\.(\d+)/ );
+####ブロードキャストアドレスの取得
+      my $vip_broadcast = join(".", $new_master_network =~ /Bcast\:(\d+)\.(\d+)\.(\d+)\.(\d+)/ );
+####フェイルオーバ先に仮想IPを割り振る、そのとき仮想IPの切り替わりのためpingを発行する
+      `ssh $new_master_host -o "ConnectTimeout=15" '/sbin/ifconfig $new_master_vip_eth $virtual_ip netmask $vip_netmask up; arping -q -A -I $real_eth -c 1 $virtual_ip > /dev/null;  /etc/init.d/zabbix-server start'`;
+####  
+      $exit_code = 0;
+    };
+    if ($@) {
+      warn $@;
+
+      # If you want to continue failover, exit 10.
+      exit $exit_code;
+    }
+    exit $exit_code;
+  }
+  elsif ( $command eq "status" ) {
+
+    # do nothing
+    exit 0;
+  }
+  else {
+    &usage();
+    exit 1;
+  }
+}
+
+sub usage {
+####仮想IPフェイルオーバのための入力も促す
+  print
+"Usage: master_ip_failover --command=start|stop|stopssh|status --orig_master_host=host --orig_master_ip=ip --orig_master_port=port --new_master_host=host --new_master_ip=ip --new_master_port=port --virtual_ip=ip --orig_master_vip_eth=eth --new_master_vip_eth=eth\n";
+####
+}
+

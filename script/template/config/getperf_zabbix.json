@@ -1,0 +1,17 @@
+{
+	"ZABBIX_SERVER_VERSION":     "2.2.10",
+	"ZABBIX_REPOSITORY_URL":     "http://repo.zabbix.com/zabbix/2.2/rhel/6/x86_64/zabbix-release-2.2-1.el6.noarch.rpm",
+	"ZABBIX_AGENT_VERSION":      "2.2.9",
+
+	"DOWNLOAD_AGENT_PLATFORMS":  [ "linux2_4.i386", "linux2_6.i386", "linux2_6.amd64", "solaris10.sparc", "solaris10.amd64", "win" ],
+	"ZABBIX_AGENT_DOWNLOAD_DIR": "[% COMPONENT_ROOT %]/var/agent",
+
+	"ZABBIX_SERVER_IP":          "[% ZABBIX_SERVER_IP %]",
+	"ZABBIX_SERVER_PORT":        10051,
+	"ZABBIX_ADMIN_PASSWORD":     "[% ZABBIX_ADMIN_PASSWORD %]",
+
+	"USE_ZABBIX_MULTI_SITE": 0,
+	"GETPERF_USE_ZABBIX_SEND": 1,
+	"GETPERF_AGENT_USE_ZABBIX": 1
+
+}

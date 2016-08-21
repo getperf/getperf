@@ -1,0 +1,50 @@
+{
+  "host_template": "Windows",
+  "host_title": "Windows - <node>",
+  "priority": 3,
+  "graphs": [
+    {
+      "graph_template": "WIN - Disk - busy% - <devn> cols",
+      "graph_tree": "/HW/<node_path>/DiskIO/",
+      "graph_title": "Windows - <node> - Disk Busy%",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["DiskIdleTime"],
+      "chart_style": "line2",
+      "vertical_label": "Disk idle %",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Windows - <node> - Disk Busy% - <device>"
+    },
+    {
+      "graph_template": "WIN - Disk - cmd/s",
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "Windows - <node> - Disk IO/s - <device>",
+      "graph_items": ["DiskReadsSec", "DiskWritesSec"],
+      "graph_item_texts": ["reads/sec", "writes/sec"],
+      "vertical_label": "IO/sec",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "datasource_title": "Windows - <node> - Disk IO/s - <device>"
+    },
+    {
+      "graph_template": "WIN - Disk - byte/s",
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "Windows - <node> - Disk Byte/s - <device>",
+      "graph_items": ["DiskReadBytesSec", "DiskWriteBytesSec"],
+      "graph_item_texts": ["read transfer", "write transfer"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Windows - <node> - Disk Byte/s - <device>"
+    },
+    {
+      "graph_template": "WIN - Disk - Response",
+      "graph_tree": "/HW/<node_path>/DiskIO/<node>/<device>",
+      "graph_title": "Windows - <node> - Disk Response - <device>",
+      "graph_items": ["DiskReadElapse", "DiskWriteElapse"],
+      "graph_item_texts": ["read latency", "write latency"],
+      "vertical_label": "msec",
+      "upper_limit": 20,
+      "datasource_title": "Windows - <node> - Disk Response - <device>"
+    }
+  ]
+}

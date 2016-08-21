@@ -1,0 +1,10 @@
+schedule:
+  start: 2015/05/11 00:10:25
+  end: 2015/05/11 00:10:30
+jobs:
+  - id: 1
+    cmd: _script_\windows_system_info.bat
+    start: 2015/05/11 00:10:25
+    end: 2015/05/11 00:10:26
+    pid: 5508
+    rc: 0

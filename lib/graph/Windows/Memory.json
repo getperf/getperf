@@ -1,0 +1,19 @@
+{
+  "host_template": "Windows",
+  "host_title": "Windows - <node>",
+  "priority": 2,
+  "graphs": [
+    {
+      "graph_template": "WIN - Memory Usage - bordered",
+      "graph_tree": "/HW/<node_path>/Memory/",
+      "graph_title": "Windows - <node> - Memory Usage",
+      "graph_items": ["CommittedBytes", "AvailableBytes"],
+      "graph_item_texts": ["Committed", "Available"],
+      "chart_style": "stack",
+      "vertical_label": "Byte",
+      "graph_borderline": "<MemTotal>",
+      "graph_comment": "Memory : <MemTotal>, Swap : <SwapTotal>",
+      "datasource_title": "Windows - <node> - Memory Usage"
+    }
+  ]
+}

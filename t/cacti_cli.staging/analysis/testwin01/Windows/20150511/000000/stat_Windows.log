@@ -1,0 +1,16 @@
+schedule:
+  start: 2015/05/11 00:00:30
+  end: 2015/05/11 00:06:11
+jobs:
+  - id: 1
+    cmd: typeperf.exe -cf perfMon\ProcessorMemory.txt -si  5 -sc 61 -f CSV -o "_odir_\ProcessorMemory.csv"
+    start: 2015/05/11 00:00:30
+    end: 2015/05/11 00:05:38
+    pid: 4400
+    rc: 0
+  - id: 2
+    cmd: typeperf.exe -cf PerfMon\DiskNetwork.txt     -si 30 -sc 13 -f CSV -o "_odir_\DiskNetwork.csv"
+    start: 2015/05/11 00:00:30
+    end: 2015/05/11 00:06:11
+    pid: 2424
+    rc: 0

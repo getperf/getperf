@@ -1,0 +1,66 @@
+{
+  "host_template": "Linux",
+  "host_title": "Linux - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "Linux - Network Recieve Traffic - net_dev - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "Linux - <node> - Network Recieve Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["inBytes"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Linux - <node> - Recieve Bytes/sec"
+    },
+    {
+      "graph_template": "Linux - Network Transfer Traffic - net_dev - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "Linux - <node> - Network Transfer Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["outBytes"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Linux - <node> - Transfer Bytes/sec"
+    },
+    {
+      "graph_template": "Linux - Network Traffic - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Linux - <node> - Network Bytes/sec - <device>",
+      "graph_items": ["inBytes", "outBytes"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Linux - <node> - Network Bytes/sec - <device>"
+    },
+    {
+      "graph_template": "Linux - Network Packet - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Linux - <node> - Network Packet - <device>",
+      "graph_items": ["inPackets", "outPackets"],
+      "vertical_label": "Packet/sec",
+      "unit_exponent_value": 1,
+      "datasource_title": "Linux - <node> - Network Packet - <device>"
+    },
+    {
+      "graph_template": "Linux - Network Error - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Linux - <node> - Network Error - <device>",
+      "graph_items": ["inErrs", "outErrs"],
+      "chart_style": "line2",
+      "vertical_label": "Errors/sec",
+      "unit_exponent_value": 1,
+      "datasource_title": "Linux - <node> - Network Error - <device>"
+    },
+    {
+      "graph_template": "Linux - Network Drop - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Linux - <node> - Network Drop - <device>",
+      "graph_items": ["inDrop", "inFifo", "inFrame", "outDrop", "outFifo", "outColls", "outCarrier"],
+      "chart_style": "line2",
+      "vertical_label": "Errors/sec",
+      "unit_exponent_value": 1,
+      "datasource_title": "Linux - <node> - Network Drop - <device>"
+    }
+  ]
+}

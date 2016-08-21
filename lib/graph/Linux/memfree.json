@@ -1,0 +1,28 @@
+{
+  "host_template": "Linux",
+  "host_title": "Linux - <node>",
+  "priority": 2,
+  "graphs": [
+    {
+      "graph_template": "Linux - Memory Usage - Linux",
+      "graph_tree": "/HW/<node_path>/Memory/",
+      "graph_title": "Linux - <node> - Memory Usage",
+      "graph_items": ["used", "shared", "buffers", "cached", "free"],
+      "chart_style": "stack",
+      "vertical_label": "Byte",
+      "cdef": "Multiply by 1024",
+      "graph_comment": "Memory : <total>, Swap : <swap>",
+      "graph_borderline": "<total>",
+      "datasource_title": "Linux - <node> - Memory Usage"
+    },
+    {
+      "graph_template": "Linux - Memory Detail - Linux",
+      "graph_tree": "/HW/<node_path>/Memory/Detail/",
+      "graph_title": "Linux - <node> - Memory Detail",
+      "graph_items": ["used"],
+      "vertical_label": "Byte",
+      "cdef": "Multiply by 1024",
+      "datasource_title": "Linux - <node> - Memory Detail"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+	"GETPERF_CACTI_HTML":             "/var/www/html",
+	"GETPERF_CACTI_ARCHIVE_DIR":      "[% COMPONENT_ROOT %]/var/cacti",
+	"GETPERF_CACTI_ARCHIVE":          "cacti-0.8.8g.tar.gz",
+	"GETPERF_CACTI_HOME":             "[% COMPONENT_ROOT %]/lib/cacti",
+	"GETPERF_CACTI_TEMPLATE_DIR":     "template/0.8.8g",
+	"GETPERF_CACTI_DUMP":             "template/0.8.8g/cacti.dmp",
+	"GETPERF_CACTI_DOMAIN_TEMPLATES": ["Linux","Windows"],
+	"GETPERF_CACTI_CONFIG":           "template/config.php.tpl"
+}

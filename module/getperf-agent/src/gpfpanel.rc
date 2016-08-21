@@ -1,0 +1,22 @@
+#include <windows.h>
+#include <commctrl.h>
+#include <richedit.h>
+#include "resource.h"
+
+//
+// Dialog resources
+//
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+IDD_MAIN DIALOG 0, 0, 82, 127
+STYLE DS_CENTER | DS_MODALFRAME | DS_SETFONT | WS_CAPTION | WS_POPUP | WS_SYSMENU
+CAPTION "Getperf"
+FONT 8, "MS Sans Serif"
+{
+    PUSHBUTTON      "&Setup",   IDC_SETUP, 15, 15, 50, 14
+    PUSHBUTTON      "St&art",   IDC_START, 15, 32, 50, 14
+    PUSHBUTTON      "St&op",    IDC_STOP, 15, 48, 50, 14
+    GROUPBOX        "Command",  IDC_STATIC1, 3, 4, 74, 66
+    PUSHBUTTON      "&Install", IDC_INSTALL, 16, 86, 49, 14
+    PUSHBUTTON      "&Remove",  IDC_REMOVE, 16, 103, 50, 14
+    GROUPBOX        "Windows Service", IDC_STATIC2, 4, 74, 73, 50
+}

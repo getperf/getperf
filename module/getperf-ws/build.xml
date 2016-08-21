@@ -1,0 +1,95 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project name="getperf" basedir="." default="generate.service">
+
+	<property name="common.service.name" value="GetperfService" />
+	<property name="service.name" value="GetperfService" />
+	<property name="dest.dir" value="build" />
+	<property name="dest.dir.classes" value="${dest.dir}/${service.name}" />
+	<property name="common.dir.classes" value="../common/${dest.dir}/${common.service.name}" />
+	<property name="dest.dir.lib" value="${dest.dir}/lib" />	
+	<property name="axis2.home" value="/tmp/axis2-1.5.6" />
+	<property name="repository.path" value="${axis2.home}/repository" />
+	<property environment="env" />
+
+	<path id="build.class.path">
+		<fileset dir="${axis2.home}/lib">
+			<include name="*.jar" />
+		</fileset>
+<!-- 
+		<fileset dir="${env.CATALINA_HOME}/lib">
+			<include name="*.jar"/>
+		</fileset>
+ -->
+ 		<fileset dir="/usr/share/java">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="client.class.path">
+		<fileset dir="${axis2.home}/lib">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${dest.dir.lib}">
+			<include name="*.jar" />
+		</fileset>
+
+	</path>
+	<target name="clean">
+		<delete dir="${dest.dir}" />
+	</target>
+
+	<target name="prepare">
+		<mkdir dir="${dest.dir}" />
+		<mkdir dir="${dest.dir.classes}/lib" />
+		<mkdir dir="${dest.dir.classes}" />
+		<mkdir dir="${dest.dir.classes}/META-INF" />
+	</target>
+
+	<target name="generate.service" depends="clean,prepare">
+
+	    <copy todir="${dest.dir.classes}/lib" >
+	      <fileset dir="lib">
+	      </fileset>
+	    </copy>
+  
+		<copy file="src/META-INF/services.xml" 
+			tofile="${dest.dir.classes}/META-INF/services.xml" 
+			overwrite="true" />
+
+		<javac srcdir="src/main/java" destdir="${dest.dir.classes}" 
+			includes="com/getperf/perf/**" deprecation="on" 
+			debug="true" debuglevel="lines,vars,source" >
+			<compilerarg value="-Xlint:unchecked" />
+			<classpath refid="build.class.path" />
+		</javac>
+
+		<jar basedir="${dest.dir.classes}" 
+			destfile="${dest.dir}/${service.name}.aar" />
+<!-- 
+		<copy file="${dest.dir}/${service.name}.aar" 
+			tofile="${repository.path}/services/${service.name}.aar" 
+			overwrite="true" />
+ -->
+	</target>
+</project>

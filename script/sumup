@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Wrapper of sumup.pl 
+#
+
+LANG=C;export LANG
+CWD=`dirname $0`
+CMDNAME=`basename $0`
+
+export SITEHOME="$(git rev-parse --show-toplevel)"
+
+if [ ! -d "$SITEHOME/lib/Getperf/Command" -o ! -d "$SITEHOME/node" ]; then
+	echo "Invalid site home directory '$SITEHOME'"
+	exit -1
+fi
+
+perl -I$SITEHOME/lib $CWD/sumup.pl $*

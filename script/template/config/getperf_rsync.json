@@ -1,0 +1,7 @@
+{
+   "site" : {
+      "GETPERF_RSYNC_SOURCE" : "staging_data/site",
+      "GETPERF_RSYNC_ZIP_KEYWORD" : "ELA",
+      "GETPERF_RSYNC_HOST" : "localhost"
+   }
+}

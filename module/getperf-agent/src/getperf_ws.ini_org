@@ -1,0 +1,12 @@
+; --------- WEBサービス設定 -------------------------------------------------
+; WEBサービスの設定の有無
+REMHOST_ENABLE = false
+
+; 構成管理用WEBサービス 
+URL_CM = https://cm.__domain__:57443/axis2/services/GetperfCMService
+
+; 性能データ転送用WEBサービス
+URL_PM = https://pm00.__domain__:58443/axis2/services/GetperfPMService
+
+; サイトキー（サイトを特定するキー）
+SITE_KEY = zzz9999

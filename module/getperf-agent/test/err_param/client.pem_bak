@@ -1,0 +1,148 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            83:cd:d5:20:28:6d:7d:c8
+        Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=JP, ST=Tokyo, O=GetPerf co., OU=GetPerf co., CN=getperf.moi/emailAddress=frsw3nr@msn.com
+        Validity
+            Not Before: Jan 13 07:31:24 2011 GMT
+            Not After : Jan 13 07:31:24 2012 GMT
+        Subject: C=JP, ST=Tokyo, O=GetPerf co., OU=GetPerf co., CN=maascacti01/emailAddress=frsw3nr@msn.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (1024 bit)
+                Modulus (1024 bit):
+                    00:ec:81:cb:ae:74:e5:f8:7a:61:4c:cb:ae:7a:28:
+                    8c:1e:4b:12:12:b3:88:8d:31:43:51:79:68:a0:87:
+                    77:28:57:8e:3e:7f:01:24:b7:04:56:e8:4f:b6:05:
+                    0d:8d:d7:42:23:65:6f:5a:db:8d:eb:ec:a5:68:37:
+                    c3:29:a5:0f:75:db:cd:fe:f0:1b:a5:ca:79:e6:ca:
+                    82:82:d1:4e:3a:16:41:32:ce:6e:e3:dc:8b:d1:a0:
+                    3b:13:eb:a2:f1:21:34:48:e5:7e:1b:d4:34:7d:1b:
+                    08:c7:64:d6:76:c6:9f:3a:30:0b:20:3c:0e:d4:3e:
+                    f9:07:b5:f0:2e:4c:d9:75:8d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                SSL Client, S/MIME
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                F6:C9:11:05:AA:35:C0:BC:B7:74:16:0D:23:F3:6F:7A:88:14:E5:F8
+            X509v3 Authority Key Identifier: 
+                keyid:E4:D8:57:3C:1A:09:F6:4A:C0:25:60:70:E1:D1:4D:C5:E4:C4:A6:88
+
+    Signature Algorithm: sha1WithRSAEncryption
+        4e:50:a4:4b:74:31:0d:2e:cf:2f:56:50:84:a6:d6:b2:10:a9:
+        56:9d:65:62:8f:58:0f:5b:fd:5b:3e:1b:68:d3:41:81:3f:1c:
+        fb:41:35:fe:74:36:9c:6f:2a:c2:72:d7:cc:5e:4c:c5:af:26:
+        9c:e3:83:8b:41:10:9b:0c:62:2c:b4:36:48:fe:f0:aa:08:a2:
+        82:2d:3e:3b:e7:f4:8b:57:8a:07:d6:07:1b:3b:1c:50:18:c5:
+        c3:d6:97:8d:55:24:89:08:95:28:15:d8:fa:9f:82:59:41:90:
+        8b:b8:6e:c9:89:ed:ad:c3:6f:31:7e:9f:6b:5a:74:15:4d:be:
+        bb:27
+-----BEGIN CERTIFICATE-----
+MIIDDDCCAnWgAwIBAgIJAIPN1SAobX3IMA0GCSqGSIb3DQEBBQUAMH8xCzAJBgNV
+BAYTAkpQMQ4wDAYDVQQIEwVUb2t5bzEUMBIGA1UEChMLR2V0UGVyZiBjby4xFDAS
+BgNVBAsTC0dldFBlcmYgY28uMRQwEgYDVQQDEwtnZXRwZXJmLm1vaTEeMBwGCSqG
+SIb3DQEJARYPZnJzdzNuckBtc24uY29tMB4XDTExMDExMzA3MzEyNFoXDTEyMDEx
+MzA3MzEyNFowfzELMAkGA1UEBhMCSlAxDjAMBgNVBAgTBVRva3lvMRQwEgYDVQQK
+EwtHZXRQZXJmIGNvLjEUMBIGA1UECxMLR2V0UGVyZiBjby4xFDASBgNVBAMTC21h
+YXNjYWN0aTAxMR4wHAYJKoZIhvcNAQkBFg9mcnN3M25yQG1zbi5jb20wgZ8wDQYJ
+KoZIhvcNAQEBBQADgY0AMIGJAoGBAOyBy6505fh6YUzLrnoojB5LEhKziI0xQ1F5
+aKCHdyhXjj5/ASS3BFboT7YFDY3XQiNlb1rbjevspWg3wymlD3Xbzf7wG6XKeebK
+goLRTjoWQTLObuPci9GgOxProvEhNEjlfhvUNH0bCMdk1nbGnzowCyA8DtQ++Qe1
+8C5M2XWNAgMBAAGjgY8wgYwwCQYDVR0TBAIwADARBglghkgBhvhCAQEEBAMCBaAw
+LAYJYIZIAYb4QgENBB8WHU9wZW5TU0wgR2VuZXJhdGVkIENlcnRpZmljYXRlMB0G
+A1UdDgQWBBT2yREFqjXAvLd0Fg0j8296iBTl+DAfBgNVHSMEGDAWgBTk2Fc8Ggn2
+SsAlYHDh0U3F5MSmiDANBgkqhkiG9w0BAQUFAAOBgQBOUKRLdDENLs8vVlCEptay
+EKlWnWVij1gPW/1bPhto00GBPxz7QTX+dDacbyrCctfMXkzFryac44OLQRCbDGIs
+tDZI/vCqCKKCLT475/SLV4oH1gcbOxxQGMXD1peNVSSJCJUoFdj6n4JZQZCLuG7J
+ie2tw28xfp9rWnQVTb67Jw==
+-----END CERTIFICATE-----
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,203FAE31F203BB18
+
+6L3v6iI+A0IXvv9rYPMSqGZ7/goySokzMJFmV4puflCK622p4XmzEz3AHyOwOewV
+GHGG9MtiiU5H7QKQh8DVDT+ZHN4A3/ACARDTPZkpcZgE4JpcZj6Adq0800FgC58+
+cdU01dkav3qCxe8+ObXEbDQzpw5AaEtqpSeN2II70yHHIHbUlVrPaURmNMCF0ZLK
+kXX0nWNeCxyiyAe0f3yT2YJ7FqVAJ06yNcwom3cli/MeJ++56c6KG0QyoiPZw252
+SugHf1a1JtwdGIOKTLwLDb6TWtnWmqqKteXZFNLGxe7dUuuY3Nt54eel9mkLS43H
+VmMchYB9auHYnj/7GCD9jCADf3ysmYTUZFd+OXKgkT4hc7E9jdnRmkwmvvtiVzsu
+Ss8yqpUoEnc9fYSat8yBMQjx9JSsjg7bSFkBoB1G2kEAdpkoyTSimCcHoZgHVh8o
+c32EwEKZobyj0/rl1g9t8nb43sunjtgLAdSg2Uo2SZOpL/fcHpsqFjAZ6TNZekAC
+8MjDJVV/yGVOpCMUk44wEtHlp2hm9+dL4h3rgc0qTLIgWjO5WlG43zyjTrzVBpvA
+CPu++q3x/9B12A/HWKJ0l+aTC0LU8rEAT3WCdYn5w3IsA+76zWapoUCAhIrBYu5o
+wSX6H/7xTZNBtBmOGFvsLc9ZbgHa9tAdV4M7GX1okzuKIf/t+vFGYZfQ0fIekaHJ
+ZKVXV6/xo4XeUein9t8daa7HL44XjfY4S3oAxBRNpa7TCqJN1RG24uPDZTfwbzPs
+f6Nu5PQ1PQiQYO08UpZbwQv/iKSmpKwW0i8Zv/uyFJhm9ZIrls2B/A==
+-----END RSA PRIVATE KEY-----
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            83:cd:d5:20:28:6d:7d:c3
+        Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=JP, ST=Tokyo, O=GetPerf co., OU=GetPerf co., CN=getperf.moi/emailAddress=frsw3nr@msn.com
+        Validity
+            Not Before: Jan 13 03:14:31 2011 GMT
+            Not After : Jan 12 03:14:31 2014 GMT
+        Subject: C=JP, ST=Tokyo, O=GetPerf co., OU=GetPerf co., CN=getperf.moi/emailAddress=frsw3nr@msn.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (1024 bit)
+                Modulus (1024 bit):
+                    00:ea:ac:74:ae:f4:a2:21:42:45:0e:23:16:a9:af:
+                    3c:72:d8:d2:84:3a:c2:09:ca:43:d9:f6:eb:63:cd:
+                    d4:8b:0c:01:50:f2:e0:b9:a0:d0:0e:06:3a:93:45:
+                    86:ff:0f:2a:38:69:3f:78:81:79:f8:08:69:f1:3e:
+                    a4:85:0b:4c:a2:f9:85:7e:88:a5:96:85:2c:1c:65:
+                    e8:f7:7d:9b:f0:b7:a7:a1:25:f2:c1:64:b1:e2:42:
+                    99:4e:84:f1:18:f8:31:d6:65:ef:7b:ba:fb:4f:16:
+                    b1:68:7f:bc:a0:8e:f3:2f:92:e5:8b:90:0f:43:e1:
+                    f8:c6:07:83:f6:c2:87:bc:13
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                E4:D8:57:3C:1A:09:F6:4A:C0:25:60:70:E1:D1:4D:C5:E4:C4:A6:88
+            X509v3 Authority Key Identifier: 
+                keyid:E4:D8:57:3C:1A:09:F6:4A:C0:25:60:70:E1:D1:4D:C5:E4:C4:A6:88
+                DirName:/C=JP/ST=Tokyo/O=GetPerf co./OU=GetPerf co./CN=getperf.moi/emailAddress=frsw3nr@msn.com
+                serial:83:CD:D5:20:28:6D:7D:C3
+
+            X509v3 Basic Constraints: 
+                CA:TRUE
+    Signature Algorithm: sha1WithRSAEncryption
+        ae:1c:13:9a:d2:23:e7:f8:3c:79:48:b3:65:14:7a:0a:75:be:
+        f2:1f:ea:3d:33:99:c4:ac:c2:ca:19:e2:97:18:5b:6b:c6:66:
+        68:b1:88:ce:8b:b7:c5:f2:63:de:d0:84:48:40:13:a4:cc:47:
+        fc:89:b0:52:7f:0c:04:95:5a:08:5d:9e:c9:36:5a:e4:ae:ea:
+        03:ce:fd:f8:5a:4a:00:20:12:65:20:ff:cd:d1:7e:64:5e:aa:
+        27:e4:d3:58:ff:fc:80:8d:67:aa:27:5c:e5:0b:a2:d3:50:02:
+        38:24:60:db:e3:75:26:fa:18:53:70:e3:fb:9d:ab:46:7c:67:
+        79:fb
+-----BEGIN CERTIFICATE-----
+MIIDYzCCAsygAwIBAgIJAIPN1SAobX3DMA0GCSqGSIb3DQEBBQUAMH8xCzAJBgNV
+BAYTAkpQMQ4wDAYDVQQIEwVUb2t5bzEUMBIGA1UEChMLR2V0UGVyZiBjby4xFDAS
+BgNVBAsTC0dldFBlcmYgY28uMRQwEgYDVQQDEwtnZXRwZXJmLm1vaTEeMBwGCSqG
+SIb3DQEJARYPZnJzdzNuckBtc24uY29tMB4XDTExMDExMzAzMTQzMVoXDTE0MDEx
+MjAzMTQzMVowfzELMAkGA1UEBhMCSlAxDjAMBgNVBAgTBVRva3lvMRQwEgYDVQQK
+EwtHZXRQZXJmIGNvLjEUMBIGA1UECxMLR2V0UGVyZiBjby4xFDASBgNVBAMTC2dl
+dHBlcmYubW9pMR4wHAYJKoZIhvcNAQkBFg9mcnN3M25yQG1zbi5jb20wgZ8wDQYJ
+KoZIhvcNAQEBBQADgY0AMIGJAoGBAOqsdK70oiFCRQ4jFqmvPHLY0oQ6wgnKQ9n2
+62PN1IsMAVDy4Lmg0A4GOpNFhv8PKjhpP3iBefgIafE+pIULTKL5hX6IpZaFLBxl
+6Pd9m/C3p6El8sFkseJCmU6E8Rj4MdZl73u6+08WsWh/vKCO8y+S5YuQD0Ph+MYH
+g/bCh7wTAgMBAAGjgeYwgeMwHQYDVR0OBBYEFOTYVzwaCfZKwCVgcOHRTcXkxKaI
+MIGzBgNVHSMEgaswgaiAFOTYVzwaCfZKwCVgcOHRTcXkxKaIoYGEpIGBMH8xCzAJ
+BgNVBAYTAkpQMQ4wDAYDVQQIEwVUb2t5bzEUMBIGA1UEChMLR2V0UGVyZiBjby4x
+FDASBgNVBAsTC0dldFBlcmYgY28uMRQwEgYDVQQDEwtnZXRwZXJmLm1vaTEeMBwG
+CSqGSIb3DQEJARYPZnJzdzNuckBtc24uY29tggkAg83VIChtfcMwDAYDVR0TBAUw
+AwEB/zANBgkqhkiG9w0BAQUFAAOBgQCuHBOa0iPn+Dx5SLNlFHoKdb7yH+o9M5nE
+rMLKGeKXGFtrxmZosYjOi7fF8mPe0IRIQBOkzEf8ibBSfwwElVoIXZ7JNlrkruoD
+zv34WkoAIBJlIP/N0X5kXqon5NNY//yAjWeqJ1zlC6LTUAI4JGDb43Um+hhTcOP7
+natGfGd5+w==
+-----END CERTIFICATE-----

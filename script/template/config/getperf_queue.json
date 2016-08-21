@@ -1,0 +1,5 @@
+{
+   "GETPERF_REDIS_PORT" : 6379,
+   "GETPERF_REDIS_HOST" : "localhost",
+   "GETPERF_QUEUE" : "getperf:queue:default"
+}

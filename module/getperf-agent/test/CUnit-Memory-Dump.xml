@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type="text/xsl" href="Memory-Dump.xsl" ?>
+<!DOCTYPE MEMORY_DUMP_REPORT SYSTEM "Memory-Dump.dtd">
+<MEMORY_DUMP_REPORT>
+  <MD_HEADER/>
+  <MD_RUN_LISTING>
+    <MD_RUN_RECORD>
+      <MD_POINTER> 00F03138 </MD_POINTER>
+      <MD_EVENT_COUNT> 1 </MD_EVENT_COUNT>
+      <MD_EVENT_RECORD>
+        <MD_SIZE> 12 </MD_SIZE>
+        <MD_ALLOC_FILE> x:\getperf\module\getperf-agent\tmp\cunit-2.1-3\cunit\sources\framework\testdb.c </MD_ALLOC_FILE>
+        <MD_ALLOC_LINE> 934 </MD_ALLOC_LINE>
+        <MD_DEALLOC_FILE> x:\getperf\module\getperf-agent\tmp\cunit-2.1-3\cunit\sources\framework\testdb.c </MD_DEALLOC_FILE>
+        <MD_DEALLOC_LINE> 954 </MD_DEALLOC_LINE>
+      </MD_EVENT_RECORD>
+    </MD_RUN_RECORD>
+    <MD_RUN_RECORD>
+      <MD_POINTER> 00EFD500 </MD_POINTER>
+      <MD_EVENT_COUNT> 1 </MD_EVENT_COUNT>
+      <MD_EVENT_RECORD>
+        <MD_SIZE> 48 </MD_SIZE>
+        <MD_ALLOC_FILE> x:\getperf\module\getperf-agent\tmp\cunit-2.1-3\cunit\sources\framework\testdb.c </MD_ALLOC_FILE>
+        <MD_ALLOC_LINE> 665 </MD_ALLOC_LINE>
+        <MD_DEALLOC_FILE> x:\getperf\module\getperf-agent\tmp\cunit-2.1-3\cunit\sources\framework\testdb.c </MD_DEALLOC_FILE>
+        <MD_DEALLOC_LINE> 639 </MD_DEALLOC_LINE>
+      </MD_EVENT_RECORD>
+    </MD_RUN_RECORD>
+    <MD_RUN_RECORD>
+      <MD_POINTER> 00F03168 </MD_POINTER>
+      <MD_EVENT_COUNT> 1 </MD_EVENT_COUNT>
+      <MD_EVENT_RECORD>
+        <MD_SIZE> 11 </MD_SIZE>
+        <MD_ALLOC_FILE> x:\getperf\module\getperf-agent\tmp\cunit-2.1-3\cunit\sources\framework\testdb.c </MD_ALLOC_FILE>
+        <MD_ALLOC_LINE> 670 </MD_ALLOC_LINE>
+        <MD_DEALLOC_FILE> x:\getperf\module\getperf-agent\tmp\cunit-2.1-3\cunit\sources\framework\testdb.c </MD_DEALLOC_FILE>
+        <MD_DEALLOC_LINE> 720 </MD_DEALLOC_LINE>
+      </MD_EVENT_RECORD>
+    </MD_RUN_RECORD>
+    <MD_RUN_RECORD>
+      <MD_POINTER> 00F02DB0 </M

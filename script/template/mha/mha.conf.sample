@@ -1,0 +1,32 @@
+[server default]
+# 監視対象サーバのmysqlのパスワード
+user=mha
+password=mha
+repl_user=repl
+repl_password=repl
+ssh_user=root
+
+# MHAが動作中に利用するディレクトリ
+manager_workdir=/tmp/mha
+# MHAのクライアントが動作に利用するディレクトリ
+remote_workdir=/tmp/mha
+
+#ログレベル
+log_level=info
+
+# 仮想IPのフェイルオーバ用のスクリプト
+master_ip_failover_script=/usr/bin/master_ip_failover --virtual_ip=192.168.10.10 --orig_master_vip_eth=eth0:1 --new_master_vip_eth=eth0:1
+# 仮想IPの切り戻し用のスクリプト
+master_ip_online_change_script=/usr/bin/master_ip_online_change --virtual_ip=192.168.10.10 --orig_master_vip_eth=eth0:1 --new_master_vip_eth=eth0:1
+
+#監視対処サーバ
+[server1]
+candidate_master=1
+hostname=192.168.10.1
+ignore_fail=1
+
+[server2]
+candidate_master=1
+hostname=192.168.10.2
+ignore_fail=1
+

@@ -1,0 +1,7 @@
+{
+	"is_physical_device" : 1,
+	"host_groups" : ["Windows Servers"],
+	"host_name" : "<node>",
+	"host_visible_name" : "Windows - <node>",
+	"templates" : [ "Template OS Windows" ]
+}

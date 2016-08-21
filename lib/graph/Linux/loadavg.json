@@ -1,0 +1,18 @@
+{
+  "host_template": "Linux",
+  "host_title": "Linux - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Linux - CPU Load Average",
+      "graph_tree": "/HW/<node_path>/CPU/Load",
+      "graph_title": "Linux - <node> - CPU Load Average",
+      "graph_items": ["load1m","load5m","load15m"],
+      "graph_item_texts": ["1min","5min","15min"],
+      "vertical_label": "Count",
+      "upper_limit": 10,
+      "unit_exponent_value": 1,
+      "datasource_title": "Linux - <node> - CPU Load Average"
+    }
+  ]
+}

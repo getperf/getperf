@@ -1,0 +1,20 @@
+{
+  "host_template": "Windows",
+  "host_title": "Windows - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "WIN - CPU% (Total)",
+      "graph_tree": "/HW/<node_path>/CPU/",
+      "graph_title": "Windows - <node> - CPU Util%",
+      "chart_style": "stack",
+      "graph_items": ["UserTime", "PrivilegedTime"],
+      "graph_item_texts": ["user", "privileged"],
+      "vertical_label": "CPU %",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "graph_comment": "<os> <model> <core_cpu>/<logical_cpu>",
+      "datasource_title": "Windows - <node> - CPU Util%"
+    }
+  ]
+}

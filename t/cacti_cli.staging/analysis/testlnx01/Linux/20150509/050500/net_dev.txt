@@ -1,0 +1,50 @@
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49721665  434346    0    0    0     0          0         0 329660655  608901    0    0    0     0       0          0
+    lo: 33154756  537765    0    0    0     0          0         0 33154756  537765    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49721793  434348    0    0    0     0          0         0 329660789  608903    0    0    0     0       0          0
+    lo: 33170303  537911    0    0    0     0          0         0 33170303  537911    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49723317  434364    0    0    0     0          0         0 329663343  608916    0    0    0     0       0          0
+    lo: 33182980  538131    0    0    0     0          0         0 33182980  538131    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49723445  434366    0    0    0     0          0         0 329664008  608920    0    0    0     0       0          0
+    lo: 33190750  538264    0    0    0     0          0         0 33190750  538264    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49730453  434433    0    0    0     0          0         0 329673196  608960    0    0    0     0       0          0
+    lo: 33203739  538490    0    0    0     0          0         0 33203739  538490    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49736595  434491    0    0    0     0          0         0 329682048  608996    0    0    0     0       0          0
+    lo: 33210740  538611    0    0    0     0          0         0 33210740  538611    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49745879  434583    0    0    0     0          0         0 329705500  609078    0    0    0     0       0          0
+    lo: 33223033  538822    0    0    0     0          0         0 33223033  538822    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49747507  434600    0    0    0     0          0         0 329712118  609097    0    0    0     0       0          0
+    lo: 33231531  538969    0    0    0     0          0         0 33231531  538969    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49754823  434669    0    0    0     0          0         0 329721086  609139    0    0    0     0       0          0
+    lo: 33243896  539183    0    0    0     0          0         0 33243896  539183    0    0    0     0       0          0
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+  p3p1:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0: 49755759  434678    0    0    0     0          0         0 329721964  609144    0    0    0     0       0          0
+    lo: 33251105  539308    0    0    0     0          0         0 33251105  539308    0    0    0     0       0          0

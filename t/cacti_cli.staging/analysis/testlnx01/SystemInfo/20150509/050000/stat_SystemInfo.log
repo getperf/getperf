@@ -1,0 +1,32 @@
+schedule:
+  start: 2015/05/09 05:09:02
+  end: 2015/05/09 05:09:23
+jobs:
+  - id: 1
+    out: cpuinfo.txt
+    cmd: cat /proc/cpuinfo
+    start: 2015/05/09 05:09:02
+    end: 2015/05/09 05:09:02
+    pid: 17795
+    rc: 0
+  - id: 2
+    out: meminfo.txt
+    cmd: cat /proc/meminfo
+    start: 2015/05/09 05:09:08
+    end: 2015/05/09 05:09:08
+    pid: 17807
+    rc: 0
+  - id: 3
+    out: uname_a.txt
+    cmd: uname -a
+    start: 2015/05/09 05:09:13
+    end: 2015/05/09 05:09:13
+    pid: 17810
+    rc: 0
+  - id: 4
+    out: issue.txt
+    cmd: cat /etc/issue
+    start: 2015/05/09 05:09:18
+    end: 2015/05/09 05:09:18
+    pid: 17824
+    rc: 0

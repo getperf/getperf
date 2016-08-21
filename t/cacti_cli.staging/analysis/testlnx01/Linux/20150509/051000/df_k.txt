@@ -1,0 +1,10 @@
+Filesystem                   1K-blocks     Used Available Use% Mounted on
+/dev/mapper/ostrich--vg-root 114731592 81262820  27617636  75% /
+none                                 4        0         4   0% /sys/fs/cgroup
+udev                           3926600        4   3926596   1% /dev
+tmpfs                          2560000       68   2559932   1% /tmp
+tmpfs                           787572     2456    785116   1% /run
+none                              5120        0      5120   0% /run/lock
+none                           3937840        0   3937840   0% /run/shm
+none                            102400        0    102400   0% /run/user
+/dev/sda1                       240972    67110    161421  30% /boot

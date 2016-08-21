@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Wrapper of rrd-cli.pl 
+#
+# Usage : rrd-cli
+#         [[--add-rra|--remove-rra] {rrd_paths} [--interval i] [--days i]] 
+#		  [--create {rrd_path} --from {rrd_path}]
+
+LANG=C;export LANG
+CWD=`dirname $0`
+CMDNAME=`basename $0`
+
+CWD=`dirname $0`
+export SITEHOME="$(git rev-parse --show-toplevel)"
+
+if [ ! -d "$SITEHOME/lib/Getperf/Command/Site" -o ! -d "$SITEHOME/storage" ]; then
+	echo "Invalid site home directory '$SITEHOME'"
+	exit -1
+fi
+
+perl -I$SITEHOME/lib $CWD/rrd-cli.pl $*

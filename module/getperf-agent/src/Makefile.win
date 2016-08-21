@@ -1,0 +1,126 @@
+CC       = cl
+AS       = ml
+LD       = link
+AR       = lib
+RC       = rc
+
+INCLOCAL = ..\include
+LOCALDIR = ..\win32
+
+# SSL install directory
+SSL_DIR   = $(LOCALDIR)\ssl
+INC_SSL   = $(SSL_DIR)\include 
+LIB_SSL   = $(SSL_DIR)\lib
+
+# ZLIB install directory
+ZLIB_DIR   = $(LOCALDIR)\zlib
+INC_ZLIB   = $(ZLIB_DIR)\include
+LIB_ZLIB   = $(ZLIB_DIR)\lib
+
+# MiniZip install directory
+MINIZIP_DIR = .\minizip
+INC_MINIZIP = $(MINIZIP_DIR)\include
+SRC_MINIZIP = $(MINIZIP_DIR)\src
+
+# gSOAP install directory
+GSOAP_DIR = ..\gsoap
+INC_GSOAP = $(GSOAP_DIR)\include
+SRC_GSOAP = $(GSOAP_DIR)\src
+
+CFLAG   = /nologo /MT /EHsc -W2 -O2 \
+	/I . /I $(INCLOCAL) /I $(INC_SSL) /I $(INC_ZLIB) /I $(INC_GSOAP) /I $(INC_MINIZIP) \
+	/D _WINDOWS /D WITH_OPENSSL /D SSL_ENABLE /D WIN32 /D _WIN32
+RFLAGS=/I . /I $(INCLOCAL) /l 0x411 /fogpfpanel.res /d DEBUG
+LDFAGS = /nologo /incremental:no /opt:ref
+
+# DLL library
+SSLLIB  = $(LIB_SSL)\libeay32.lib $(LIB_SSL)\ssleay32.lib
+ZLIB    = $(LIB_ZLIB)\zdll.lib
+#SSLLIB  = $(LIB_SSL)\VC\libeay32MD.lib $(LIB_SSL)\VC\ssleay32MD.lib
+
+TARGET=all
+
+GPF_COMMON_SRC = \
+	hash_functions.c hash_table.c \
+	gpf_common.c gpf_config.c gpf_log.c gpf_param.c \
+    gpf_process.c gpf_admin.c gpf_agent.c \
+	gpf_getopt.c gpf_service.c \
+    md5c.c mutexs.c \
+	$(SRC_GSOAP)\stdsoap2.c $(SRC_GSOAP)\soapC.c $(SRC_GSOAP)\soapClient.c \
+    gpf_soap_common.c gpf_soap_admin.c gpf_soap_agent.c 
+
+GPF_SOAP_SRC = $(SRC_GSOAP)\stdsoap2.c $(SRC_GSOAP)\soapC.c $(SRC_GSOAP)\soapClient.c \
+    gpf_soap_common.c gpf_soap_admin.c gpf_soap_agent.c 
+
+GPF_ZIP_SRC = $(SRC_MINIZIP)\ioapi.c $(SRC_MINIZIP)\iowin32.c $(SRC_MINIZIP)\treeunz.c $(SRC_MINIZIP)\treezip.c $(SRC_MINIZIP)\unzip.c $(SRC_MINIZIP)\zip.c
+
+GPF_PANEL_SRC = gpfpanel.c
+
+UNZ_OBJS = miniunz.obj unzip.obj ioapi.obj iowin32.obj
+ZIP_OBJS = minizip.obj zip.obj   ioapi.obj iowin32.obj
+
+GPF_COMMON_OBJ2 = \
+	hash_functions.obj hash_table.obj \
+	gpf_common.obj gpf_config.obj gpf_log.obj gpf_param.obj \
+    gpf_process.obj gpf_admin.obj gpf_agent.obj \
+	gpf_getopt.obj gpf_service.obj \
+    md5c.obj mutexs.obj \
+	stdsoap2.obj soapC.obj soapClient.obj \
+    gpf_soap_common.obj gpf_soap_admin.obj gpf_soap_agent.obj 
+
+GPF_SOAP_OBJ2   = \
+	stdsoap2.obj soapC.obj soapClient.obj \
+    gpf_soap_common.obj gpf_soap_admin.obj gpf_soap_agent.obj 
+
+GPF_ZIP_OBJ2    = \
+	ioapi.obj iowin32.obj treeunz.obj treezip.obj unzip.obj zip.obj
+
+GPF_COMMON_OBJ = $(GPF_COMMON_SRC:.c=.obj)
+GPF_SOAP_OBJ   = $(GPF_SOAP_SRC:.c=.obj)
+GPF_ZIP_OBJ    = $(GPF_ZIP_SRC:.c=.obj)
+GPF_PANEL_OBJ  = $(GPF_PANEL_SRC:.c=.obj) gpfpanel.res
+
+all: gpfcommon.obj gpfsoap.obj gpfzip.obj \
+	getperf.exe getperfctl.exe getperfzip.exe getperfsoap.exe gpfpanel.exe # logretrieve.exe
+
+gpfcommon.obj: $(GPF_COMMON_OBJ)
+	lib $(GPF_COMMON_OBJ2) /OUT:$@
+
+gpfsoap.obj: $(GPF_SOAP_OBJ)
+	lib $(GPF_SOAP_OBJ2) $(SSLLIB) $(ZLIB) /OUT:$@
+
+gpfzip.obj: $(GPF_ZIP_OBJ)
+	lib $(GPF_ZIP_OBJ2) $(ZLIB) /OUT:$@
+
+getperf.exe: getperf.obj gpfcommon.obj gpfzip.obj
+	$(LD) $(LDFLAGS) -out:$@ getperf.obj gpfcommon.obj gpfzip.obj $(ZLIB) User32.lib advapi32.lib
+
+getperfctl.exe: getperfctl.obj gpfcommon.obj gpfzip.obj gpfsoap.obj
+	$(LD) $(LDFLAGS) -out:$@ getperfctl.obj gpfcommon.obj gpfzip.obj \
+	 User32.lib advapi32.lib $(SSLLIB) $(ZLIB)
+
+getperfsoap.exe: getperfsoap.obj gpfcommon.obj gpfsoap.obj
+	$(LD) $(LDFLAGS) -out:$@ getperfsoap.obj gpfcommon.obj gpfzip.obj gpfsoap.obj \
+	$(SSLLIB) $(ZLIB) User32.lib advapi32.lib  
+
+getperfzip.exe: getperfzip.obj gpfcommon.obj gpfzip.obj
+	$(LD) $(LDFLAGS) -out:$@ getperfzip.obj gpfcommon.obj gpfzip.obj \
+	$(ZLIB) User32.lib advapi32.lib  
+
+gpfpanel.exe: gpfpanel.obj gpfcommon.obj gpfzip.obj gpfpanel.res
+	$(LD) $(LDFLAGS) -out:$@ gpfpanel.obj gpfcommon.obj gpfzip.obj $(ZLIB) \
+	gpfpanel.res User32.lib advapi32.lib gdi32.lib 
+
+logretrieve.exe: logretrieve.obj gpfcommon.obj
+	$(LD) $(LDFLAGS) -out:$@ logretrieve.obj gpfcommon.obj \
+	$(ZLIB) User32.lib advapi32.lib  
+
+.c.obj :
+ $(CC) $(CFLAG) /c $<
+
+.rc{$(OUTDIR)}.res:
+	$(RC) $(RFLAGS) $<
+
+clean:
+	-del *.obj
+    -del *.exe

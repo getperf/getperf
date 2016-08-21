@@ -1,0 +1,15 @@
+TESTDIR = .\test
+
+SUBDIRS = test
+
+all: $(TESTDIR)
+
+testdir: $(TESTDIR)
+!if "$(TESTDIR)" != ""
+$(TESTDIR):testdir.mak.force-build
+	cd $(TESTDIR) 
+	nmake /f Makefile.win 
+	cd ..
+testdir.mak.force-build:
+!endif
+

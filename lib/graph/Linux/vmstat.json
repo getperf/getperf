@@ -1,0 +1,55 @@
+{
+  "host_template": "Linux",
+  "host_title": "Linux - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Linux - CPU Util% - vm",
+      "graph_tree": "/HW/<node_path>/CPU/",
+      "graph_title": "Linux - <node> - CPU Util%",
+      "graph_comment": "<issue> <arch> <model> <cores>/<cpus>",
+      "graph_items": ["us", "sy", "wa"],
+      "graph_item_texts": ["user", "sys", "waitio"],
+      "total_data_source": "Total All Data Sources",
+      "chart_style": "stack",
+      "vertical_label": "CPU %",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Linux - <node> - CPU Util%"
+    },
+    {
+      "graph_template": "Linux - CPU RunQue - vm",
+      "graph_tree": "/HW/<node_path>/CPU/RunQue",
+      "graph_title": "Linux - <node> - CPU Run Queue",
+      "graph_items": ["r", "b"],
+      "graph_item_texts": ["waiting for run", "blocked"],
+      "vertical_label": "Processes",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "chart_style": "line1",
+      "datasource_title": "Linux - <node> - CPU Run Queue"
+    },
+    {
+      "graph_template": "Linux - Memory - free",
+      "graph_tree": "/HW/<node_path>/Memory/free",
+      "graph_title": "Linux - <node> - Free Memory",
+      "graph_items": ["free"],
+      "vertical_label": "Byte",
+      "cdef": "Multiply by 1024",
+      "chart_style": "stack",
+      "datasource_title": "Linux - <node> - Free Memory"
+    },
+    {
+      "graph_template": "Linux - Memory - swap rate",
+      "graph_tree": "/HW/<node_path>/Memory/swap",
+      "graph_title": "Linux - <node> - Memory Swap Rate",
+      "graph_items": ["si", "so"],
+      "graph_item_texts": ["swap in", "swap out"],
+      "upper_limit": 100,
+      "vertical_label": "Page/sec",
+      "unit_exponent_value": 1,
+      "chart_style": "line1",
+      "datasource_title": "Linux - <node> - Memory Swap Rate"
+    }
+  ]
+}

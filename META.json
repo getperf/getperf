@@ -1,0 +1,66 @@
+{
+   "abstract" : "Blah blah blah",
+   "author" : [
+      "Minoru Furusawa <frsw3nr@gmail.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Milla version v1.0.8, Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.141520",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Getperf",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build::Tiny" : "0.038",
+            "perl" : "5.008005"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Dist::Milla" : "v1.0.8",
+            "Test::Pod" : "1.41"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Class::Accessor::Fast" : "0",
+            "DateTime::Format::Strptime" : "0",
+            "File::Path" : "0",
+            "Getopt::Long" : "0",
+            "Log::Minimal" : "0",
+            "Object::Container::Exporter" : "0",
+            "Path::Class" : "0",
+            "String::CamelCase" : "0",
+            "Time::Moment" : "0",
+            "parent" : "0",
+            "perl" : "5.008005"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : "0.96"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "version" : "0.01",
+   "x_contributors" : [
+      "Minoru Furusawa <frsw3nr@msn.com>"
+   ]
+}
+

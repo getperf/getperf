@@ -1,0 +1,56 @@
+{
+  "host_template": "Windows",
+  "host_title": "Windows - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "WIN - Network Recieve Traffic - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "Windows - <node> - Network Recieve Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "line1",
+      "graph_items": ["BytesRecivedSec"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Windows - <node> - Recieve Bytes/sec"
+    },
+    {
+      "graph_template": "WIN - Network Transfer Traffic - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "Windows - <node> - Network Sent Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "line1",
+      "graph_items": ["BytesSentSec"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Windows - <node> - Sent Bytes/sec"
+    },
+    {
+      "graph_template": "WIN - Network Bytes",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Windows - <node> - Network Bytes/sec - <device>",
+      "graph_items": ["BytesRecivedSec", "BytesSentSec"],
+      "graph_item_texts": ["Recived transfer", "Sent transfer"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Windows - <node> - Network Bytes/sec - <device>"
+    },
+    {
+      "graph_template": "WIN - Network Packets",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Windows - <node> - Network Packets - <device>",
+      "graph_items": ["PacketsRecivedSec", "PacketsSentSec"],
+      "graph_item_texts": ["Recived/sec", "Sent/sec"],
+      "vertical_label": "Packets/sec",
+      "datasource_title": "Windows - <node> - Network Packets - <device>"
+    },
+    {
+      "graph_template": "WIN - Network Errors",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Windows - <node> - Network Error - <device>",
+      "graph_items": ["RecievedDiscarded", "RecievedErrors", "OutboundDiscarded", "OutboundErrors"],
+      "chart_style": "line2",
+      "vertical_label": "Errors/sec",
+      "datasource_title": "Windows - <node> - Network Error - <device>"
+    }
+  ]
+}

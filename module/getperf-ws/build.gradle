@@ -1,0 +1,75 @@
+// ant.importBuild 'build.xml'
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+sourceCompatibility = 1.7
+version = '1.0.0'
+group = 'com.getperf.perf'
+def dependenciesCopyTargetDirName = 'dependencies'
+mainClassName = 'com.getperf.perf.GradleMain'
+
+defaultTasks 'copyLib', 'copyMetaInfo'
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+}
+
+test {
+	minHeapSize = '256m'
+	maxHeapSize = '256m'
+	jvmArgs '-Dconfig.file=../../config/getperf_site.json'
+}
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': 'Getperf', 'Implementation-Version': version
+        attributes 'Main-Class': 'com.getperf.perf.GradleMain'
+	}
+}
+
+def metaInfoDir = new File('build/classes/main/META-INF')
+task axisJar(type: Jar) {
+	doFirst {
+		metaInfoDir.mkdirs()
+		copy {
+			from 'src/META-INF/services.xml'
+			into metaInfoDir
+		}
+		copy {
+			from configurations.compile
+			into 'build/classes/main/lib'
+		}
+	}
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+	compile
+	runtime
+}
+
+dependencies {
+    compile 'org.apache.commons:commons-lang3:3.1',
+    	'net.arnx:jsonic:1.3.5'
+	compile 'log4j:log4j:1.2.16',
+		'org.slf4j:slf4j-api:1.7.5',
+		'ch.qos.logback:logback-classic:1.0.13'
+	compile 'com.typesafe:config:1.2.0',
+		'commons-collections:commons-collections:3.2.1',
+		'commons-codec:commons-codec:1.5'
+	compile 'redis.clients:jedis:2.6.2'
+	compile('org.apache.axis2:axis2-adb:1.5.6') //may need to exclude woden
+	compile 'org.apache.axis2:axis2-transport-local:1.5.6',
+		'org.apache.axis2:axis2-transport-http:1.5.6'
+    testCompile 'com.googlecode.jmockit:jmockit:1.4'
+    testCompile 'junit:junit:4.+'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+}

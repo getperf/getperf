@@ -1,0 +1,33 @@
+#!/bin/sh
+# chkconfig: 345 98 20
+# description: Startup script for Getperf Agent
+# processname: getperf
+#
+
+PTUNE_HOME=__PTUNE_HOME__
+GETPERF_USER=__PTUNE_USER__
+GETPERF_PROG=getperfctl
+
+if [ ! -f "$PTUNE_HOME/_wk/_running_flg" ]; then
+    rm "$PTUNE_HOME/_wk/_pid_getperf"  2> /dev/null
+fi
+
+# See how we were called.
+case "$1" in
+    start)
+        su - $GETPERF_USER -c "$PTUNE_HOME/bin/getperfctl start"
+        ;;
+    stop)
+        su - $GETPERF_USER -c "$PTUNE_HOME/bin/getperfctl stop"
+        ;;
+    restart)
+        $0 stop
+        sleep 3
+        $0 start
+        ;;
+    *)
+        echo "Usage: $GETPERF_PROG {start|stop|restart}"
+        exit 1
+esac
+
+exit 0

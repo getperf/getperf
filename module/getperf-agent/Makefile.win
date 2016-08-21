@@ -1,0 +1,8 @@
+SRCDIR  = .\src
+
+SUBDIRS = src 
+
+all: 
+	cd $(SRCDIR)
+	nmake /f Makefile.win 
+	cd ..
