@@ -78,9 +78,7 @@ sudo -E yum -y update
 Download the Getperf module ※ provisional public version.
 
 ```
-(Download 'getperf.tar.gz' from the provisional site)
-cd $HOME
-tar xvf getperf.tar.gz
+git clone https://github.com/getperf/getperf
 cd getperf
 ```
 

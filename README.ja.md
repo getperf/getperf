@@ -76,12 +76,10 @@ sudo -E yum -y install perl-XML-Parser perl-XML-Simple perl-Crypt-SSLeay perl-Ne
 sudo -E yum -y update
 ```
 
-Getperf モジュールをダウンロードします ※ 暫定公開版
+Getperf モジュールをダウンロードします
 
 ```
-(Download 'getperf.tar.gz' from the provisional site)
-cd $HOME
-tar xvf getperf.tar.gz
+git clone https://github.com/getperf/getperf
 cd getperf
 ```
 
