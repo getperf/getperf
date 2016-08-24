@@ -156,8 +156,14 @@ sub login {
 sub logout {
 	my ($self) = @_;
 
-	if ($self->{zabber}) {
-		$self->{zabber}->logout;
+	# https://support.zabbix.com/browse/ZBX-9700
+	if (my $zabber = $self->{zabber}) {
+		eval {
+			$zabber->query(method => 'user.logout', params => {});
+		};
+		if ($@) {
+	        die 'Could not log out: '.$@;
+		}
 	}
 }
 
