@@ -25,7 +25,6 @@ docs/ja/docs/_build/
 
 !.gitkeep
 /config/ssl/
-/config/site/
 /t/rra/
 /t/rrd/storage/
 /module/getperf-ws/.gradle/
