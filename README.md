@@ -57,8 +57,23 @@ Preparation
 -----------
 
 * You will need an environment in which disabled the SELinux.
+* Set firewall settings to open the port. If you want to set up a simplified, Set the firewall disable in the setup command.
 * In an intranet environment becomes necessary Proxy setting during the external connection with yum command.
-* Installation user need to run sudo privileges.
+* Create administration user, this user need to add sudo privileges. Set the following with visudo command.
+
+```
+# Add /usr/local/bin:/usr/local/sbin to secure_path.
+Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
+# Add administrator role with no password.
+someosuser ALL=(ALL)       NOPASSWD: ALL
+```
+
+* Edit the /etc/hosts, Set the server IP in the following example.
+
+```
+127.0.0.1       kirin localhost
+192.168.10.2    kirin
+```
 
 Please refer to [preparation](docs/en/sphinx-doc/03_Installation/01_Preparation.rst).
 
@@ -90,7 +105,7 @@ echo source $GETPERF_HOME/script/profile.sh >> ~/.bash_profile
 sudo -E yum -y install perl-devel
 curl -L http://cpanmin.us | perl - --sudo App::cpanminus
 cd $GETPERF_HOME
-sudo -E cpanm --installdeps .
+sudo -E cpanm --installdeps --notest .
 ```
 
 Server Installation
@@ -172,7 +187,13 @@ Install the agent
 perl deploy.pl
 ```
 
-"getperf-zabbix-Build?-CentOS6-x86_64.tar.gz" is the archive of the distribution module of the agent.
+"getperf-zabbix-Build?-CentOS6-x86_64.tar.gz" is the archive of the distribution module of the agent. Distribute the archive to the download site.
+
+```
+cd $GETPERF_HOME/var/docs/agent/
+unzip $HOME/upload_var_module.zip
+```
+
 Other platforms compile, such as Windows, please refer to [compile on each platform](docs/en/sphinx-doc/03_Installation/10_AgentCompile.rst).
 
 How to use

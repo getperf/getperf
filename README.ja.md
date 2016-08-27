@@ -58,8 +58,23 @@ CentOS 6.x 環境のインストール手順を記します。詳細の手順は
 -------
 
 * インストール環境は、SELinux の無効化した環境が必要になります。
+* Firewall設定でポート開放が必要になります。簡略的に設定する場合は setup コマンドでファイヤーウォール設定を無効化します。
 * イントラネット環境で yum コマンド等で外部接続する際に Proxy の設定が必要となります。
-* インストール実行ユーザは sudo 実行権限が必要となります。
+* 管理用 OS ユーザが必要になります。以下、sudo 権限のあるユーザを作成してください。visudo コマンドで以下設定をしてください。
+
+```
+# Add /usr/local/bin:/usr/local/sbin to secure_path.
+Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
+# Add administrator role with no password.
+someosuser ALL=(ALL)       NOPASSWD: ALL
+```
+
+* /etc/hosts を編集して、以下例の通り監視サーバIPの登録をしてください。
+
+```
+127.0.0.1   	kirin localhost
+192.168.10.2    kirin
+```
 
 上記手順は詳細は、[事前準備](docs/ja/sphinx-doc/03_Installation/01_Preparation.rst) を参照してください。
 
@@ -90,8 +105,7 @@ source script/profile.sh
 echo source $GETPERF_HOME/script/profile.sh >> ~/.bash_profile
 sudo -E yum -y install perl-devel
 curl -L http://cpanmin.us | perl - --sudo App::cpanminus
-cd $GETPERF_HOME
-sudo -E cpanm --installdeps .
+sudo -E cpanm --installdeps --notest .
 ```
 
 サーバインストール
@@ -126,7 +140,8 @@ sudo -E rex prepare_tomcat    # Apache Tomcat インストール
 rex prepare_tomcat_lib        # Tomcat ライブラリインストール
 rex prepare_ws                # Webサービスインストール
 sudo -E rex svc_auto          # サービス起動登録
-rex svc_start                 # サービス起動
+rex svc_stop                  # サービス起動
+rex svc_start
 ```
 
 MySQLとCactiを設定します
@@ -173,6 +188,13 @@ perl deploy.pl
 ```
 
 作成された、 getperf-zabbix-Build?-CentOS6-x86_64.tar.gz がエージェントの配布モジュールのアーカイブとなります。
+ダウンロードサイトにアーカイブを配布します。
+
+```
+cd $GETPERF_HOME/var/docs/agent/
+unzip $HOME/upload_var_module.zip
+```
+
 Windows など他プラットフォームのコンパイルは、[各プラットフォームでのコンパイル](docs/ja/sphinx-doc/03_Installation/10_AgentCompile.rst)を参照してください。
 
 使用方法
