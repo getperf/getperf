@@ -617,20 +617,27 @@ sub create_zabbix_repository_db {
 	my $self = shift;
 	my $zabbix_config = config('zabbix');
 
-	my $zabbix_ver  = $zabbix_config->{ZABBIX_SERVER_VERSION};
-	my $zabbix_pass = $zabbix_config->{ZABBIX_ADMIN_PASSWORD}; 
-	my $zabbixdb    = 'zabbix';
-	my $rootpass    = $self->{mysql_passwd};
-	my $zabbix_sql  = '';
+	my $zabbix_ver     = $zabbix_config->{ZABBIX_SERVER_VERSION};
+	my $zabbix_pass    = $zabbix_config->{ZABBIX_ADMIN_PASSWORD}; 
+	my $zabbixdb       = 'zabbix';
+	my $rootpass       = $self->{mysql_passwd};
+	my $zabbix_sql_dir = '';
+	my $zabbix_sql_tar = '';
 	my @zabbix_dirs = `find /usr/share/doc/zabbix-server-mysql-*/create -type d`;
 	for my $zabbix_dir(@zabbix_dirs) {
-		$zabbix_sql = $zabbix_dir;
+		$zabbix_sql_dir = $zabbix_dir;
+		$zabbix_sql_dir=~s/(\r|\n)//g;
 		last if ($zabbix_dir=~/mysql-${zabbix_ver}/);
 	}
-	if (!$zabbix_sql) {
+	my @zabbix_tars = `ls /usr/share/doc/zabbix-server-mysql-*/create.sql.gz`;
+	for my $zabbix_tar(@zabbix_tars) {
+		$zabbix_sql_tar = $zabbix_tar;
+		$zabbix_sql_tar=~s/(\r|\n)//g;
+		last if ($zabbix_tar=~/mysql-${zabbix_ver}/);
+	}
+	if (!$zabbix_sql_dir && !$zabbix_sql_tar) {
 		die "zabbix ${zabbix_ver} not installed\n";
 	}
-	$zabbix_sql=~s/(\r|\n)//g;
 
 	my $is_exist_db = 0;
 	my $drh = DBI->install_driver('mysql');
@@ -650,8 +657,16 @@ sub create_zabbix_repository_db {
 		$dbh = DBI->connect("dbi:mysql:mysql", 'root', $rootpass);
 		$dbh->do("GRANT ALL ON $zabbixdb.* TO $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
 		$dbh->disconnect();
-		for my $sql(qw/schema.sql images.sql data.sql/) {
-			my $command = "mysql -uroot -p${rootpass} zabbix < ${zabbix_sql}/$sql";
+		if ($zabbix_sql_dir) {
+			for my $sql(qw/schema.sql images.sql data.sql/) {
+				my $command = "mysql -uroot -p${rootpass} zabbix < ${zabbix_sql_dir}/$sql";
+				if (system($command) != 0) {
+					die "$!";
+				}
+			}
+		} elsif ($zabbix_sql_tar) {
+			# zcat create.sql.gz | mysql -uroot zabbix
+			my $command = "zcat ${zabbix_sql_tar} | mysql -uroot -p${rootpass} zabbix";
 			if (system($command) != 0) {
 				die "$!";
 			}
