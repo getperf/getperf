@@ -450,7 +450,7 @@ task "prepare_zabbix", sub {
         _sudo 'sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/zabbix.repo';
       }
 
-      my $mysql_passwd = $config->{mysql_passwd};
+      my $mysql_passwd =     $config->{mysql_passwd};
       if (-f '/etc/zabbix/zabbix_server.conf') {
         _sudo 'sed -i -e "s/^.*DBPassword=.*$/DBPassword=' . $mysql_passwd . '/g" /etc/zabbix/zabbix_server.conf';
       }

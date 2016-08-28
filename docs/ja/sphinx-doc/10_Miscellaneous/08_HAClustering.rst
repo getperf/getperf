@@ -132,6 +132,157 @@ IPアドレスは適宜環境に合わせて変更してください。
      - Zabbix, Apache, Getperf
      - 同左
 
+始めに各ノードでVIPを追加し、VIP構成で以下サービスの動作を確認します。
+
+- Getperf Webサービスとエージェント
+- Zabbix サーバとエージェント
+- Apache HTTPサーバ(Zabbix, Cacti)
+
+次に各ノードをHAクラスター化します。
+
+- MySQLのレプリケーション設定
+- HAクラスター構成のセットアップと、フェイルオーバーの動作を確認
+- HAクラスター構成の監視設定
+
+Getperf WebサービスのVIP設定変更(稼働系で実施)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+VIPを追加し、ARPテーブルを更新します。
+
+::
+
+	sudo /sbin/ifconfig eth0:1 192.168.10.10 netmask 255.255.255.0 up
+	sudo /sbin/arping -q -A -I eth0 -c 1 192.168.10.10
+
+Getperf Webサービスを VIP に変更します。
+
+::
+
+	vi $GETPERF_HOME/config/getperf_site.json
+
+以下の行のIPアドレスをVIPに変更します。
+
+::
+
+	"GETPERF_WS_SERVER_NAME": "192.168.10.10",
+	"GETPERF_WS_ADMIN_SERVER":   "192.168.10.10",
+	"GETPERF_WS_DATA_SERVER":    "192.168.10.10",
+
+サーバ証明書を更新し、Getperf Webサービス用の Apache HTTP サーバ設定を更新します。
+
+::
+
+	cd $GETPERF_HOME
+	rex server_cert      # サーバ証明書構成
+	rex prepare_apache   # Apache HTTP サーバ設定更新
+
+Getperf Webサービスを再起動します。
+
+::
+
+	rex restart_ws_admin
+	rex restart_ws_data
+
+以下のURLで、WebブラウザからVIP経由でAxis2 コンソールに接続できるか確認します。
+
+::
+
+	http://192.168.10.10:57000/axis2/
+	http://192.168.10.10:58000/axis2/
+
+Getperf エージェントの設定をVIPに変更します。
+
+.. note:: 監視サーバ上にGetperfエージェントにてリモート採取をしている場合に実行してください。
+
+::
+
+	vi ~/ptune/network/getperf_ws.ini
+
+以下の行のIPアドレスをVIPに変更します。
+
+::
+
+	URL_CM = https://192.168.10.10:57443/axis2/services/GetperfService
+	URL_PM = https://192.168.10.10:58443/axis2/services/GetperfService
+
+Getperf エージェントを再起動します。
+
+::
+
+	~/ptune/bin/getperfctl stop
+	~/ptune/bin/getperfctl start
+
+ZabbixサーバのVIP設定変更(稼働系で実施)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Zabbix 設定をVIPに変更します。
+
+::
+
+	vi $GETPERF_HOME/config/getperf_zabbix.json
+
+以下の行のIPアドレスをVIPに変更します。
+
+::
+
+	"ZABBIX_SERVER_IP":          "192.168.10.10",
+
+Zabbix 本体の設定ファイルにVIP設定を追加します。
+
+::
+
+	sudo vi /etc/zabbix/zabbix_server.conf
+
+以下の行をVIPに変更して追加します。
+
+::
+
+	SourceIP=192.168.10.10
+
+Zabbix サーバを再起動します。
+
+::
+
+	sudo /etc/init.d/zabbix-server restart
+
+Zabbix エージェントの設定をVIPを変更します。
+
+::
+
+	vi ~/ptune/zabbix_agentd.conf
+
+以下の行のIPアドレスをVIPに変更します。
+
+::
+
+	<最終行>
+	Server=192.168.10.10
+	ServerActive=192.168.10.10
+
+Zabbix エージェントを再起動します。
+
+::
+
+	sudo /etc/init.d/zabbixagent restart
+
+Apache Webサーバの接続確認(稼働系で実施)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+以下のURLで、WebブラウザからVIP経由で接続できることを確認します。
+
+::
+
+	http://192.168.10.10/zabbix/
+
+待機系のVIP設定変更(待機系で実施)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+稼働系と同様の手順で待機系で以下のVIPの設定変更をします。
+
+- Getperf WebサービスのVIP設定変更
+- Getperf エージェントの設定のVIP変更
+- ZabbixサーバのVIP設定変更
+- Zabbix エージェントの設定のVIP設定変更
 
 root の ssh 公開鍵の配布(稼働系、待機系の順に実施)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -213,6 +364,13 @@ MySQLレプリケーション設定(稼働系で実施)
 
 	mysql -u root -p
 
+バックアップ対象のデータ容量を確認します。バックアップ時間はデータ容量に依存し、データ容量からバックアップ時間の目安を確認します。
+
+::
+
+	select table_schema, sum(data_length+index_length) /1024 /1024 as MB 
+	from information_schema.tables where table_schema = "zabbix";
+
 全テーブルをロックします。
 
 ::
@@ -253,6 +411,44 @@ MySQLレプリケーション設定(稼働系で実施)
 ::
 
 	scp mysql_dump.sql 192.168.10.2:/tmp/
+
+XtraBackupの場合
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+yumでインストールできます。マスター、スレーブの両方で必要になりますのでインストールします。
+
+::
+
+	sudo -E rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
+	sudo -E yum install xtrabackup
+
+
+任意の場所にバックアップを取得します。innobackupexはextrabackupのwrapperです。先ほどのextrabackupのインストールで同時にインストールされます。
+
+::
+
+	sudo mkdir -p /backup/xtrabackup/
+	sudo time /usr/bin/innobackupex --user root --password mysql_password /backup/xtrabackup/
+
+completed OK!が出れば完了です。binlogのファイル名とpositionも出力されますので確認してください。
+
+::
+
+	innobackupex: MySQL binlog position: filename 'mysqld-bin.000001', position 310
+
+バックアップ処理中の更新ログを適用します。
+
+::
+
+	/usr/bin/innobackupex --user root --password mysql_password --apply-log /backup/xtrabackup/2016-08-28_11-15-12
+
+バックアップディレクトリをコピーします。
+
+::
+
+	cd /backup/xtrabackup/
+	tar cvf - 2016-08-28_11-15-12 | gzip > backup.tar.gz
+	scp  backup.tar.gz root@192.168.10.2:/backup/xtrabackup/
 
 MySQLレプリケーション設定(待機系で実施)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -296,6 +492,33 @@ MySQLコンソールに接続し、MySQL レプリケーションのスレーブ
 
 上記結果で、Slave_IO_Running と Slave_SQL_Running が Yes
 となり、Last_Error　にエラーメッセージが出力がされていない事を確認します。
+
+XtraBackupの場合の待機系リストア
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+XtraBackupを使用した場合の待機系リストア手順は以下の通りです。
+
+::
+
+	cd /backup/xtrabackup/
+	tar xvf  backup.tar.gz
+
+::
+
+	/etc/init.d/mysqld stop
+	mv /var/lib/mysql /var/lib/mysql.old
+	mkdir /var/lib/mysql
+
+::
+
+	time /usr/bin/innobackupex --copy-back /backup/xtrabackup/2016-08-28_11-15-12
+
+ディレクトリの権限をmysqlに変更してMySQLをスタート。
+
+::
+
+	chown -R mysql:mysql /var/lib/mysql
+	/etc/init.d/mysqld start
 
 MySQLレプリケーション　動作確認
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -72,7 +72,6 @@ someosuser ALL=(ALL)       NOPASSWD: ALL
 * /etc/hosts を編集して、以下例の通り監視サーバIPの登録をしてください。
 
 ```
-127.0.0.1   	kirin localhost
 192.168.10.2    kirin
 ```
 

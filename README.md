@@ -71,7 +71,6 @@ someosuser ALL=(ALL)       NOPASSWD: ALL
 * Edit the /etc/hosts, Set the server IP in the following example.
 
 ```
-127.0.0.1       kirin localhost
 192.168.10.2    kirin
 ```
 
@@ -104,7 +103,6 @@ source script/profile.sh
 echo source $GETPERF_HOME/script/profile.sh >> ~/.bash_profile
 sudo -E yum -y install perl-devel
 curl -L http://cpanmin.us | perl - --sudo App::cpanminus
-cd $GETPERF_HOME
 sudo -E cpanm --installdeps --notest .
 ```
 

@@ -74,7 +74,7 @@ sub main {
     eval {
 
 ####障害の発生したマスタに付加されている仮想IPを剥奪、もし接続できない場合はタイムアウトまで待つ
-        `ssh $orig_master_host -o "ConnectTimeout=5" '/etc/init.d/zabbix-server stop; /sbin/ifconfig $orig_master_vip_eth down; /etc/init.d/getperfagent restart'`;
+        `ssh $orig_master_host -o "ConnectTimeout=5" '/etc/init.d/zabbix-server stop; /sbin/ifconfig $orig_master_vip_eth down; /etc/init.d/getperfagent restart; /etc/init.d/zabbixagent restart'`;
 ####
         $exit_code = 0;
 
@@ -104,7 +104,7 @@ sub main {
 ####ブロードキャストアドレスの取得
       my $vip_broadcast = join(".", $new_master_network =~ /Bcast\:(\d+)\.(\d+)\.(\d+)\.(\d+)/ );
 ####フェイルオーバ先に仮想IPを割り振る、そのとき仮想IPの切り替わりのためpingを発行する
-      `ssh $new_master_host -o "ConnectTimeout=15" '/sbin/ifconfig $new_master_vip_eth $virtual_ip netmask $vip_netmask up; arping -q -A -I $real_eth -c 1 $virtual_ip > /dev/null;  /etc/init.d/zabbix-server start'`;
+      `ssh $new_master_host -o "ConnectTimeout=15" '/sbin/ifconfig $new_master_vip_eth $virtual_ip netmask $vip_netmask up; arping -q -A -I $real_eth -c 1 $virtual_ip > /dev/null;  /etc/init.d/zabbix-server start; /etc/init.d/zabbixagent restart'`;
 ####  
       $exit_code = 0;
     };
