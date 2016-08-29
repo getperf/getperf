@@ -134,9 +134,9 @@ IPアドレスは適宜環境に合わせて変更してください。
 
 導入ステップは以下となります。
 
-1. VIP経由での各ノードの動作確認
+1. 各ノードにVIPを追加し、VIP経由でサービスが動作する様に構成変更する
 
-	始めに各ノードでVIPを追加し、VIP経由で各サービスの動作を確認します。
+	各ノードでVIPを追加し、VIP経由で各サービスの動作を確認します。
 
 	- Getperf Webサービスとエージェント
 	- Zabbix サーバとエージェント
@@ -144,16 +144,21 @@ IPアドレスは適宜環境に合わせて変更してください。
 
 2. HAクラスター化と動作確認
 
-	次に各ノードをHAクラスター化します。
+	各ノードをHAクラスター化します。
 
 	- MySQLのレプリケーション設定
 	- HAクラスター構成のセットアップと、フェイルオーバーの動作を確認
-	- HAクラスター構成の監視設定
 
-Getperf WebサービスのVIP設定変更(稼働系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3. HAクラスターの監視設定
 
-VIPを追加し、ARPテーブルを更新します。
+	HAクラスター構成の監視設定をします。クラスター外部のZabbixサーバから各ノードの監視設定をします。
+
+各ノードのVIP追加、サービスの構成変更
+^^^^^^^^^^^^^^^^^^^^
+
+**稼働系のVIP追加**
+
+稼働系でVIPを追加し、ARPテーブルを更新します。
 
 ::
 
@@ -174,7 +179,7 @@ Getperf Webサービスを VIP に変更します。
 	"GETPERF_WS_ADMIN_SERVER":   "192.168.10.10",
 	"GETPERF_WS_DATA_SERVER":    "192.168.10.10",
 
-サーバ証明書を更新し、Getperf Webサービス用の Apache HTTP サーバ設定を更新します。
+サーバ証明書を更新、Getperf Webサービス用の Apache HTTP サーバ設定の更新をします。
 
 ::
 
@@ -189,16 +194,16 @@ Getperf Webサービスを再起動します。
 	rex restart_ws_admin
 	rex restart_ws_data
 
-以下のURLで、WebブラウザからVIP経由でAxis2 コンソールに接続できるか確認します。
+WebブラウザからVIP経由でAxis2管理コンソールの接続確認をします。
 
 ::
 
 	http://192.168.10.10:57000/axis2/
 	http://192.168.10.10:58000/axis2/
 
-Getperf エージェントの設定をVIPに変更します。
+Getperfエージェントの設定をVIPに変更します。
 
-.. note:: 監視サーバ上にGetperfエージェントにてリモート採取をしている場合に実行してください。
+.. note:: 監視サーバ上でGetperfエージェントにてリモート採取をしている場合に実行してください。
 
 ::
 
@@ -218,10 +223,7 @@ Getperf エージェントを再起動します。
 	~/ptune/bin/getperfctl stop
 	~/ptune/bin/getperfctl start
 
-ZabbixサーバのVIP設定変更(稼働系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Zabbix 設定をVIPに変更します。
+次に、Zabbix 設定をVIPに変更します。
 
 ::
 
@@ -251,6 +253,12 @@ Zabbix サーバを再起動します。
 
 	sudo /etc/init.d/zabbix-server restart
 
+以下のURLで、WebブラウザからVIP経由で接続できることを確認します。
+
+::
+
+	http://192.168.10.10/zabbix/
+
 Zabbix エージェントの設定をVIPを変更します。
 
 ::
@@ -271,17 +279,7 @@ Zabbix エージェントを再起動します。
 
 	sudo /etc/init.d/zabbixagent restart
 
-Apache Webサーバの接続確認(稼働系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-以下のURLで、WebブラウザからVIP経由で接続できることを確認します。
-
-::
-
-	http://192.168.10.10/zabbix/
-
-待機系のVIP設定変更(待機系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**待機系のVIP追加**
 
 稼働系と同様の手順で待機系で以下のVIPの設定変更をします。
 
@@ -290,8 +288,10 @@ Apache Webサーバの接続確認(稼働系で実施)
 - ZabbixサーバのVIP設定変更
 - Zabbix エージェントの設定のVIP設定変更
 
-root の ssh 公開鍵の配布(稼働系、待機系の順に実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+HAクラスター化と動作確認
+^^^^^^^^^^^^^
+
+**root の ssh 公開鍵の配布**
 
 MHA のリモート操作用にノード間で root の ssh 接続許可設定をします。
 稼働系、待機系の順で各ノードに ssh 公開鍵の配布をします。
@@ -302,8 +302,7 @@ MHA のリモート操作用にノード間で root の ssh 接続許可設定�
 	sudo ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.1
 	sudo ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.2
 
-MySQL 監視用のユーザ作成(稼働系、待機系の順に実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**MySQL 監視用のユーザ作成**
 
 MySQL Ping監視用ユーザを作成します。稼働系、待機系の順で実行します。
 
@@ -311,22 +310,17 @@ MySQL Ping監視用ユーザを作成します。稼働系、待機系の順で�
 
 	mysql -u root -p
 
-MySQL コンソールから以下を実行します。
+MySQL コンソールから監視用ユーザ mha と、レプリケーション用ユーザ repl を作成します。
 
 ::
 
 	grant all privileges on *.* to mha@'%' identified by 'mhapassword';
-
-同様にMySQLコンソールから、レプリケーションユーザを作成します。
-
-::
-
 	grant replication slave on *.* to repl@'%' identified by 'replpassword';
+	grant all privileges on *.* to repl with grant option;
 	flush privileges;
 	exit
 
-MySQL 設定ファイル編集(稼働系、待機系の順に実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**MySQL 設定ファイル編集**
 
 MySQL 設定ファイルにレプリケーション設定を追加します。稼働系、待機系の順で実行します。
 
@@ -334,7 +328,7 @@ MySQL 設定ファイルにレプリケーション設定を追加します。�
 
 	sudo vi /etc/my.cnf
 
-先頭行の[mysqld]の後ろに以下を追加します。server-id は、稼働系を 101、待機系を 102　にしてください。
+先頭行に以下を追加します。server-id は、稼働系を 101、待機系を 102　にしてください。
 
 ::
 
@@ -353,8 +347,21 @@ MySQL 設定ファイルにレプリケーション設定を追加します。�
 
 	sudo /etc/init.d/mysqld restart
 
-MySQLレプリケーション設定(稼働系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**稼働系MySQLデータのバックアップ**
+
+稼働系でMySQLデータのバックアップをします。稼働系でMySQLに接続します。
+
+::
+
+	mysql -u root -p
+
+バックアップ対象のデータ容量を確認します。バックアップ時間はデータ容量に依存し、
+データ容量からバックアップ時間の目安を確認します。
+
+::
+
+	select table_schema, sum(data_length+index_length) /1024 /1024 as MB 
+	from information_schema.tables where table_schema = "zabbix";
 
 .. note::
 
@@ -362,20 +369,7 @@ MySQLレプリケーション設定(稼働系で実施)
 	バックアップ処理で長時間待たされる場合が有ります。
 	MySQL 標準のバックアップコマンド mysqldump は実行中にDB全体にロックを掛ける為、その間の監視運用に影響が生じる場合が有ります。
 	本制約の回避が必要な場合は、Percona社 XtraBackup などのオンラインバックアップツールを使用して下さい。
-
-稼働系、待機系でMySQLのデータ同期を、レプケーション設定をします。
-初めに MySQL データのロックとバイナリログ情報の確認をします。
-
-::
-
-	mysql -u root -p
-
-バックアップ対象のデータ容量を確認します。バックアップ時間はデータ容量に依存し、データ容量からバックアップ時間の目安を確認します。
-
-::
-
-	select table_schema, sum(data_length+index_length) /1024 /1024 as MB 
-	from information_schema.tables where table_schema = "zabbix";
+	XtraBackup のバックアップ手順は次のセクションで記します。
 
 全テーブルをロックします。
 
@@ -418,48 +412,7 @@ MySQLレプリケーション設定(稼働系で実施)
 
 	scp mysql_dump.sql 192.168.10.2:/tmp/
 
-XtraBackupの場合
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-yumでインストールできます。マスター、スレーブの両方で必要になりますのでインストールします。
-
-::
-
-	sudo -E rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
-	sudo -E yum install xtrabackup
-
-
-任意の場所にバックアップを取得します。innobackupexはextrabackupのwrapperです。先ほどのextrabackupのインストールで同時にインストールされます。
-
-::
-
-	sudo mkdir -p /backup/xtrabackup/
-	sudo time /usr/bin/innobackupex --user root --password mysql_password /backup/xtrabackup/
-
-completed OK!が出れば完了です。binlogのファイル名とpositionも出力されますので確認してください。
-
-::
-
-	innobackupex: MySQL binlog position: filename 'mysqld-bin.000001', position 310
-
-バックアップ処理中の更新ログを適用します。
-
-::
-
-	/usr/bin/innobackupex --user root --password mysql_password --apply-log /backup/xtrabackup/2016-08-28_11-15-12
-
-バックアップディレクトリをコピーします。
-
-::
-
-	cd /backup/xtrabackup/
-	tar cvf - 2016-08-28_11-15-12 | gzip > backup.tar.gz
-	scp  backup.tar.gz root@192.168.10.2:/backup/xtrabackup/
-
-MySQLレプリケーション設定(待機系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-待機系で、MySQLレプリケーションのスレーブ設定をします。
+**MySQLバックアップデータのリストア**
 
 稼働系から転送したダンプデータをインポートします。
 
@@ -467,13 +420,86 @@ MySQLレプリケーション設定(待機系で実施)
 
 	mysql -u root -p < /tmp/mysql_dump.sql
 
+**XtraBackupでのデータバックアップ**
+
+yumでインストールします。
+稼働系、待機系の両方で必要になりますので順にインストールします。
+
+::
+
+	sudo -E rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
+	sudo -E yum install xtrabackup
+
+
+任意の場所にバックアップを取得します。ここでは、/backup/xtrabackup/の下にバックアップします。
+
+::
+
+	sudo mkdir -p /backup/xtrabackup/
+	sudo time innobackupex --user root --password mysql_password /backup/xtrabackup/
+
+completed OK!が出れば完了です。
+メッセージにbinlogのファイル名とpositionも出力されますのでfilenameとpositionの値を控えておきます。
+
+::
+
+	innobackupex: MySQL binlog position: filename 'mysqld-bin.000001', position 310
+
+バックアップ処理中の更新ログを適用します。
+--apply-logオプションは、全コマンドで実行したバックアップディレクトリを指定します。
+
+::
+
+	sudo innobackupex --user root --password mysql_password --apply-log /backup/xtrabackup/2016-08-28_11-15-12
+
+バックアップディレクトリをアーカイブし、待機系にコピーします。
+
+::
+
+	cd /backup/
+	tar cvf - xtrabackup/2016-08-28_11-15-12 | gzip > backup.tar.gz
+	scp  backup.tar.gz root@192.168.10.2:/tmp/
+
+**XtraBackupの場合のリストア**
+
+XtraBackupを使用した場合の待機系リストア手順は以下の通りです。
+
+.. note:: 以下作業はすべて、rootで実行してください。
+
+MySQLを停止し、データディレクトリを退避して新たにデータディレクトリを作成します。
+
+::
+
+	/etc/init.d/mysqld stop
+	mv /var/lib/mysql /var/lib/mysql.old
+	mkdir /var/lib/mysql
+
+バックアップファイルを解凍し、解凍してできたディレクトリを指定して、リストアを実行します。
+
+::
+
+	cd /tmp/
+	tar xvf backup.tar.gz
+	time innobackupex --copy-back /tmp/xtrabackup/2016-08-28_11-15-12
+
+ディレクトリの権限をmysqlに変更してMySQLをスタートします。
+
+::
+
+	chown -R mysql:mysql /var/lib/mysql
+	/etc/init.d/mysqld start
+
+**MySQLレプリケーション設定**
+
+待機系で、MySQLレプリケーションのスレーブ設定をします。
 MySQLコンソールに接続し、MySQL レプリケーションのスレーブ設定をします。
 
 ::
 
 	mysql -u root -p
 
-稼働系で確認した、バイナリログの File, Position を指定して change master to コマンドを実行します。
+change master to コマンドでレプリケーションの開始位置を指定します。
+稼働系で確認した、バイナリログの File, Position を指定します。
 
 ::
 
@@ -497,37 +523,9 @@ MySQLコンソールに接続し、MySQL レプリケーションのスレーブ
 	show slave status \G
 
 上記結果で、Slave_IO_Running と Slave_SQL_Running が Yes
-となり、Last_Error　にエラーメッセージが出力がされていない事を確認します。
+となり、Last_Error　にエラーメッセージが出力がされていなければOKです。
 
-XtraBackupの場合の待機系リストア
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-XtraBackupを使用した場合の待機系リストア手順は以下の通りです。
-
-::
-
-	cd /backup/xtrabackup/
-	tar xvf  backup.tar.gz
-
-::
-
-	/etc/init.d/mysqld stop
-	mv /var/lib/mysql /var/lib/mysql.old
-	mkdir /var/lib/mysql
-
-::
-
-	time /usr/bin/innobackupex --copy-back /backup/xtrabackup/2016-08-28_11-15-12
-
-ディレクトリの権限をmysqlに変更してMySQLをスタート。
-
-::
-
-	chown -R mysql:mysql /var/lib/mysql
-	/etc/init.d/mysqld start
-
-MySQLレプリケーション　動作確認
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**MySQLレプリケーション　動作確認**
 
 単純なDB更新作業で、レプリケーションの動作を確認します。
 上記で特にエラーなど問題が発生していない場合は、省略しても構いません。
@@ -551,9 +549,9 @@ MySQLレプリケーション　動作確認
 
 	mysql -u root -p -e 'drop database test_db;'
 
-MHAインストール(稼働系、待機系の順に実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**MHAインストール**
 
+稼働系、待機系の順に実施します。
 `MHA ダウンロードサイト <https://code.google.com/p/mysql-master-ha/wiki/Downloads?tm=2>`_ から最新版のモジュールをダウンロードします。ここでは以下モジュールをダウンロードします。
 
 - MHA Manager 0.56 rpm RHEL6
@@ -573,8 +571,7 @@ MHAインストール(稼働系、待機系の順に実施)
 	sudo -E yum localinstall -y mha4mysql-manager-0.56-0.el6.noarch.rpm
 
 
-MHA拡張スクリプト配布(待機系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**MHA拡張スクリプト配布**
 
 待機系でMHA拡張スクリプトを配布します。配布するスクリプトは以下の2種です。
 
@@ -599,8 +596,7 @@ MHA拡張スクリプト配布(待機系で実施)
 	sudo -E cp $GETPERF_HOME/script/template/mha/master_ip_online_change /usr/bin/
 	sudo -E chmod 755 /usr/bin/master_ip_online_change
 
-MHA設定ファイルの編集(待機系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**MHA設定ファイルの編集**
 
 待機系で MHA 設定ファイル /etc/mha.conf を作成します。
 $GETPERF_HOME/script/template/mha/ の下の、サンプル mha.conf.sample を参考に設定ファイルを編集してください。
@@ -611,15 +607,14 @@ $GETPERF_HOME/script/template/mha/ の下の、サンプル mha.conf.sample を�
 	sudo vi /etc/mha.conf
 
 IPアドレスとネットワークデバイスの箇所を環境に合わせて変更します。
-編集後、以下のコマンドで動作確認をします。
+編集後、以下のコマンドでMHAの動作確認をします。
 
 ::
 
 	sudo masterha_check_ssh --conf=/etc/mha.conf 	# 各ノードへの ssh 疎通確認
 	sudo masterha_check_repl --conf=/etc/mha.conf 	# 各ノードへの MySQL 疎通確認
 
-MHAデーモンの常駐化(待機系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**MHAデーモンの常駐化**
 
 待機系でMHAデーモンの常駐設定をします。
 起動設定は CentOSで標準インストールされている `upstart <http://upstart.ubuntu.com/>`_ を使用します。
@@ -664,49 +659,56 @@ MHAデーモンを起動します。
 	ps auxf | grep mha
 	sudo tail -f /var/log/masterha/masterha_manager.log
 
-停止するときは、以下のコマンドを実行します。
+.. note:: 停止するときは、以下のコマンドを実行します。
 
-::
+	::
 
-	sudo initctl stop mha
+		sudo initctl stop mha
 
-フェイルオーバーテスト
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**フェイルオーバーテスト**
 
 ここでは、簡単に稼働系でMySQLをkillしてフェイルオーバー動作を確認します。
-
 待機系でMHAログを確認します。
 
 ::
 
 	sudo tail -f /var/log/masterha/masterha_manager.log
 
-別端末で稼働系を開き、MySQL をkill します。
+別端末で稼働系を開き、MySQL を kill します。
 
 ::
 
 	sudo pkill mysql
 
-ログからフェイルオーバーが処理されていることを確認します。以下確認コマンドで状態を確認します。
+フェイルオーバー後以下手順でサービスが引き継がれていることを確認します。
 
-::
+- MHAログからフェイルオーバーが処理されていること
+- WebブラウザからVIPで Zabbix、Cacti のコンソールに接続できること
+	- http://192.168.10.10/zabbix/
+	- http://192.168.10.10/{サイトキー}/
+- Getperf WebサービスのAxis2コンソールに接続できること
+	- http://192.168.10.10:57000/axis2/
+	- http://192.168.10.10:57000/axis2/
+- 現稼働系(旧待機系)でZabbix サーバログから、サーバが起動されていること
+- 現稼働系でMySQLが稼働されていること。以下のコマンドで確認する
 
-	sudo masterha_check_ssh --conf=/etc/mha.conf
-	sudo masterha_check_repl --conf=/etc/mha.conf
+	::
 
-フェイルオーバー後の切り戻し手順
------------------------------
+		sudo masterha_check_ssh  --conf=/etc/mha.conf
+		sudo masterha_check_repl --conf=/etc/mha.conf
 
-フェイルオーバー発生後は、手動で旧稼働系を復帰させ、切り戻し作業を行い、監視を再開します。
-その手順を以下に記します。前提条件として、旧稼働系は以下の状態にします。
+フェイルオーバー後の切り戻し
+^^^^^^^^^^^^^^
+
+フェイルオーバー発生後は、手動で旧稼働系を復帰させ、切り戻し作業を行います。
+その手順を以下に記します。前提条件として、フェールオーバー後の旧稼働系は以下の状態となっていることとします。
 
 - 旧稼働系でOSが起動ができる状態にする。
 - 以下のサービスは停止した状態にする。
 	- MySQL
 	- Zabbix Server
 
-旧稼働系をスレーブとして復帰
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**旧稼働系をスレーブとして復帰**
 
 新稼働系でバイナリログチェックポイントを確認します。
 
@@ -742,18 +744,12 @@ MHAデーモンを起動します。
 	    master_log_file='mysqld-bin.000001',
 	    master_log_pos=620812883;
 	start slave;
+	show slave status;
 	exit;
 
-旧待機系で動作確認をします。
+.. note:: スレーブで不整合エラーが出る場合の対処
 
-::
-
-	sudo masterha_check_ssh --conf=/etc/mha.conf
-	sudo masterha_check_repl --conf=/etc/mha.conf
-
-.. note::
-
-	スレーブで不整合エラーが出る場合の対処
+	"show slave status;"で更新SQLのエラーが発生した場合は、以下のコマンドでエラーとなったSQLを順にスキップさせてください。
 
 	::
 
@@ -761,8 +757,15 @@ MHAデーモンを起動します。
 		STOP SLAVE; SET GLOBAL SQL_SLAVE_SKIP_COUNTER=1; START SLAVE;
 		show slave status;
 
-系の切り戻し(旧待機系で実施)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+旧待機系でMHAチェックコマンドを実行して、sshとレプリケーションの状態確認をします。
+
+::
+
+	sudo masterha_check_ssh --conf=/etc/mha.conf
+	sudo masterha_check_repl --conf=/etc/mha.conf
+
+
+**系の切り戻し**
 
 旧待機系で切り戻しを実行します。
 フェイルオーバー後に生成されるフラグファイルを削除します。
