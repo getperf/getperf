@@ -101,10 +101,10 @@ sub _service_ctl {
 
   sudo {
     command => sub {
+      my $last_service = $$services[$#$services];
       for my $service(@$services) {
         if ($controll=~/^(start|stop|restart)$/) {
           Rex::Logger::info("$controll : $service");
-          _sudo("/etc/init.d/$service $controll");
           if ($service=~/^(tomcat|apache2)-/) {
             _sudo("/etc/init.d/$service $controll");
           } elsif (operating_system ne 'Ubuntu') {
@@ -113,6 +113,9 @@ sub _service_ctl {
         } elsif ($controll eq 'ensure') {
           Rex::Logger::info("Regist : $service");
           service $service => ensure => "started";
+        }
+        if ($service ne $last_service) {
+          sleep 3;
         }
       }
     },
