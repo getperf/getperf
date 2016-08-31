@@ -105,11 +105,7 @@ sub _service_ctl {
       for my $service(@$services) {
         if ($controll=~/^(start|stop|restart)$/) {
           Rex::Logger::info("$controll : $service");
-          if ($service=~/^(tomcat|apache2)-/) {
-            _sudo("/etc/init.d/$service $controll");
-          } elsif (operating_system ne 'Ubuntu') {
-            service $service => $controll;
-          }
+          _sudo("/etc/init.d/$service $controll");
         } elsif ($controll eq 'ensure') {
           Rex::Logger::info("Regist : $service");
           service $service => ensure => "started";
