@@ -10,6 +10,7 @@ cpanfile.*
 /t/staging_data/*
 /.prove
 /config/*.json
+/config/site/*.json
 /log/*
 /var/cacti/*
 /var/zabbix/*
