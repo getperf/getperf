@@ -5,12 +5,8 @@
 .. toctree::
    :maxdepth: 1
 
-   01_AgentVersionUp
-   02_PotingOldVersion
-   03_RRDToolTuning
-   03_RRDToolAdmin
-   04_SSLCertificateInstration
-   05_SiteCloning
-   06_IPythonNotebook
-   07_CactiPatch
-   08_HAClustering
+   01_ChangeManagement/index
+   02_MonitoringSetup/index
+   03_Customize/index
+   04_HighAvailability/index
+   05_FAQ/index

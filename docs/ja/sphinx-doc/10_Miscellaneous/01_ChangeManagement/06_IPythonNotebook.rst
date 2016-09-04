@@ -1,7 +1,9 @@
-IPython Notebook 環境の構築
+Jupyter Notebook 環境の構築
 ===========================
 
-Webブラウザを用いた対話型 Python 開発ツール IPython Notebook をインストールします。
+Webブラウザを用いた対話型 Python 開発ツール Jupyter Notebook をインストールします。
+
+.. note:: 監視データの分析用にPythonでデータ分析をします。本環境はα版のリリースとなります。
 
 Python 統合パッケージ Anaconda インストール
 -------------------------------------------
@@ -31,11 +33,11 @@ pip でGraphite用 Python ライブラリをインストールします。
 
 	pip install influxdb
 
-IPython Notebook セットアップ
+Jupyter Notebook セットアップ
 --------------------------------
 
-IPython Notebook は Anaconda パッケージにバンドルされており、既に利用できます。
-ここでは IPython Notebook 用のプロファイラを作成して設定します。default という規定のプロファイラを作成します。
+Jupyter Notebook は Anaconda パッケージにバンドルされており、既に利用できます。
+ここでは Jupyter Notebook 用のプロファイラを作成して設定します。default という規定のプロファイラを作成します。
 
 ::
 
@@ -60,8 +62,8 @@ IPython Notebook は Anaconda パッケージにバンドルされており、�
         "%matplotlib inline"
     ]
 
-以上でセットアップは終了です。IPython Notebook 起動用スクリプトで動作確認をします。
-起動時のカレントディレクトリが IPython Notebook のホームディレクトリになりますので開発用ディレクトリに移動してからスクリプトを起動してください。試しに ~/work/tmp ディレクトリを作成して起動します。
+以上でセットアップは終了です。Jupyter Notebook 起動用スクリプトで動作確認をします。
+起動時のカレントディレクトリが Jupyter Notebook のホームディレクトリになりますので開発用ディレクトリに移動してからスクリプトを起動してください。試しに ~/work/tmp ディレクトリを作成して起動します。
 
 ::
 

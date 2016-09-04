@@ -49,6 +49,7 @@ sub new {
 		switch_off      => 0,
 		force           => 0,
 		time_shift_file => undef,
+		sumup_last_path => undef,
 		input_paths     => undef,
 		lastzip_dir     => $lastzip_dir,
 		update_master   => undef,
@@ -77,6 +78,7 @@ sub parse_command_option {
 		"\n\t[[--init] {input file or directory}]" .
 		"\n\t[--update-master,-u={domain}]" .
 		"\n\t[--time-shift,-t={input file}]" .
+		"\n\t[--last,-l={input dir}]" .
 		"\n\t[[--export={domain}|--import={domain} [--force,-f]] [--archive={file.tar.gz}]]" .
 		"\n\t[--daemon,-d] [--recover,-r|--fastrecover,-f]" .
 		"\n\t[--info|--auto|--manual]" .
@@ -95,11 +97,13 @@ sub parse_command_option {
 		'--manual'          => \$self->{switch_off},
 		'--force'           => \$self->{force},
 		'--time-shift=s'    => \$self->{time_shift_file},
+		'--last=s'          => \$self->{sumup_last_path},
 		'--update-master=s' => \$self->{update_master},
 		'--export=s'        => \$self->{export_domain},
 		'--import=s'        => \$self->{import_domain},
 		'--archive=s'       => \$self->{tar_file},
 	);
+
 	for my $input_path(@ARGV) {
 		$self->{input_paths}{$input_path} = 1;
 	}
@@ -128,6 +132,9 @@ sub parse_command_option {
 
 	} elsif (my $input_path = $self->{time_shift_file}) {
 		return $self->run_test($input_path);
+
+	} elsif (my $sumup_last_path = $self->{sumup_last_path}) {
+		return $self->run_last_data($sumup_last_path);
 
 	} elsif ($self->{input_paths}) {
 		return $self->run;
@@ -216,6 +223,41 @@ sub run_test {
 	}
 	my $elapse_command = Time::HiRes::tv_interval($start);
 	LOG->info("sumup test : elapse = $elapse_command");
+	return 1;
+}
+
+sub run_last_data {
+	my ($self, $input_dir) = @_;
+
+	$self->switch_screen_log;
+
+	my $aggregator = Getperf::Aggregator->new();
+	my $start = [Time::HiRes::gettimeofday()];
+	if ($input_dir !~ m#analysis/(\w+)/(\w+)(/|)$#) {
+		print "Error : Input path must be 'analysys/{host}/{domain}/'\n";
+		return;
+	}
+	my %input_files;
+	my $last_date_path = '';
+	dir($input_dir)->recurse(callback => sub {
+		my $input_file = shift;
+		if (-f $input_file && $input_file =~ m#analysis/(\w+/\w+/\d+/\d+)/#) {
+			my $date_path = $1;
+			$last_date_path = $date_path if ($last_date_path lt $date_path);
+			push (@{$input_files{$date_path}}, $input_file);
+		}
+	});
+	print "IN:$last_date_path\n";
+	for my $input_file(@{$input_files{$last_date_path}}) {
+		my $data_info = Getperf::Data::DataInfo->new(
+							file_path => $input_file, is_daemon => $self->{daemon}
+						);
+		$aggregator->run($data_info);
+	}
+	$aggregator->flush();
+	my $count = scalar(@{$input_files{$last_date_path}});
+	my $elapse_command = Time::HiRes::tv_interval($start);
+	LOG->info("sumup : files = $count, elapse = $elapse_command");
 	return 1;
 }
 

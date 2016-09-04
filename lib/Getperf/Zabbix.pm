@@ -69,6 +69,7 @@ sub new {
 		sitekey    => undef,
 		node_info  => undef,
 		node_list  => undef,
+		node_dir   => undef,
 		@_,
 	}, $class;
 }
@@ -78,17 +79,19 @@ sub parse_command_option {
 
 	Getopt::Long::Configure("pass_through");
 	my $usage = "Usage : zabbix-cli\n" .
-        "  [--hosts={.hosts}] [--add|--rm|--info] {./node/{domain}/...}\n";
+        "  [--hosts={.hosts}] [--node-dir={path}] [--add|--rm|--info] {./node/{domain}/...}\n";
 
 	push @ARGV, grep length, split /\s+/, $args if ($args);
 	my %config = ();
 	my $node_list_tsv = undef;
+	my $node_dir = undef;
 	my $opts = GetOptions (
-		'--add'     => \$self->{command}{regist},
-		'--rm'      => \$self->{command}{delete},
-		'--info'    => \$self->{command}{info},
-		'--hosts=s' => \$node_list_tsv,
-		'--help'    => \$self->{help},
+		'--add'        => \$self->{command}{regist},
+		'--rm'         => \$self->{command}{delete},
+		'--info'       => \$self->{command}{info},
+		'--hosts=s'    => \$node_list_tsv,
+		'--node-dir=s' => \$self->{node_dir},
+		'--help'       => \$self->{help},
 	);
 
 	my $command = $self->{command};
@@ -96,7 +99,9 @@ sub parse_command_option {
 		die "\t[--add|--rm|--info] Required.\n\n" . $usage;
 	}
 	$self->login;
-
+	if ($self->{node_dir} && $self->{node_dir} !~ /^[\/\w]+/) {
+		die "\tnode_dir must contain alphanumeric char and '/'\n\n". $usage;
+	}
 	for my $target (@ARGV) {
 		my $node_info = Getperf::Data::NodeInfo->new(
 			file_path => $target, node_list_tsv => $node_list_tsv
@@ -541,6 +546,9 @@ sub regist_node {
 		if ($zabbix_host) {
 			# If a node_path is set, add it for the host groups and templates
 			my $node_path = $node->{node_info}{node_path};
+			if ($self->{node_dir}) {
+				$node_path = $self->{node_dir} . '/' . $node_name;
+			}
 			$self->merge_additional_node_path_host_info($zabbix_host, $node_path);
 
 			if ($zabbix_host->{is_physical_device}) {
