@@ -32,11 +32,12 @@ const MAX_PRIORITY = 100;
 
 class NodeManager {
 
-
-	public $domains = array();
+	public $options     = array();
+	public $domains     = array();
 	public $metric_keys = array();
 
-	function __construct( ) {
+	function __construct( $options = array() ) {
+		$this->options = $options;
 	}
 
 	function reset_metric_pointer() {
@@ -54,7 +55,8 @@ class NodeManager {
 
 	// 現在は名前順(ディレクトリのリスト順)のみだが、登録日付順、更新日付順にソートできる様に機能拡張
 	// ノード以降のソートでソートオプションを選択できるようにする
-	function generate_metric_keys( $prioritys = array(), $options = null ) {
+	function generate_metric_keys( $prioritys = array()) {
+		extract(get_object_vars($this));
  		$metric_keys = array();
 		$tenant = (isset($options["tenant"])) ? $options["tenant"] : '_default';
 		$view_info = ViewInfo::getInstance();
@@ -88,6 +90,7 @@ class NodeManager {
 	}
 
 	function retrieve( $path ) {
+		extract(get_object_vars($this));
 		$node_home = Config::getInstance()->node_home;
 
 		fputs(STDERR, "Retrieve node '$path'.\n");
@@ -122,6 +125,7 @@ class NodeManager {
 	}
 
 	function read_all_domains() {
+		extract(get_object_vars($this));
 		$node_home = Config::getInstance()->node_home;
 
 		$domain_infos = array();
@@ -138,36 +142,39 @@ class NodeManager {
 	}
 
 	function retrieve_domain( $domain ) {
+		extract(get_object_vars($this));
 		$node_home = Config::getInstance()->node_home;
 
-		$domain_info = new Domain( $domain );
+		$domain_info = new Domain( $domain, $options );
 		$domain_info->add_all_nodes();
 
 		return $domain_info;
 	}
 
 	function retrieve_node( $domain, $node ) {
+		extract(get_object_vars($this));
 		$node_home = Config::getInstance()->node_home;
 
-		$node_info = new Node( $domain, $node );
+		$node_info = new Node( $domain, $node, $options );
 		$node_info->read_node_info();
 		$node_info->add_all_metrics();
-		$domain_info = new Domain( $domain );
+		$domain_info = new Domain( $domain, $options );
 		$domain_info->add_node( $node, $node_info );
 
 		return $domain_info;
 	}
 
 	function retrieve_metric( $domain, $node, $metric ) {
+		extract(get_object_vars($this));
 		$node_home = Config::getInstance()->node_home;
-    	$metric_info = new Metric( $domain, $node, $metric ); 
+    	$metric_info = new Metric( $domain, $node, $metric, $options ); 
 		$metric_info->read_metric();
 
-		$node_info   = new Node( $domain, $node );
+		$node_info   = new Node( $domain, $node, $options );
 		$node_info->read_node_info();
 		$node_info->add_metric( $metric, $metric_info );
 
-		$domain_info = new Domain( $domain );
+		$domain_info = new Domain( $domain, $options );
 		$domain_info->add_node( $node, $node_info );
 
 		$this->metric_keys[][] = array($domain, $node, $metric);

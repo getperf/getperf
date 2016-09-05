@@ -31,6 +31,7 @@ class CactiGraphSet {
 	public $node_configs;
 	public $graph_configs;
 
+	public $options            = array();
 	public $cacti_host_ids     = array();
 	public $cacti_graph_ids    = array();
 	public $cacti_tree_ids     = array();
@@ -38,12 +39,13 @@ class CactiGraphSet {
 	public $data_source_rrds   = array();
 	public $data_source_titles = array();
 
-	function __construct( ) {
-		$this->node_configs  = new NodeManager();
+	function __construct( $options = array() ) {
+		$this->options       = $options;
+		$this->node_configs  = new NodeManager($options);
 		$this->graph_configs = new GraphConfigManager();
 	}
 
-	function retrieve_configs( $path , $options = null ) {
+	function retrieve_configs( $path ) {
 		extract(get_object_vars($this));
 	    $path = preg_replace ( "/^(.+?)\/$/", "$1", $path );
 		$graph_configs->retrieve( $path );
@@ -52,7 +54,7 @@ class CactiGraphSet {
 		$node_configs->generate_metric_keys( $prioritys, $options );
 	}
 
-	function report_nodes( $options = array() ) {
+	function report_nodes( ) {
 		extract(get_object_vars($this));
 		$reports = array();
 		$node_configs->reset_metric_pointer();
@@ -72,7 +74,8 @@ class CactiGraphSet {
 		return true;
 	}
 
-	function make_graphs( $options = array() ) {
+	function make_graphs( ) {
+		extract(get_object_vars($this));
 		$metric_keyword = $options["grep"];
 		extract(get_object_vars($this));
 		$node_configs->reset_metric_pointer();

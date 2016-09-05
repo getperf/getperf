@@ -43,9 +43,9 @@ class CactiGraphSetTests extends PHPUnit_Framework_TestCase {
 
 	function testGraphSetMemfree() {
 		$cacti_graph_set = new CactiGraphSet($this->site_home);
-		$cacti_graph_set->retrieve_configs('/Linux/ostrich/memfree.json');
+		$cacti_graph_set->retrieve_configs('/Linux/testlnx01/memfree.json');
 //		$this->assertTrue($cacti_graph_set->make_graphs());
-		$cacti_graph_set->retrieve_configs('/Linux/ostrich');
+		$cacti_graph_set->retrieve_configs('/Linux/testlnx01');
 //		$this->assertTrue($cacti_graph_set->make_graphs());
 		$cacti_graph_set->retrieve_configs('/Linux');
 //		$this->assertTrue($cacti_graph_set->make_graphs());

@@ -31,9 +31,10 @@ class Node {
 	public $infos   = array();
 	public $metrics = array();
 
-	function __construct( $domain, $node ) {
+	function __construct( $domain, $node, $options ) {
 		$this->domain_name = $domain;
 		$this->node_name   = $node;
+		$this->options     = $options;
 	}
 
 	function read_node_info() {
@@ -63,6 +64,9 @@ class Node {
 					}
 				}
 			}
+		}
+		if ($options["node_path_dir"]) {
+			$this->node_path = $options["node_path_dir"];
 		}
 		$this->infos = $node_infos;
 		return true;

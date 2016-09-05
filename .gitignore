@@ -8,6 +8,7 @@ cpanfile.*
 /docs/html/*
 /t/cacti_cli/**
 /t/staging_data/*
+/lib/cacti/t
 /.prove
 /config/*.json
 /config/site/*.json

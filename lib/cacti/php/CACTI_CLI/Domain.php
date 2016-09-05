@@ -30,8 +30,9 @@ class Domain {
 
 	private $domain_key, $node_key, $metric_key;
 
-	function __construct( $domain_name ) {
+	function __construct( $domain_name, $options ) {
 		$this->domain_name = $domain_name;
+		$this->options     = $options;
 	}
 
 	function check_domain_exists() {
@@ -55,7 +56,7 @@ class Domain {
 				foreach ( $nodes as $node ) {
 					if ($node === "." || $node === "..")
 						continue;
-					$node_info = new Node( $domain_name, $node );
+					$node_info = new Node( $domain_name, $node, $options );
 					$node_info->read_node_info();
 					if (! $node_info->add_all_metrics() )
 						return false;
