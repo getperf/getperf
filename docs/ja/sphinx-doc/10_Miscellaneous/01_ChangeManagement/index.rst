@@ -5,10 +5,11 @@
 .. toctree::
    :maxdepth: 1
 
-   01_AgentVersionUp
-   02_PotingOldVersion
-   03_RRDToolAdmin
-   03_RRDToolTuning
-   04_SSLCertificateInstration
-   05_SiteCloning
-   06_IPythonNotebook
+   01_ServerVersionUp
+   02_AgentVersionUp
+   03_PotingOldVersion
+   04_RRDToolAdmin
+   05_RRDToolTuning
+   06_SSLCertificateInstration
+   07_SiteCloning
+   08_IPythonNotebook
