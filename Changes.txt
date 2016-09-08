@@ -9,6 +9,7 @@ New features:
 
 Bug fixes:
 * rex svc_restart コマンドで2重に再起動する問題対処
+* Zabbix 3.0の設定ファイルで既定のままだとPostgreSQL接続になる問題対象。DBHost=localhostを追加
 
 Changes for 2.12.0 (2016-6-20)
 --------------------------------------------------------------------------------
