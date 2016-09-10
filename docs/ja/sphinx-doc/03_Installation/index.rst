@@ -6,6 +6,7 @@
    :maxdepth: 2
 
    01_Preparation
+   01_PreparationIntranet
    02_PackageInstallation
    03_CreatingConfigurationFiles
    04_SSLSettings

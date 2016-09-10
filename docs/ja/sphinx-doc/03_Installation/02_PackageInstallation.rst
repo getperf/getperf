@@ -15,19 +15,27 @@
 Getperf モジュールのダウンロードと解凍
 ======================================
 
-Getperf モジュールをダウンロードし、ホームディレクトリの下に解凍します ※
-暫定公開版
+git コマンドを使ってモジュールをコピーします。
 
 ::
 
-    (Download 'getperf.tar.gz' from the provisional site)
     cd $HOME
-    tar xvf getperf.tar.gz
+    git clone https://github.com/getperf/getperf.git
 
-**注意事項**
+もしくは、以下、GitHub サイトから、zip ファイルをダウンロードします。
 
-    Getperf のインストールは 'getperf.tar.gz'
-    のモジュール一式をダウンロードして行いますが、まだ限定公開のライセンスとなるため、正式なダウンロードサイトが存在しません。ダウンロードモジュールが必要な場合は `モジュールのダウンロード <docs/ja/docs/../docs/faq.md>`_ の問い合わせ先から入手してください
+::
+
+    https://github.com/getperf/getperf
+
+ホームディレクトリの下に解凍し、ディレクトリ名をgetperf-masterからgetperfに変更します。
+
+::
+
+    (Download 'getperf-master.zip' from the provisional site)
+    cd $HOME
+    unzip getperf-master.zip
+    mv getperf-master getperf
 
 Perlライブラリのインストール
 ============================
@@ -53,16 +61,10 @@ cpanm と、Perl ライブラリをインストールします
     cd $GETPERF_HOME
     sudo -E cpanm --installdeps --notest .
 
-.. note::
-
-  -  Perl ライブラリのroot管理下への配置について
-
-    /usr/share/perl5　など、 root 管理下のディレクトリにライブラリをインストールします。
+.. note:: Perl ライブラリは /usr/share/perl5　など、 root 管理下のディレクトリにライブラリをインストールします。
     そのため、インストールコマンドは、全てsudo 権限で実行するか、--sudo　オプションをつけて実行してください。
 
-  -  cpanm コマンドエラーについて
-
-    cpanm コマンド実行時に 「Installing the dependencies failed:」のライブラリの依存エラーが出た場合は、
+.. note:: cpanm コマンド実行時に 「Installing the dependencies failed:」のライブラリの依存エラーが出た場合は、
     前述のyumのパッケージインストールでPerlライブラリを手動でインストールしてください。
     試行錯誤的な作業が必要となる場合がありますが、cpanm で以下のメッセージが出力されれば完了となります。
 

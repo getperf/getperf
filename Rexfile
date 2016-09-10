@@ -253,7 +253,7 @@ task "install_package", sub {
         if (!-f "/tmp/rex/${module}-bin.tar.gz") {
           download "$ftpsite/${module}-bin.tar.gz", "/tmp/rex/${module}-bin.tar.gz";
         }
-        _run "cd /tmp/rex; tar xvf ${module}-bin.tar.gz";
+        _run "cd /tmp/rex; tar xf ${module}-bin.tar.gz";
         _sudo "mv /tmp/rex/${module} /usr/local/";
         _sudo "ln -s /usr/local/${module}/bin/ant /usr/local/bin/ant";
       }
@@ -330,7 +330,7 @@ task "prepare_apache", sub {
   if (!-f "/tmp/rex/${archive}") {
     _download $download, "/tmp/rex/";
     chdir('/tmp/rex');
-    _run "tar xvf $module.tar.gz";
+    _run "tar xf $module.tar.gz";
   }
 
   my $config = config('base');
@@ -380,7 +380,7 @@ task "prepare_tomcat", sub {
     my $tomcat_owner = $config->{ws_tomcat_owner};
     my $tomcat_home = $tomcat_dir . '-' . $ws_suffix;
     if (!-d $tomcat_home) {
-      _run "cd /tmp/rex; tar xvf ${module}.tar.gz";
+      _run "cd /tmp/rex; tar xf ${module}.tar.gz";
       _sudo "mv /tmp/rex/${module} ${tomcat_home}";
       _sudo "chown -R ${tomcat_owner}. ${tomcat_home}";
     }
