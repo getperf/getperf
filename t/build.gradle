@@ -1,0 +1,137 @@
+// gradle-ssh-pluginを使うための設定
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.hidetake:gradle-ssh-plugin:0.2.7'
+        classpath 'org.apache.poi:poi:3.13'
+        classpath 'org.apache.poi:poi-ooxml:3.13'
+    }
+}
+
+import org.apache.poi.ss.usermodel.*
+apply plugin: 'ssh'
+
+// Gradle と ssh
+// ---------------
+// gradle-ssh-pluginを使うための設定
+
+// SSH先のサーバ情報
+
+remotes {
+    psadmin {
+        host = '192.168.10.5'
+        user = 'psadmin'
+        password = 'psadmin'
+    }
+}
+
+task testSSH(type: SshTask) {
+  // SSHでやること
+  session(remotes.psadmin) {
+    execute('uname -a > /tmp/uname-a.txt')
+    execute('cat /etc/*-release || true')
+  }
+}
+
+// Gradle プロパティ
+// -----------------------------
+
+// gradle.propertiesをユーザーのホームディレクトリまたはプロジェクトディレクトリに置く
+
+// gradle.propertiesという名前でプロパティファイルを作成
+// なお、プロジェクトディレクトリ→ユーザーのホームディレクトリの順に読み込まれます。
+// ユーザーのホームディレクトリのプロパティが優先して使われる(上書きする)ということです。
+
+// vi gradle.properties
+  
+// yourname=literalice
+
+task hello2 << {
+    println "Hello, $yourname"
+}
+
+task stopTomcat(type: Exec) {
+  workingDir '/usr/local/tomcat-admin/bin'
+
+  //on windows:
+  // commandLine 'cmd', '/c', 'catalina.bat'
+
+  //on linux
+  commandLine './catalina.sh' , 'stop'
+
+  //store the output instead of printing to the console:
+  standardOutput = new ByteArrayOutputStream()
+
+  //extension method stopTomcat.output() can be used to obtain the output:
+  ext.output = {
+    return standardOutput.toString()
+  }
+}
+
+// GradleでExcelを読み込んでなにかを作る
+// ---------------------------------------
+
+// http://hideoku.hatenablog.jp/entry/2015/11/13/001509
+
+// [とあるフォルダ]
+// ├build.gradle
+// ├message_master.xls
+// └（MessageId.java）
+
+// gradle generateMessageIdJava
+
+task generateMessageIdJava << {
+
+    Workbook workbook = WorkbookFactory.create(
+                                  new File("message_master.xls"))
+    Sheet sheet = workbook.getSheetAt(0)
+
+    new File("MessageId.java").withWriter("UTF-8") { writer ->
+
+        writer << "package sample.constants;\n\n"
+        writer << "public class MessageId {\n\n"
+
+        (3 .. sheet.getLastRowNum()).each { rownum ->
+            Row row = sheet.getRow(rownum)
+
+            String messageId = row.getCell(0).getStringCellValue()
+
+            // メッセージIDが記載されていない行は書き出さない
+            if (messageId?.length() == 0) return
+
+            String message = row.getCell(1).getStringCellValue()
+
+            writer << "    /** $message */\n"
+            writer << "    public static final String $messageId"
+            writer <<                             " = \"$messageId\";\n"
+            writer << "\n"
+        }
+
+        writer << "}"
+    }
+}
+
+// タスクの実行順序
+// -------------------
+// Gradleではタスク間の依存関係の指定ができます
+// http://nobeans.hatenablog.com/entry/2013/06/20/103255
+// gradle d
+
+task a << {
+    println "A"
+}
+task b(dependsOn: "a") << {
+    println "B"
+}
+task c(dependsOn:"a") << {
+    println "C"
+}
+task d(dependsOn: ["b", "c"]) << {
+    println "D"
+}
+
+PowerShell連携
+
+https://discuss.gradle.org/t/startup-script-using-powershell/9529
