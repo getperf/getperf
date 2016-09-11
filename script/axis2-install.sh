@@ -28,7 +28,7 @@ if [ ! -d $AXIS2_HOME ]; then
 
 	cd /tmp/rex
 	wget  "${DOWNLOAD_SITE}/${AXIS2_VERSION}/${AXIS2_MODULE}-bin.zip"
-	unzip "${AXIS2_MODULE}-bin.zip"
+	unzip -q "${AXIS2_MODULE}-bin.zip"
 fi
 
 if [ ! -f $WARFILE ]; then

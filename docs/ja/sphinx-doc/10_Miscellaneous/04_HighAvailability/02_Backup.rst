@@ -1,7 +1,30 @@
 監視サーバのバックアップ
 =============================
 
-**稼働系MySQLデータのバックアップ**
+バックアップ環境とシナリオ
+---------------------------
+
+* 稼働系から待機系に監視データのバックアップをします。
+* 日次で、稼働系のZabbix,Cacti,Getperf データのフルバックアップをします。
+* 世代管理はせずに直近の1日前のデータをバックアップします。
+* 以降に手順を記します。例として稼働系を 192.168.10.2、待機系を 192.168.10.3 として手順を記します。
+* 以下例ではバックアップの保存先を待機系の /data/backup としています。
+* バックアップ対象は以下の通りです。
+
+   +---------+---------------------------------------------------+
+   | Zabbix  | Zabbix 用 MySQL リポジトリ                        |
+   +---------+---------------------------------------------------+
+   | Cacti   | Cacti 用 MySQL リポジトリ                         |
+   +---------+---------------------------------------------------+
+   | Getperf | Getperf Gitベアリポジトリ($GETPERF_HOME/var/site) |
+   +---------+---------------------------------------------------+
+   |         | Getperf SSL管理ディレクトリ(/etc/getperf)         |
+   +---------+---------------------------------------------------+
+
+.. note:: 稼働系、待機系は前述のHA構成を前提とし、待機系の切り替えができる状態にします。
+
+MySQLデータ容量の調査
+-------------------------
 
 稼働系でMySQLデータのバックアップをします。稼働系でMySQLに接続します。
 
@@ -18,67 +41,141 @@
    select table_schema, sum(data_length+index_length) /1024 /1024 as MB 
    from information_schema.tables where table_schema = "zabbix";
 
-.. note::
+既に稼働中の監視サーバでレプリケーションを構成する場合、MySQLの蓄積データが大きいと、
+バックアップ、リストア処理で長時間待たされる場合が有ります。
+本制約の回避が必要な場合は、Percona社 XtraBackup などのオンラインバックアップツールを検討して下さい。
+以下では MySQL 標準の mysqldump コマンドによるバックアップ手順を記します。
+XtraBackup のバックアップについては後のセクションで手順を記します。
 
-   既に稼働中の監視サーバでレプリケーションを構成する場合、MySQLの蓄積データが大きいと、
-   バックアップ処理で長時間待たされる場合が有ります。
-   MySQL 標準のバックアップコマンド mysqldump は実行中にDB全体にロックを掛ける為、その間の監視運用に影響が生じる場合が有ります。
-   本制約の回避が必要な場合は、Percona社 XtraBackup などのオンラインバックアップツールを使用して下さい。
-   XtraBackup のバックアップについては次のセクションで手順を記します。
+バックアップ設定
+---------------------------
 
-全テーブルをロックします。
+**待機系のバックアップディレクトリ作成**
 
-::
-
-   flush tables with read lock;
-
-バイナリログのステータスを表示します。
+待機系にバックアップ用ディレクトリを作成します。
+前述のデータ容量が保存できる領域が必要になります。
 
 ::
 
-   show master status;
+   ssh -l psadmin 192.168.10.3   # 待機系に接続
+   sudo mkdir -p /backup/data
 
-待機系のスレーブ設定で、File, Position を使用するので値を控えておきます。
+**稼働系、待機系間のssh接続許可設定**
 
-::
-
-   +-------------------+----------+--------------+------------------+
-   | File              | Position | Binlog_Do_DB | Binlog_Ignore_DB |
-   +-------------------+----------+--------------+------------------+
-   | mysqld-bin.000002 |      107 |              |                  |
-   +-------------------+----------+--------------+------------------+
-
-上記端末は残したまま、別端末を追加で開き、ダンプを実行します。
+バックアップはrootで実行します。
+稼働系から待機系にrootでssh接続できるよう公開鍵を登録します。
 
 ::
 
-   mysqldump -u root -p --all-databases --lock-all-tables --events \
-   > mysql_dump.sql
+   ssh -l psadmin 192.168.10.2   # 稼働系に接続
+   sudo su -
+   ssh-copy-id -i .ssh/id_rsa.pub 192.168.10.3
+   exit
 
-元の端末に戻って、ロックを解除します。
+**バックアップスクリプト編集**
 
-::
-
-   unlock tables;
-   exit;
-
-ダンプファイルを稼働系から待機系にコピーします。
+稼働系で実行します。
+以下の箇所を編集します。
 
 ::
 
-   scp mysql_dump.sql 192.168.10.2:/tmp/
+   vi $GETPERF_HOME/script/backup-getperf.sh
+
+
+.. code-block:: bash
+
+   TARGET_HOST="192.168.10.3"           # target server ip
+   GETPERF_HOME="/home/psadmin/getperf" # Getperf Home Directory
+   PASS=mysqlpasswd                     # MySQL root パスワード
+
+手動で実行します。
+
+::
+
+   sudo $GETPERF_HOME/script/backup-getperf.sh
+
+**cronによるスケジュール設定**
+
+cronでsudoした場合に「you must have a tty to run sudo」のメッセージが実行できない制約があるため、
+/etc/sudoersから該当行を以下のようにコメントアウトします。
+
+::
+
+   vi /etc/sudoers
+   #Defaults    requiretty
+
+cronでスケジュールを設定します。以下例では毎日 3:15AM にバックアップを実行します。
+
+::
+
+   EDITOR=vi
+   crontab -E
+   15 3 * * * sudo -E /home/psadmin/getperf/script/backup-getperf.sh > /dev/null 2>&1
+
+待機系でのリストア
+---------------------
 
 **MySQLバックアップデータのリストア**
 
-稼働系から転送したダンプデータをインポートします。
+稼働系からMySQLダンプデータをインポートします。
 
 ::
 
-   mysql -u root -p < /tmp/mysql_dump.sql
+   mysql -u root -p < /backup/data/mysql_dump.sql
 
-**XtraBackupでのデータバックアップ**
+**Getperfサイトのリストア**
 
-yumでインストールします。
+Getperf の Git ベアリポジトリをリストアします。
+
+::
+
+   cd $GETPERF_HOME
+   tar xvf /backup/data/getperf_var_site.tar.gz
+
+リストアした、$GETPERF/var/siteの下に各サイトホームのGit ベアリポジトリが復元されます。
+各サイトごとにリストアをします。git clone でベアリポジトリを指定してサイトを復元します。
+以下例では 'site1' というサイトの復元例を記します。
+
+::
+
+   cd $HOME
+   git clone $GETPERF_HOME/var/site/site1.git
+
+以下のコマンドで復元したサイトの初期化をします。
+
+::
+
+   initsite --update ./site1
+
+サイト集計デーモンの再起動をします。
+
+::
+
+   (cd ./site1; sumup restart)
+
+以上でサイトの復元は完了です。上記手順を各サイトごとに実行します。
+
+**SSL証明書のリストア**
+
+以下コマンドでSSL証明書をリストアします。psadmin ユーザで実行してください。
+
+::
+
+   cd /
+   tar xvf getperf_etc.tar.gz
+
+パックアップデータからの復元は以上です。次に、以下の待機系の系切り替え作業を行います。
+本手順の詳細は前節のサーバのHA化を参照してください。
+
+* VIPの活性化
+* Zabbixサーバの起動
+
+XtraBackupでのデータバックアップ
+-------------------------------------
+
+.. note:: MySQL標準のバックアップコマンド mysqldump を使用せずに、Percona製XtraBackupによるバックアップ手順を記します。
+
+yumで Percona 製 XtraBackup をインストールします。
 稼働系、待機系の両方で必要になりますので順にインストールします。
 
 ::
@@ -86,37 +183,37 @@ yumでインストールします。
    sudo -E rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
    sudo -E yum install xtrabackup
 
-
-任意の場所にバックアップを取得します。ここでは、/backup/xtrabackup/の下にバックアップします。
-
-::
-
-   sudo mkdir -p /backup/xtrabackup/
-   sudo time innobackupex --user root --password mysql_password \
-   /backup/xtrabackup/
-
-completed OK!が出れば完了です。
-メッセージにbinlogのファイル名とpositionも出力されますのでfilenameとpositionの値を控えておきます。
+稼働系でバックアップスクリプトを編集します。
 
 ::
 
-   innobackupex: MySQL binlog position: filename 'mysqld-bin.000001', position 310
+   vi $GETPERF_HOME/script/backup-getperf.sh
 
-バックアップ処理中の更新ログを適用します。
---apply-logオプションは、全コマンドで実行したバックアップディレクトリを指定します。
+以下の、mysqldumpコマンドの箇所をコメントアウトして、innobackupexコマンドの箇所のコメントを外します。
+
+.. code-block:: bash
+
+   # mysqldump command for MySQL Backup
+   # (
+   #  time mysqldump --user=${USER} --password=${PASS} \
+   #      --single-transaction --all-databases --quick --routines \
+   #      | ssh $TARGET_HOST 'cat > /backup/data/mysqldump.dmp'
+   # )
+
+   # Percona XtraBackup command for MySQL Backup
+   (
+      time innobackupex /var/lib/mysql/ --user ${USER} --password ${PASS} --stream=tar \
+         | ssh $TARGET_HOST 'cat - > /backup/data/xtrabackup.tar'
+   )
+
+手動で実行します。
 
 ::
 
-   sudo innobackupex --user root --password mysql_password \
-   --apply-log /backup/xtrabackup/2016-08-28_11-15-12
+   sudo $GETPERF_HOME/script/backup-getperf.sh
 
-バックアップディレクトリをアーカイブし、待機系にコピーします。
-
-::
-
-   cd /backup/
-   tar cvf - xtrabackup/2016-08-28_11-15-12 | gzip > backup.tar.gz
-   scp  backup.tar.gz root@192.168.10.2:/tmp/
+cron の設定をします。
+手順は mysqldump と同様です。
 
 **XtraBackupの場合のリストア**
 
@@ -146,266 +243,4 @@ MySQLを停止し、データディレクトリを退避して新たにデータ
 
    chown -R mysql:mysql /var/lib/mysql
    /etc/init.d/mysqld start
-
-Zabbix バックアップ検証
-=======================
-
-リファレンス
--------------
-
-* (Percona XtraBackupの圧縮メモ)[https://yoku0825.blogspot.jp/2014/05/percona-xtrabackup.html]
-
-
-ToDo
---------
-
-* Percona XtraBackup インストール
-* MySQLパラメータ調整
-* テスト
-
-XtraBackupインストール
----------------------------
-
-稼働系、待機系の順で実施します。
-Percona社からダウンロードしたrpmファイルをy2iobsv01bからコピーします。
-
-    cd /tmp
-    scp psadmin@10.152.32.104:/home/psadmin/getperf/var/agent/misc/percona-xtrabackup-24-2.4.4-1.el6.x86_64.rpm .
-
-yum localinstallでインストールします。
-
-    sudo -E yum localinstall percona-xtrabackup-24-2.4.4-1.el6.x86_64.rpm
-
-インストールされたか、ヘルプを表示してみます。
-
-    innobackupex --help
-
-その他にpbzip2圧縮ツールをインストール
-
-    sudo -E yum --enablerepo=epel install pbzip2
-
-パラメータ調整
----------------------------
-
-MySQLで必要なパラメータはlog-bin,innodb_buffer_pool_sizeとなります。
-/etc/my.cnfを見てみます。
-
-    vi /etc/my.cnf
-
-    innodb_buffer_pool_size = 2147483648
-
-    #バイナリログの出力
-    log-bin=mysqld-bin
-    #server-idは一意になるように設定する
-    # 101:マスター, 102:スレーブ
-    server-id=101
-    expire_logs_days = 7
-
-設定されていたので調整は保留。
-ディスク容量確認。
-
-    cd /var/lib/mysql
-    du -h -s .
-    5.9G    .
-
-    ls -l /var/lib/|grep mysql
-    lrwxrwxrwx   1 root     root       22  8月  3 19:03 2016 mysql -> /home2/mysql/mysqldata
-
-    df -h
-                           23G  6.0G   16G  28% /home2
-    /dev/sdb1              40G   14G   24G  37% /data
-
-SSH公開鍵コピー
-
-    cd /root
-    ssh-copy-id -i .ssh/id_rsa.pub root@133.116.134.203
-
-
-/data/tmp 作成。
-
-    mkdir -p /data/tmp
-
-**ターゲット側**
-
-/data/tmp 作成。
-
-    mkdir -p /data/tmp
-
-
-テスト
--------------------------------
-
-すべてrootで実行する。
-1行目の 'innobackupex /var/lib/mysql' はソース側で、
-2-4行目の tar 解凍、innobackupex --apply-log はターゲット側で実行する。
-
-ソース側は事前に以下環境変数を読み込み。
-
-ターゲット側はテストの度に/data/tmp/xtrabackupを削除
-
-    cd /data/tmp
-    rm -rf xtrabackup
-
-**tarボールストリーム圧縮なし**
-
-    time innobackupex /var/lib/mysql $BK_OPTS --stream=tar | ssh $TARGET "cat - > /data/tmp/xtrabackup.tar"
-    real    1m25.276s
-
-    ls -lh xtrabackup*
-    -rw-r--r--. 1 root root 4.0G  9月  9 11:24 2016 xtrabackup.tar
-
-    mkdir xtrabackup
-    time tar ixf xtrabackup.tar -C xtrabackup
-    real    0m18.506s
-
-    time innobackupex --apply-log xtrabackup
-    real    0m4.670s
-
-**tarボールgzip圧縮**
-
-    time innobackupex /var/lib/mysql $BK_OPTS --stream=tar | gzip -c | ssh $TARGET "cat - > /data/tmp/xtrabackup.tar.gz"
-    real    5m9.941s
-
-    ls -lh xtrabackup*
-    -rw-r--r--. 1 root root 1003M  9月  9 11:32 2016 xtrabackup.tar.gz
-
-    mkdir xtrabackup
-    time tar ixf xtrabackup.tar.gz -C xtrabackup
-    real    0m37.041s
-
-    time innobackupex --apply-log xtrabackup
-    real    0m4.547s
-
-**tarボールpbzip2圧縮(8並列)**
-
-    time innobackupex /var/lib/mysql $BK_OPTS --stream=tar | pbzip2 -p8 -c | ssh $TARGET "cat - > /data/tmp/xtrabackup.tar.bz2"
-    real    2m35.366s
-
-    ls -lh xtrabackup*
-    -rw-r--r--. 1 root root  692M  9月  9 11:49 2016 xtrabackup.tar.bz2
-
-    mkdir xtrabackup
-    time pbzip2 -p8 -dc xtrabackup.tar.bz2 | tar ix -C xtrabackup
-    real    0m58.871s
-
-    time innobackupex --apply-log xtrabackup
-    real    0m5.285s
-
-**xbstream圧縮なし(1並列)**
-
-    time innobackupex /var/lib/mysql $BK_OPTS --stream=xbstream | ssh $TARGET "cat - > /data/tmp/xtrabackup.xb"
-    real    1m29.292s
-
-    ll -h xtrabackup.*
-    -rw-r--r--. 1 root root  4.0G  9月  9 11:54 2016 xtrabackup.xb
-
-    mkdir xtrabackup
-    time xbstream -x -C xtrabackup < xtrabackup.xb
-    real    0m27.646s
-
-    time innobackupex --apply-log xtrabackup
-    real    0m4.508s
-
-**xbstream圧縮あり(1並列)**
-
-    time innobackupex /var/lib/mysql $BK_OPTS --stream=xbstream --compress | ssh $TARGET "cat - > /data/tmp/xtrabackup.xb"
-    real    1m19.387s
-
-    ll -h xtrabackup.*
-    -rw-r--r--. 1 root root  1.4G  9月  9 11:57 2016 xtrabackup.xb
-
-    mkdir xtrabackup
-    time xbstream -x -C xtrabackup < xtrabackup.xb
-    real    0m13.288s
-
-    time innobackupex --decompress xtrabackup/
-
-    Percona社製 qpress コマンドがないエラー発生(リストア側処理は以降、保留)
-
-        160909 11:59:01 [01] decompressing ./site1/poller_item.frm.qp
-        sh: qpress: コマンドが見つかりません
-        Error: thread 0 failed.
-
-    time innobackupex --apply-log xtrabackup
-
-
-**xbstream圧縮あり(8並列)**
-
-    time innobackupex /var/lib/mysql $BK_OPTS --stream=xbstream --compress --parallel=8 | ssh $TARGET "cat - > /data/tmp/xtrabackup.xb"
-    real    1m15.403s
-
-    ll -h xtrabackup.*
-    -rw-r--r--. 1 root root  1.4G  9月  9 12:06 2016 xtrabackup.xb
-
-    time xbstream -x -C xtrabackup < xtrabackup.xb
-    real    0m13.023s
-
-    以下は保留
-
-    $ time innobackupex --decompress --parallel=8 xtrabackup/
-
-    $ time innobackupex --apply-log xtrabackup
-
-リストアテスト
--------------------------------
-
-XtraBackup でリストア作業手順の確認
-
-**事前準備**
-
-作業は全て root で行います。
-各種サービスの停止します。
-
-    /etc/init.d/zabbix-server stop
-    /etc/init.d/httpd stop
-    /etc/init.d/mysqld stop
-
-**データリストア**
-
-/data/tmp/に上記手順で取得したバックアップがある前提で以下を実行します
-
-    cd /data/tmp/
-    rm -rf xtrabackup
-    tar xvf xtrabackup.tar
-
-## 解凍処理
-
-    mkdir xtrabackup
-    time tar ixf xtrabackup.tar -C xtrabackup
-
-するとMySQLのデータディレクトリ配下のファイルが展開されます。
-
-次にリストアです。
-事前にmysqlを停止して、mysqlのデータディレクトリ（今回の場合だと/var/lib/mysql）を退避もしくは削除しておく必要があります。
-
-    mv /var/lib/mysql /var/lib/mysql.bak
-
-## WAL(Write Ahead Log)を適用
-
-    innobackupex --user=root --apply-log xtrabackup/
-
-## リストア開始
-
-    innobackupex --copy-back xtrabackup/
-
-# 起動
-
-    chown -R mysql:mysql /var/lib/mysql
-    /etc/init.d/mysqld start
-
-以上でリストア完了です。
-
-mysqldump でのバックアップ
-------------------------------
-
-    time mysql--single-transaction
-
-    time mysqldump --user root --password Passw0rd --single-transaction --flush-logs --master-data=2 --all-databases --extended-insert --quick --routines | ssh $TARGET 'cat > /data/tmp/mysqldump.dmp'
-
-    > market_dump.sql 2> market_dump.err &
-
-mysqldump -udb_user db_name -pdb_pass | gzip | ssh example.com 'cat > ~/db_name.dump.sql.gz'
-
-   time mysqldump --user root --password Passw0rd --single-transaction --flush-logs --master-data=2 --all-databases --extended-insert --quick --routines | ssh $TARGET 'cat > /data/tmp/mysqldump.dmp'
-
 

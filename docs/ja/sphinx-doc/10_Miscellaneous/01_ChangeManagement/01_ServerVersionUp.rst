@@ -16,14 +16,14 @@
 -------------------
 
 各監視サーバにpsadminユーザでssh接続。
-戻しの手段として、$HOME/getperf/conf の下の構成ファイルを一旦バックアップする。
+$HOME/getperf/conf の下の構成ファイルを一旦バックアップします。
 
 ::
 
    cd ~/getperf
    tar cvf - conf | gzip > ~/work/conf_backup.tar.gz
 
-GitHubサイトから getperf-master.zip ファイルをダウンロード。
+GitHubサイトから getperf-master.zip ファイルをダウンロードします。
 Getperf モジュールホームの $HOME/getperf に zip を展開して上書更新する。
 
 ::
