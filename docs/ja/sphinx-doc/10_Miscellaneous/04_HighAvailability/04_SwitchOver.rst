@@ -73,7 +73,7 @@
    --conf=/etc/mha.conf \
    --new_master_host=192.168.10.1  --orig_master_is_new_slave
 
-旧稼働系でデーモンを再起動します。
+デーモンを再起動します。
 
 ::
 
