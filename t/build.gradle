@@ -1,137 +1,73 @@
-// gradle-ssh-pluginを使うための設定
+// パッケージインポート
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.hidetake:gradle-ssh-plugin:0.2.7'
-        classpath 'org.apache.poi:poi:3.13'
-        classpath 'org.apache.poi:poi-ooxml:3.13'
+        classpath 'com.profesorfalken:jPowerShell:1.6.2'
     }
 }
 
-import org.apache.poi.ss.usermodel.*
-apply plugin: 'ssh'
+import org.apache.commons.io.FileUtils.*
+import groovy.transform.ToString
+import static groovy.json.JsonOutput.*
+import com.profesorfalken.jpowershell.*
 
-// Gradle と ssh
-// ---------------
-// gradle-ssh-pluginを使うための設定
+// Param(
+//     [string]$ip
+//   , [string]$server
+//   , [string]$user
+//   , [string]$password
+// )
 
-// SSH先のサーバ情報
+// $secure   = ConvertTo-SecureString $password -asplaintext -force
+// $cred     = New-Object System.Management.Automation.PsCredential $user, $secure
+// $log_dir  = ".\build\log\windows\" + $server
 
-remotes {
-    psadmin {
-        host = '192.168.10.5'
-        user = 'psadmin'
-        password = 'psadmin'
+// $log_file    = $log_dir + "\cpu"
+// Get-WmiObject -Credential $cred -ComputerName $ip Win32_Processor | Out-File $log_file -Encoding UTF8
+
+task test << {
+    println "test"
+    //Execute a command in PowerShell session
+    PowerShellResponse response = PowerShell.executeSingleCommand("Get-Process");
+    System.out.println("List Processes:" + response.getCommandOutput());
+}
+
+task test2 << {
+
+    // 検査対象サーバアカウント情報
+    def user     = getProperty("testServer.Windows.user")
+    def password = getProperty("testServer.Windows.password")
+    def ip       = '192.168.0.12'
+
+    PowerShell powerShell = null;
+    try {
+        //Creates PowerShell session (we can execute several commands in the same session)
+        powerShell = PowerShell.openSession();
+
+        //Execute a command in PowerShell session
+        def $command = """\
+            |\$secure = ConvertTo-SecureString ${password} -asplaintext -force
+            |\$cred   = New-Object System.Management.Automation.PsCredential ${user}, \$secure
+            |Get-WmiObject -Credential \$cred -ComputerName ${ip} Win32_Processor
+        """.stripMargin()
+        println $command
+
+        //Execute another command in the same PowerShell session
+        PowerShellResponse response;
+        response = powerShell.executeCommand($command);
+        // response = powerShell.executeCommand("Get-WmiObject Win32_BIOS");
+
+        //Print results
+        System.out.println("BIOS information:" + response.getCommandOutput());
+    } catch(PowerShellNotAvailableException ex) {
+        //Handle error when PowerShell is not available in the system
+        //Maybe try in another way?
+        println ex.localizedMessage
+    } finally {
+        //Always close PowerShell session to free resources.
+        if (powerShell != null)
+            powerShell.close();
     }
 }
-
-task testSSH(type: SshTask) {
-  // SSHでやること
-  session(remotes.psadmin) {
-    execute('uname -a > /tmp/uname-a.txt')
-    execute('cat /etc/*-release || true')
-  }
-}
-
-// Gradle プロパティ
-// -----------------------------
-
-// gradle.propertiesをユーザーのホームディレクトリまたはプロジェクトディレクトリに置く
-
-// gradle.propertiesという名前でプロパティファイルを作成
-// なお、プロジェクトディレクトリ→ユーザーのホームディレクトリの順に読み込まれます。
-// ユーザーのホームディレクトリのプロパティが優先して使われる(上書きする)ということです。
-
-// vi gradle.properties
-  
-// yourname=literalice
-
-task hello2 << {
-    println "Hello, $yourname"
-}
-
-task stopTomcat(type: Exec) {
-  workingDir '/usr/local/tomcat-admin/bin'
-
-  //on windows:
-  // commandLine 'cmd', '/c', 'catalina.bat'
-
-  //on linux
-  commandLine './catalina.sh' , 'stop'
-
-  //store the output instead of printing to the console:
-  standardOutput = new ByteArrayOutputStream()
-
-  //extension method stopTomcat.output() can be used to obtain the output:
-  ext.output = {
-    return standardOutput.toString()
-  }
-}
-
-// GradleでExcelを読み込んでなにかを作る
-// ---------------------------------------
-
-// http://hideoku.hatenablog.jp/entry/2015/11/13/001509
-
-// [とあるフォルダ]
-// ├build.gradle
-// ├message_master.xls
-// └（MessageId.java）
-
-// gradle generateMessageIdJava
-
-task generateMessageIdJava << {
-
-    Workbook workbook = WorkbookFactory.create(
-                                  new File("message_master.xls"))
-    Sheet sheet = workbook.getSheetAt(0)
-
-    new File("MessageId.java").withWriter("UTF-8") { writer ->
-
-        writer << "package sample.constants;\n\n"
-        writer << "public class MessageId {\n\n"
-
-        (3 .. sheet.getLastRowNum()).each { rownum ->
-            Row row = sheet.getRow(rownum)
-
-            String messageId = row.getCell(0).getStringCellValue()
-
-            // メッセージIDが記載されていない行は書き出さない
-            if (messageId?.length() == 0) return
-
-            String message = row.getCell(1).getStringCellValue()
-
-            writer << "    /** $message */\n"
-            writer << "    public static final String $messageId"
-            writer <<                             " = \"$messageId\";\n"
-            writer << "\n"
-        }
-
-        writer << "}"
-    }
-}
-
-// タスクの実行順序
-// -------------------
-// Gradleではタスク間の依存関係の指定ができます
-// http://nobeans.hatenablog.com/entry/2013/06/20/103255
-// gradle d
-
-task a << {
-    println "A"
-}
-task b(dependsOn: "a") << {
-    println "B"
-}
-task c(dependsOn:"a") << {
-    println "C"
-}
-task d(dependsOn: ["b", "c"]) << {
-    println "D"
-}
-
-PowerShell連携
-
-https://discuss.gradle.org/t/startup-script-using-powershell/9529
