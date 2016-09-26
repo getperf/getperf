@@ -1,0 +1,27 @@
+// https://github.com/onBass-naga/ci-server-provisioning.git
+
+apply plugin: "groovy"
+apply plugin: "application"
+
+mainClassName = 'com.example.CIServerProvisioning'
+//mainClassName = 'com.example.StagingServerProvisioning'
+
+applicationDefaultJvmArgs = [
+    "-Dlogback.configurationFile=./config/logback.xml",
+    "-Dtest.config=./config/config.groovy"
+]
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+version = '1.0'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.hidetake:groovy-ssh:latest.release'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'org.codehaus.groovy:groovy-all:2.3.+'
+    compile 'org.postgresql:postgresql:9.3-1100-jdbc4'
+}
