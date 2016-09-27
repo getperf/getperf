@@ -253,7 +253,7 @@ Zabbix Windows テンプレートのカスタマイズ
 Zabbix 標準の 'Template OS Windows' テンプレートには syslog 監視が有りません。
 テンプレートに以下を設定をして syslog 監視を追加します。
 
-**Syslog アイテム、トリガーの登録**
+**Windowsイベントログ アイテム、トリガーの登録**
 
 1. テンプレートメニューを選択して、リストから 'Template OS Windows' を選択します
 2. Itemsを選択します

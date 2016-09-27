@@ -1,18 +1,19 @@
-// https://github.com/onBass-naga/ci-server-provisioning.git
-
-apply plugin: "groovy"
+apply plugin: 'groovy'
 apply plugin: "application"
 
-mainClassName = 'com.example.CIServerProvisioning'
-//mainClassName = 'com.example.StagingServerProvisioning'
+mainClassName = 'jp.co.toshiba.infra.acceptance.TestRunner'
 
 applicationDefaultJvmArgs = [
+    "-Dfile.encoding=UTF-8",
     "-Dlogback.configurationFile=./config/logback.xml",
-    "-Dtest.config=./config/config.groovy"
+    "-Dtest.config=./config/test_scenario.jp.groovy",
+    // 検査項目を絞り込みたい場合は、-Ddomain=...、-Dserver=... で検査対象を絞り込む
+    // "-Ddomain=Linux",
+    "-Dserver=clkanshi002",
 ]
 
-sourceCompatibility = '1.7'
-targetCompatibility = '1.7'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 version = '1.0'
 
 repositories {
@@ -20,8 +21,16 @@ repositories {
 }
 
 dependencies {
+    ext.poiVersion = '3.14'
+
     compile 'org.hidetake:groovy-ssh:latest.release'
     compile 'ch.qos.logback:logback-classic:1.1.2'
-    compile 'org.codehaus.groovy:groovy-all:2.3.+'
+    compile 'org.codehaus.groovy:groovy-all:2.4.+'
     compile 'org.postgresql:postgresql:9.3-1100-jdbc4'
+    compile "org.apache.poi:poi:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml:${poiVersion}"
+    compile 'org.apache.poi:ooxml-schemas:1.1'
+
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile 'junit:junit:4.12'
 }
