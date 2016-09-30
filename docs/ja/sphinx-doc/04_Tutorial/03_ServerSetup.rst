@@ -4,6 +4,7 @@
 エージェントを起動すると監視サーバのサイトディレクトリ下でデータを受信し集計処理を行います。そのフローは以下となります(図内の/analysis,/lib/Getperf などはサイトディレクトリ下のディレクトリとなります)。
 
 .. figure:: ../image/site_data_flow.png
+   :width: 640px
    :align: center
    :alt: サイトデータフロー
 

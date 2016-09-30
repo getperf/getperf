@@ -6,6 +6,7 @@ Zabbix の監視登録手順、データ連携手順を説明します。その�
 .. figure:: ../../image/zabbix_flow.png
    :align: center
    :alt: Zabbix Flow
+   :width: 640px
 
 1. zabbix-cli コマンドによる監視登録
 

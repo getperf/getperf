@@ -4,6 +4,7 @@
 エージェントからの採取コマンドデータを受信すると、監視サーバは予め定義した集計定義でデータ集計を行います。そのフローは以下の通りです。
 
 .. figure:: ../../image/data_collection.png
+   :width: 800px
    :align: center
    :alt: データ集計の流れ
 
