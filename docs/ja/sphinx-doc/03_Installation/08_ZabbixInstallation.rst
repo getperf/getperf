@@ -90,7 +90,7 @@ Zabbix の動作確認
 -  管理コンソールログイン画面から、ユーザ admin、パスワードは ZABBIX_ADMIN_PASSWORD　を入力してログインします
 
 これで Zabbix のインストール作業は完了です。この後の Zabbix の監視設定は、管理コマンド zabbix-cli
-を用いて行います。詳細は、 :doc:`../08_ZabbixRegistration/index` を参照してください。
+を用いて行います。zabbix-cli については後述します。
 
 この後の作業について
 --------------------
