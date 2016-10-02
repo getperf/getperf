@@ -23,7 +23,7 @@ getperf\_zabbix.json 設定ファイルの編集
 .. figure:: ../image/zabbix_url_source.png
    :align: center
    :alt: Zabbix Source URL
-
+   :width: 640px
 
 -  ZABBIX_AGENT_VERSION
 

@@ -6,6 +6,7 @@
 
 .. figure:: ../../image/cacti_flow.png
    :align: center
+   :width: 640px
    :alt: Cacti Flow
 
 1. Cacti テンプレートの作成
@@ -74,6 +75,7 @@ Cactiで管理しているグラフテンプレートのモデルは以下とな
 
 .. figure:: ../../image/cacti_template.png
    :align: center
+   :width: 640px
    :alt: Cacti Template
 
    Cacti Template

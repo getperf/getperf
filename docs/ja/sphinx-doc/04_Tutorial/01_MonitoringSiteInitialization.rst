@@ -6,6 +6,7 @@
 .. figure:: ../image/tutorial_flow.png
    :align: center
    :alt: PDCA
+   :width: 640px
 
 1. サイト初期化
 

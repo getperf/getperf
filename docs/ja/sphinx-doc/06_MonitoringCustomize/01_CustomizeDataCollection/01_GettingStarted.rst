@@ -4,7 +4,7 @@
 エージェントからの採取コマンドデータを受信すると、監視サーバは予め定義した集計定義でデータ集計を行います。そのフローは以下の通りです。
 
 .. figure:: ../../image/data_collection.png
-   :width: 800px
+   :width: 640px
    :align: center
    :alt: データ集計の流れ
 
@@ -24,6 +24,7 @@
 採取コマンド、集計定義の設定には以下の集計モデルの理解が必要となります。集計モデルとは、監視対象、監視項目の定義モデルで、本モデルをベースにデータ集計を行います。
 
 .. figure:: ../../image/data_collection_model.png
+   :width: 640px
    :align: center
    :alt: データ集計モデル
 

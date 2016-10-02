@@ -15,27 +15,12 @@
 Getperf モジュールのダウンロードと解凍
 --------------------------------------
 
-git コマンドを使ってモジュールをコピーします。
+git コマンドを使ってモジュールをダウンロードします。
 
 ::
 
     cd $HOME
     git clone https://github.com/getperf/getperf.git
-
-もしくは、以下、GitHub サイトから、zip ファイルをダウンロードします。
-
-::
-
-    https://github.com/getperf/getperf
-
-ホームディレクトリの下に解凍し、ディレクトリ名をgetperf-masterからgetperfに変更します。
-
-::
-
-    (Download 'getperf-master.zip' from the provisional site)
-    cd $HOME
-    unzip getperf-master.zip
-    mv getperf-master getperf
 
 Perlライブラリのインストール
 ----------------------------

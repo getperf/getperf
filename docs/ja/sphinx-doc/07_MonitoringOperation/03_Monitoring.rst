@@ -43,7 +43,7 @@ MHAの監視は稼働系ノードのMySQLなど一部に限られるため、外
 **Zabbix Linux 標準テンプレート監視**
 
 Zabbix エージェントを使用して各ノードで以下の監視をします。
-Zabbix エージェントのセットアップについては、 :doc:`../04_Tutorial/02_LinuxResourceMonitoring` を参照してください。
+Zabbix エージェントのセットアップについては、 :doc:`../04_Tutorial/02_AgentSetup` を参照してください。
 注意点として、Zabbix 設定で稼働系ノードの IP は VIP を使用してください。
 
 ::

@@ -5,17 +5,33 @@ JavaVM監視設定
 * Java 1.5 以上をサポートします。
 * [jstat API](https://docs.oracle.com/javase/jp/6/technotes/tools/share/jstat.html) を使用して情報採取をします。
 
+監視仕様は以下の通りです。
+
+   +------------------------+------------------------------------------+
+   | Key                    | Description                              |
+   +========================+==========================================+
+   | **パフォーマンス統計** | **Cacti JavaVMグラフ**                   |
+   +------------------------+------------------------------------------+
+   | jstat                  | Javaヒープ使用量 / GC 回数 / GC ビジー率 |
+   +------------------------+------------------------------------------+
+
+JavaVM監視は標準テンプレートではないため、テンプレートのインストールが必要です。
+次のセクションでテンプレートのインストールをしてください。
+すでにインストール済みの場合はスキップしてエージェント設定に進んでください。
+
 Jvmstatテンプレートのインストール
 ---------------------------------
 
 Jvmstat テンプレートのビルド
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Git Hub からプロジェクトをクローンします。
+以降の作業は監視サーバ側で行います。
+ある作業ディレクトリに移動して Git Hub からプロジェクトをクローンします。
 
 ::
 
-   (git clone してプロジェクト複製)
+   cd ~/work
+   git clone https://github.com/getperf/t_Jvmstat.git
 
 プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします。
 
@@ -40,6 +56,7 @@ Cacti グラフテンプレートをファイルにエクスポートします�
 
 ::
 
+   mkdir -p $GETPERF_HOME/var/template/archive
    sumup --export=Jvmstat --archive=$GETPERF_HOME/var/template/archive/config-Jvmstat.tar.gz
 
 Jvmstat テンプレートのインポート
@@ -69,7 +86,20 @@ jstatmコンパイル
 ~~~~~~~~~~~~~~~~
 
 jvmstat API を用いた、Java アプリを使用します。Java 実行環境に応じて、Javaアプリをコンパイルしてください。
-コンパイルの詳細は、jstatm ソースディレクトリ下の [README](lib/agent/Jvmstat/src/jstat/README.md) を参照してください。
+
+::
+
+    cd lib/agent/Jvmstat/src/jstat
+    ant
+
+BUILD SUCCESSFUL と出力されればOKです。
+作成したjarファイル、スクリプトを、エージェントの script の下にコピーします。
+
+::
+
+   cp -r dest/* ../../script/
+
+コンパイルの詳細は、jstatm ソースディレクトリ下の README.md を参照してください。
 
 エージェント設定
 ----------------
@@ -93,12 +123,34 @@ script/jstatm.sh　スクリプト内の以下の行を編集します。
    grep JAVA_HOME= ~/ptune/script/jstatm.sh
    JAVA_HOME=/usr/lib/jvm/java; export JAVA_HOME
 
+jstatm.sh の起動確認をします。
+
+::
+
+   cd ~/ptune/script
+   jstatm.sh -h
+
+"usage: ..."と出力されればOKです。
+
+.. note::
+
+   jstatm.sh は tools.jar を参照します。$JAVA_HOME/lib に tools.jar があることを確認してください。
+   ls /usr/lib/jvm/*/lib/tools.jar
+
 設定を反映するためエージェントを再起動します。
 
 ::
 
    ~/ptune/bin/getperfctl stop
    ~/ptune/bin/getperfctl start
+
+起動後、~/ptune/log/Jvmstat/下に採取データが保存されいるか、~/ptune/_log/getperf.log にエラーがないかを確認します。
+問題なければ採取が完了するまでしばらく待ちます。
+実行周期は5分間となるため、5分間後に監視サーバ側のカスタマイズ作業を行います。
+
+.. note::
+
+   監視対象のJavaインスタンスと実行ユーザとJavaバージョンは同じにする必要があります。
 
 Windows セットアップ
 ~~~~~~~~~~~~~~~~~~~~
@@ -118,12 +170,49 @@ script/jstatm.bat　スクリプト内の以下の行を編集します。
    c:\ptune\bin\getperfctl stop
    c:\ptune\bin\getperfctl start
 
+起動後、c:/ptune/log/Jvmstat/下に採取データが保存されいるか、c:/ptune/_log/getperf.log にエラーがないかを確認します。
+問題なければ採取が完了するまでしばらく待ちます。Linux と同様に実行周期は5分間となります。
+
+.. note::
+
+   監視対象のJavaインスタンスはサービス起動とし、システムユーザの実行ユーザにする必要があります。また、Javaバージョンは同じにする必要があります。
+
 データ集計のカスタマイズ
 ------------------------
+
+以降の作業は監視サーバ側で行います。
+監視サーバに psadmin ユーザでssh接続し、サイトホームディレクトリに移動します。
+
+::
+
+   cd {サイトホーム}
+
 
 上記エージェントセットアップ後、データ集計が実行されると、サイトホームディレクトリの lib/Getperf/Command/Master/ の下に Jvmstat.pm ファイルが生成されます。
 本ファイルは監視対象のJava VM インスタンスのマスター定義ファイルで、Java VMインスタンス の用途を記述します。
 同ディレクトリ下の Jvmstat.pm_sample を例にカスタマイズしてください。
+カスタマイズ内容の動作確認は、sumup -l コマンドで手動で直近のデータを集計をして、生成されたノード定義ファイルを確認します。
+
+::
+
+   sumup -l analysis/{監視対象サーバ}/Jvmstat/
+
+実行後、node/Jvmstat/{監視対象サーバ}/device/jstat.json にノード定義ファイルが生成されます。
+以下は監視サーバのTomcatサーブレットエンジンのJavaインスタンスのノード定義となります。
+
+.. code-block:: json
+
+   {
+      "device_texts" : [
+         "Apache Tomcat - /usr/local/tomcat-data",
+         "Apache Tomcat - /usr/local/tomcat-admin"
+      ],
+      "devices" : [
+         "tomcat.UsrLocalTomcatData",
+         "tomcat.UsrLocalTomcatAdmin"
+      ],
+      "rrd" : "Jvmstat/ostrich/device/jstat__*.rrd"
+   }
 
 グラフ登録
 ----------
@@ -133,4 +222,4 @@ script/jstatm.bat　スクリプト内の以下の行を編集します。
 
 ::
 
-   cacti-cli node/Jvmstat/{Java VM インスタンス}/
+   cacti-cli node/Jvmstat/{監視対象サーバ}/

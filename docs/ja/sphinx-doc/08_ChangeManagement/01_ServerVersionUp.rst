@@ -24,7 +24,7 @@ $HOME/getperf/conf の下の構成ファイルを一旦バックアップしま�
    tar cvf - conf | gzip > ~/work/conf_backup.tar.gz
 
 GitHubサイトから getperf-master.zip ファイルをダウンロードします。
-Getperf モジュールホームの $HOME/getperf に zip を展開して上書更新する。
+Getperf モジュールホームの $HOME/getperf に zip を展開して上書更新します。
 
 ::
 
@@ -32,7 +32,16 @@ Getperf モジュールホームの $HOME/getperf に zip を展開して上書�
    cd ~
    unzip getperf-master.zip
    cd getperf-master
-   cp -r \* ../getperf
+   cp -r * ../getperf
+
+.. note::
+
+   git clone コマンドでクローンを作成している場合は、git pullで最新モジュールをチェックアウトしてください。
+
+   ::
+
+      cd ~/getperf
+      git pull
 
 config/getperf.json の更新
 --------------------------

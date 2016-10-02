@@ -14,7 +14,7 @@ Getperf は v2.5 は仕様変更により、旧バージョンである(～v2.4)
 .. figure:: ../image/site_sync.png
    :align: center
    :alt: 旧バージョンサイトとの同期方法
-   :width: 780px
+   :width: 640px
 
 導入の際は事前に以下の設定が必要です。
 
