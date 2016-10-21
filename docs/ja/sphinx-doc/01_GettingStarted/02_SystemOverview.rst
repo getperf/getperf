@@ -55,7 +55,7 @@ InfluxDB　を追加した場合は、RRDtool のデータ蓄積に加え、Infl
 -----------------
 
 -  問題分析に `Cacti <http://www.cacti.net/>`_ を使用します。
--  オプションでより高度な問題分析に、Python、`InfluxDB <https://www.influxdata.com/>`_ を使用します。
+-  オプションでより高度な問題分析に、Python、`InfluxDB <https://influxdata.com/>`_ を使用します。
 -  インシデント管理に統合監視ソフト `Zabbix <http://www.zabbix.com/>`_ を使用します。
 -  各ソフトの監視設定コマンドを用いてこれらソフトの設定を自動化します。
 

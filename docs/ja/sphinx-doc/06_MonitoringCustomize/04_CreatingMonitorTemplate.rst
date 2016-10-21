@@ -1,17 +1,78 @@
 監視テンプレートの作成
 ======================
 
+前述の手順で説明した、データ集計のカスタマイズ、Cactiグラフ登録、Zabbix監視登録の一連の
+設定ファイルはテンプレートとしてまとめることが可能です。
+テンプレート化することにより、他サイトへの展開の際に個々の定義ファイルをまとめて登録することができます。
+
 テンプレートの構成
 ------------------
 
+テンプレートはサイトホームのlibの下に配置します。その構成は以下の通りです。
+各ディレクトリパス内のドメインがテンプレートのキー情報となり、ドメインをキーにして定義ファイル一式のエクスポート、インポートをします。
 
-エージェント設定追加
++--------------------------------------+-------------+--------------------------+
+| ディレクトリ                         | ファイル    | 用途                     |
++======================================+=============+==========================+
+| lib/agent/{ドメイン}/conf/           | iniファイル | エージェント設定ファイル |
++--------------------------------------+-------------+--------------------------+
+| lib/agent/{ドメイン}/script/         | スクリプト  | データ採取スクリプト     |
++--------------------------------------+-------------+--------------------------+
+| lib/Getperf/Command/Site/{ドメイン}/ | Perl        | データ集計定義           |
++--------------------------------------+-------------+--------------------------+
+| lib/graph/{ドメイン}/                | JSON        | Cactiグラフ定義          |
++--------------------------------------+-------------+--------------------------+
+| lib/zabbix/{ドメイン}/               | JSON        | Zabbix監視定義           |
++--------------------------------------+-------------+--------------------------+
+
+テンプレートの作成手順
+----------------------
+
+テンプレートの作成手順は以下となり、1～4までの手順は前述した各種カスタマイズ手順と同じです。
+
+1. エージェント採取設定
+
+	監視対象サーバで採取コマンドやスケジュールの設定を行います。
+	設定したファイルは共有できる様、上述の監視サイトのlib/agent/{ドメイン} の下にコピーします。
+
+2. データ集計のカスタマイズ
+
+	採取したデータの集計スクリプトを作成します。
+
+3. グラフ登録
+
+	集計したデータのグラフ定義を作成します。
+
+4. Zabbix監視登録(オプション)
+
+	集計したデータのZabbix監視定義を作成します。本設定はオプションです。
+
+5. テンプレートのエクスポート
+
+	上記設定を行い、一連の動作確認ができたら、テンプレートとして各定義ファイルをエクスポートします。
+	他サイトへ展開する場合は、作成したテンプレートをインポートします。
+
+エージェント採取設定
 --------------------
+
+ここでは、簡単な例として、:doc:`01_CustomizeDataCollection/03_AggregateDefinition` で説明した、
+"HTTP レスポンスのデータ集計"を例にテンプレート作成手順を記します。
+
+.. note::
+
+   ここでは、監視対象を 192.168.10.1 のIPアドレスとして設定しています。
+   実際の環境に合わせて適宜修正してください。
 
 ::
 
 	curl -o /dev/null "http://192.168.10.1:57000/" -w "%{time_total}\n" 2> /dev/null
 	0.002
+
+監視対象サーバのスケジュールにHTTP.ini というファイルを新規作成して、上記コマンドの定期実行をします。
+
+::
+
+	vi ~/ptune/conf/HTTP.ini
 
 ::
 
@@ -21,96 +82,70 @@
     STAT_TIMEOUT.HTTP = 300
     STAT_MODE.HTTP = concurrent
 
-    STAT_CMD.HTTP = 'curl -o /dev/null "http://{外部サーバアドレス}/" -w "%{time_total}\n"', {外部サーバアドレス}/http_response.txt
+    STAT_CMD.HTTP = 'curl -o /dev/null "http://192.168.10.1/" -w "%{time_total}\n"', 192.168.10.1/http_response.txt
 
+設定を反映するため、エージェントを再起動します。
+
+::
+
+	~/ptune/bin/getperfctl stop
+	~/ptune/bin/getperfctl start
+
+データ採取の確認が完了したら、監視サイトのlib/agent/HTTP/conf の下に、上記 HTTP.ini ファイルをコピーします。
 
 データ集計のカスタマイズ
 ------------------------
 
-::
-
-	sumup --init analysis/ostrich/HTTP/20161001/174000/192.168.10.1/http_response__getperf_ws.txt
-
-::
-
-	package Getperf::Command::Site::HTTP::HttpResponse;
-	use strict;
-	use warnings;
-	use Data::Dumper;
-	use Time::Piece;
-	use base qw(Getperf::Container);
-
-	sub new {bless{},+shift}
-
-	sub parse {
-	    my ($self, $data_info) = @_;
-
-	    my %results;
-	    my $step = 300;
-	    my @headers = qw/response/;
-
-	    $data_info->step($step);
-	    $data_info->is_remote(1);           # 1. リモート採取設定
-	    my $host = $data_info->postfix;     # 2. 受信データファイルパスからホスト名抽出
-	    my $app  = $data_info->file_suffix; # 3. 受信データファイル名からアプリ名抽出
-	    my $sec  = $data_info->start_time_sec->epoch;
-
-	    open( IN, $data_info->input_file ) || die "@!";
-	    while (my $line = <IN>) {
-	        $line=~s/(\r|\n)*//g;           # trim return code
-	        $results{$sec} = $line;
-	    }
-	    close(IN);
-	    $data_info->regist_device($host, 'HTTP', 'http_response', $app, undef, \@headers);
-	    # 3. 集計データファイルパス設定
-	    my $output = "/HTTP/${host}/device/http_response__${app}.txt";
-	    $data_info->simple_report($output, \%results, \@headers);
-	    return 1;
-	}
-
-	1;
+監視サーバで採取データの集計スクリプトを作成します。
+スクリプトは :doc:`01_CustomizeDataCollection/03_AggregateDefinition` のHTTPレスポンス集計で記述したスクリプトとなります。
+以下のコマンドでデータ集計の動作確認をします。
 
 ::
 
-	sumup -l analysis/ostrich/HTTP/
-	more node/HTTP/192.168.10.1/device/http_response.json
+	sumup -l analysis/{監視対象サーバ}/HTTP/
 
+作成されたノード定義を確認します。
+
+::
+
+	more node/HTTP/192.168.10.1/http_response.json
 
 グラフ登録
 ----------
+
+グラフ定義ディレクトリを作成して、グラフ定義ファイルを作成します。
 
 ::
 
 	mkdir lib/graph/HTTP
 	vi lib/graph/HTTP/http_response.json
 
-.. code-block:: json
-
-    source
+.. code-block:: javascript
 
 	{
 	  "host_template": "HTTP",
 	  "host_title": "HTTP - <node>",
-	  "priority": 1,
 	  "graphs": [
 	    {
-	      "graph_template": "HTTP - Response - <devn> cols",
+	      "graph_template": "HTTP - Response",
 	      "graph_tree": "/HTTP/<node_path>/latency/",
 	      "graph_title": "HTTP - <node> - Response",
-	      "graph_type": "multi",
-	      "legend_max": 15,
 	      "graph_items": ["sec"],
-	      "vertical_label": "Disk busy %",
+	      "vertical_label": "sec",
 	      "upper_limit": 100,
 	      "unit_exponent_value": 1,
-	      "datasource_title": "HTTP - <node> - Response - <device>"
+	      "datasource_title": "HTTP - <node> - Response"
 	    }
 	  ]
 	}
 
+グラフテンプレートを作成します。
+
 ::
 
 	cacti-cli -g lib/graph/HTTP/http_response.json
+
+グラフ登録をして、集計データのグラフが作成されているか確認します。
 
 ::
 
@@ -119,10 +154,34 @@
 テンプレートのエクスポート
 --------------------------
 
+Zabbix監視登録も前述と同様の手順で行いますが、今回は省略します。
+上記で作成した一連の定義ファイルをテンプレートとしてエクスポートします。
+初めに、Cactiのテンプレートをエクスポートします。
+
 ::
 
 	cacti-cli --export HTTP
 
+次に集計ファイル一式をエクスポートします。
+config-HTTP.tar.gz がテンプレートのアーカイブとなります。
+
 ::
 
 	sumup --export=HTTP --archive=$GETPERF_HOME/var/template/archive/config-HTTP.tar.gz
+
+テンプレートのインポート
+------------------------
+
+他サイトにテンプレートをインポートする場合の手順を記します。
+初めにテンプレートアーカイブファイルを解凍します。
+
+::
+
+	cd {サイトディレクトリ}
+	tar xvf $GETPERF_HOME/var/template/archive/config-HTTP.tar.gz
+
+次にCactiテンプレートをインポートします。
+
+::
+
+	cacti-cli --import HTTP

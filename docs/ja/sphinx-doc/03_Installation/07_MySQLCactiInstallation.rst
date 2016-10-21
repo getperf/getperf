@@ -22,4 +22,4 @@ Cacti モジュールアーカイブをダウンロードします。
     rex prepare_cacti
 
 Cacti
-実体のインストールは後述の監視サイト初期化作業で行います。詳細は、 `サイト初期化コマンド <../05_AdminCommand/01_SiteInitialization.html>`_ を参照してください。
+実体のインストールは後述の監視サイト初期化作業で行います。詳細は、 サイト初期化コマンド :doc:`../09_AdminCommand/01_SiteInitialization` を参照してください。

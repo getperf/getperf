@@ -10,21 +10,21 @@ sumup コマンドでエージェントからの受信データを集計しま�
 
 ::
 
-    sumup analysis/{監視対象}/{ドメイン}/{日付}/{時刻}/{メトリック}.txt
+   sumup analysis/{監視対象}/{ドメイン}/{日付}/{時刻}/{メトリック}.txt
 
 自動モードはサイト集計デーモンを起動し、登録した集計定義を基に自動でデータ集計を行います。
 
 ::
 
-    sumup [start|stop|restart|status]
+   sumup [start|stop|restart|status]
 
 .. note::
 
-    新たなメトリックを登録した際は、--init オプションを追加して、集計スクリプトのひな形を作成します。
+   新たなメトリックを登録した際は、--init オプションを追加して、集計スクリプトのひな形を作成します。
 
-    ::
+   ::
 
-        sumup --init analysis/{新メトリックの保存パス}
+      sumup --init analysis/{新メトリックの保存パス}
 
 手動モードの使用方法
 ----------------------
@@ -33,7 +33,7 @@ sumup コマンドでエージェントからの受信データを集計しま�
 
 ::
 
-    cd ~/work/site1
+   cd ~/work/site1
 
 引数に、/analysis 下のファイルパスの指定して sumup コマンドを実行します。パスはディレクトリ、ワイルドカードでの指定が可能で例を以下に記します。
 
@@ -41,7 +41,7 @@ sumup コマンドでエージェントからの受信データを集計しま�
 
 ::
 
-    sumup analysis/{監視対象}/Linux/{日付}/{時刻}/loadavg.txt
+   sumup analysis/{監視対象}/Linux/{日付}/{時刻}/loadavg.txt
 
 ディレクトリ指定の場合はそのディレクトリの下の全てのファイルを集計します。
 
@@ -49,7 +49,15 @@ sumup コマンドでエージェントからの受信データを集計しま�
 
 ::
 
-    sumup analysis/{監視対象}/Linux/{日付}/{時刻}/
+   sumup analysis/{監視対象}/Linux/{日付}/{時刻}/
+
+直近のデータを指定する場合は -l オプションを追加します。
+
+例 : Linux の直近の採取データの全ファイルを集計
+
+::
+
+   sumup -l analysis/{監視対象}/Linux/
 
 ワイルドカードでの指定も可能です。
 
@@ -57,7 +65,7 @@ sumup コマンドでエージェントからの受信データを集計しま�
 
 ::
 
-    sumup analysis/*/Linux/*/*/loadavg.txt
+   sumup analysis/*/Linux/*/*/loadavg.txt
 
 オプション
 ----------
@@ -71,17 +79,17 @@ sumup コマンドでエージェントからの受信データを集計しま�
 
 ::
 
-    sumup --init analysis/{監視対象}/Linux/{日付}/{時刻}/uptime.txt
+   sumup --init analysis/{監視対象}/Linux/{日付}/{時刻}/uptime.txt
 
 上記は、以下のスクリプトのひな形を作成します。
 
 * lib/Getperf/Command/Master/Linux.pm
 
-  Linux 定義のマスターファイル。サイト固有のデータを記述します。
+   Linux 定義のマスターファイル。サイト固有のデータを記述します。
 
 * lib/Getperf/Command/Site/Linux/Uptime.pm
 
-  uptime 実行結果の集計スクリプト。本スクリプトを編集してデータ集計の定義をします。スクリプト編集の詳細は、 `データ集計カスタマイズ <../06_CustomizeDataCollection/01_GettingStarted.html>`_ を参照してください。
+   uptime 実行結果の集計スクリプト。本スクリプトを編集してデータ集計の定義をします。スクリプト編集の詳細は、 `データ集計カスタマイズ <../06_CustomizeDataCollection/01_GettingStarted.html>`_ を参照してください。
 
 --export={domain} --tar={file.tar.gz}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,7 +101,7 @@ tar.gz 形式で圧縮します。
 
 ::
 
-    sumup --export=Linux --tar=/tmp/domain-export-linux.tar.gz
+   sumup --export=Linux --tar=/tmp/domain-export-linux.tar.gz
 
 エクスポートする対象ファイル、ディレクトリは以下の通りです。
 
@@ -109,11 +117,11 @@ tar.gz 形式で圧縮します。
 
   * ドメインのリンクについて
 
-    関連するドメインを合わせてエクスポートする場合、 package_links.json ファイルにリンクするドメインを登録することで、リンク先ドメインもまとめてエクスポートします。集計定義、グラフ定義、エージェント定義の各ディレクトリで以下の形式で、package_links.json を作成します。
+   関連するドメインを合わせてエクスポートする場合、 package_links.json ファイルにリンクするドメインを登録することで、リンク先ドメインもまとめてエクスポートします。集計定義、グラフ定義、エージェント定義の各ディレクトリで以下の形式で、package_links.json を作成します。
 
-    例 : lib/Getperf/Command/Site/{ドメイン}/package_links.json
+   例 : lib/Getperf/Command/Site/{ドメイン}/package_links.json
 
-    ::
+   ::
 
       [
           "リンク先ドメイン名"
@@ -128,7 +136,7 @@ tar.gz 形式で圧縮します。
 
 ::
 
-    sumup --import=Linux --tar=/tmp/domain-export-linux.tar.gz
+   sumup --import=Linux --tar=/tmp/domain-export-linux.tar.gz
 
 ドメインが登録済みの場合は処理をキャンセルします。強制的にインポートしたい場合は、--force オプションを追加してください。
 
@@ -155,7 +163,7 @@ OS起動時のサイト集計デーモンの自動起動を無効化します。
 
 .. note::
 
-    * 注意事項:RRDデータの更新エラーについて
+   * 注意事項:RRDデータの更新エラーについて
 
       RRDtool は仕様上、過去のデータの再登録が出来ない制約があり、--recover オプションを使用しても二重登録エラーとなり更新は無効となります。
 
@@ -178,5 +186,5 @@ sumup [start\|stop\|restart\|status]
 
 ::
 
-    sumup status
-    Getperf Sumup daemon                      [Running]
+   sumup status
+   Getperf Sumup daemon                      [Running]

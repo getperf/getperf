@@ -8,6 +8,12 @@ Webサービスインストール
 
     sudo -E rex install_package
 
+.. note::
+
+   "The requested URL returned error: 404 Not Found" エラーが発生する場合、
+   yum リポジトリの競合が発生している可能性が有ります。その場合、
+   sudo yum clean all を実行してから再度実行してみてください。
+
 データ集計サービスの起動停止スクリプト /etc/init.d/sumupctl を登録します。
 
 ::
