@@ -570,22 +570,23 @@ sub update_client_certificate {
 		$licese_check_counts{'target'} ++;
 		($sitekey, $agent) = ($1, $2);
 		LOG->info("check : $sitekey, $agent");
+		my $license_expired = '';
 		eval {
 			map {
 				chomp;
 				if ($_=~/^EXPIRE=(\d{8})$/) {
-					my ($license_expired) = ($1);
-					if ( $license_expired lt $expired_check ) {
-						LOG->info("update : $sitekey, $agent");
-						$licese_check_counts{'update'} ++;
-						$self->create_client_certificate( $sitekey, $agent ) || return;
-					}
+					$license_expired = $1;
 				}		
 			} $license_file->slurp;
 		};
 		if ($@) {
 			LOG->crit("License file parse error '$license_file' : $!");
 			return;
+		}
+		if ( $license_expired && $license_expired lt $expired_check ) {
+			LOG->info("update : $sitekey, $agent");
+			$licese_check_counts{'update'} ++;
+			$self->create_client_certificate( $sitekey, $agent ) || return;
 		}
 	}
 	my $result = sprintf("%d/%d", $licese_check_counts{'update'}, $licese_check_counts{'target'});
