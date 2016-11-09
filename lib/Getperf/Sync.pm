@@ -25,7 +25,7 @@ sub new {
 	my $MONITOR_CYCLE = 30;
 	my $MONITOR_TIMES = 9;
 	my $sites = config('sites');
-	my $base = config('base');
+	my $base  = config('base');
 
 	if  (!$sitekey) {
 		if (my $site_home_dir = dir($ENV{'SITEHOME'})) {
@@ -50,6 +50,7 @@ sub new {
 		cycle         => $MONITOR_CYCLE,
 		times         => $MONITOR_TIMES,
 		purge         => 0,
+		grep          => undef,
 		zips          => undef,
 		staging_files => undef,
 	}, $class;
@@ -58,13 +59,14 @@ sub new {
 sub parse_command_option {
 	my ($self, $args) = @_;
 
-	my $usage = "Usage : sitesync: [--interval=i] [--times=i] [--purge] [--disable-delete] rsync://xxx.xxx ...\n";
+	my $usage = "Usage : sitesync: [--interval=i] [--times=i] [--purge] [--disable-delete] [--grep=s] rsync://xxx.xxx ...\n";
 
 	my ($status_on, $status_off, $show_status, $lastzip, $ziplist);
 	push @ARGV, grep length, split /\s+/, $args if ($args);
 	GetOptions (
 		'--interval=i'     => \$self->{cycle},
 		'--times=i'        => \$self->{times},
+		'--grep=s'         => \$self->{grep},
 		'--purge'          => \$self->{purge},
 		'--disable-delete' => \$self->{disable_delete},
 	) || die $usage;
@@ -85,9 +87,17 @@ sub rsync {
 	my @rsync_urls = @{$self->{rsync_urls}};
 	my $delete_opt = ($self->{disable_delete}) ? '' : '--delete';
 
+	my $grep_opt = '';
+	if( $self->{grep}) {
+		my @keywords = split(/\s*,\s*/, $self->{grep});
+		for my $keyword(@keywords) {
+			$grep_opt .= " --include '*${keyword}*'"
+		}
+		$grep_opt .= " --exclude '*'"
+	}
 	for my $rsync_url(@rsync_urls) {
 		my $dest = $self->{rsync_zip_dir};
-		my $command = "rsync -av $delete_opt $rsync_url $dest";
+		my $command = "rsync -av $delete_opt $grep_opt $rsync_url $dest";
 		LOG->notice($command);
 		if (!File::Path::Tiny::mk($dest)) {
     	    LOG->crit("Could not make path '$dest': $!");
