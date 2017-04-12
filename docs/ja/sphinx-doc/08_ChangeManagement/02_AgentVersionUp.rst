@@ -18,7 +18,7 @@
 ::
 
    cd $GETPERF_HOME
-   find var/agent/update/CentOS6-x86_64/ -type f
+   find var/docs/agent/update/CentOS6-x86_64/ -type f
    var/agent/update/CentOS6-x86_64/2/5/getperf-bin-CentOS6-x86_64-5.zip
    var/agent/update/CentOS6-x86_64/2/4/getperf-bin-CentOS6-x86_64-4.zip
 

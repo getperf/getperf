@@ -96,7 +96,10 @@ sub rsync {
 		$grep_opt .= " --exclude '*'"
 	}
 	for my $rsync_url(@rsync_urls) {
-		my $dest = $self->{rsync_zip_dir};
+		my $rsync_base = $rsync_url;
+		$rsync_base=~s/\/$//g;		# trim tail '/'
+		$rsync_base=~s/^.+\///g;	# trim rsync://{ip}/
+		my $dest = $self->{rsync_zip_dir} . '/' . $rsync_base;
 		my $command = "rsync -av $delete_opt $grep_opt $rsync_url $dest";
 		LOG->notice($command);
 		if (!File::Path::Tiny::mk($dest)) {
@@ -111,7 +114,7 @@ sub rsync {
 				LOG->crit($result);
 			}
 			if ($result=~/^arc_.*\.zip$/) {
-				push (@{$self->{zips}}, $result) ;
+				push (@{$self->{zips}}, $rsync_base . '/' . $result) ;
 			}
 		}
 	}
