@@ -54,6 +54,12 @@ sub new {
 	my $zabbix_conf = config('zabbix');
 	config('base')->add_screen_log;
 
+	my $zabbix_config_file = file($ENV{'SITEHOME'}, ".zabbix");
+	if ($zabbix_config_file->stat) {
+		my $config_json_text = $zabbix_config_file->slurp || die $@;
+    	$zabbix_conf = decode_json($config_json_text);
+	}
+
 	my $server = $zabbix_conf->{ZABBIX_SERVER_IP} || 'localhost';
 
 	bless {

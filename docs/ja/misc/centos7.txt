@@ -1,0 +1,74 @@
+受信ノード作成
+--------------
+
+CentOS7 Mimimal インストール
+
+alpaca1/alpaca2
+
+sudo nmcli device connect ens160
+
+SELinux無効化
+
+getenforce
+sudo setenforce 0
+sudo vi /etc/selinux/config
+
+Firewall無効化
+
+sudo systemctl is-enabled firewalld
+enabled
+
+sudo systemctl stop firewalld
+
+firewalld自動起動停止
+
+sudo systemctl disable firewalld
+
+sudo systemctl is-enabled firewalld
+disabled
+
+visudoで設定ファイルを編集します。
+
+sudo visudo
+
+変更
+Defaults secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+コメントアウト
+#Defaults   !visiblepw
+最終行に追加
+psadmin        ALL=(ALL)       NOPASSWD: ALL
+
+cd $HOME
+git clone https://github.com/getperf/getperf.git
+
+Rex 関連
+
+cd $GETPERF_HOME
+rex install_ssh_key
+
+SSL証明書の作成
+
+rex create_ca        # ルート認証局作成
+
+rex create_inter_ca  # 中間認証局作成
+
+サーバ証明書の作成
+
+rex server_cert
+
+sudo rex run_client_cert_update
+
+注釈
+監視対象のエージェントは有効期限が切れるタイミングで新規証明書をダウンロードして自動更新を行います。
+
+Error Rex::Commands::Cron::cron
+
+[2017-04-12 14:43:55] ERROR - Error executing task:
+[2017-04-12 14:43:55] ERROR - Error during `i_run` at /usr/local/share/perl5/Rex/Helper/Run.pm line 114.
+        Rex::Helper::Run::i_run('crontab -l -u psadmin 2> /dev/null') called at /usr/local/share/perl5/Rex/Cron/Base.pm line 199
+        Rex::Cron::Base::read_user_cron('Rex::Cron::Linux=HASH(0x40fed78)', 'psadmin') called at /usr/local/share/perl5/Rex/Commands/Cron.pm line 226
+        Rex::Commands::Cron::cron('add', 'psadmin', 'HASH(0x2a54650)') called at /usr/local/share/perl5/Rex/Commands/Cron.pm line 100
+        Rex::Commands::Cron::cron_entry('client_cert_update', 'ensure', 'present', 'command', '(perl /home/psadmin/getperf/script/ssladmin.pl --update_clien...', 'minute', 15, 'hour', 0, ...) called at /loader/0x2faf2d0/__Rexfile__.pm line 723
+        Rex::CLI::__ANON__('HASH(0x404eb88)', 'ARRAY(0x404eb58)') called at /usr/local/share/perl5/Rex/Interface/Executor/Default.pm line 61
+        eval {...} called at /usr/local/share/perl5/Rex/Interface/Executor/Default.pm line 43
+        

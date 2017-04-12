@@ -4,6 +4,7 @@ New features:
 * ドキュメント構成の見直し
 * cacti管理コマンド(cacti-cli)のヘルプメッセージ変更
 * サイト同期コマンド sitesync に grep オプション追加
+* zabbix管理コマンド(zabbix-cli)の設定ファイル読み込みをサイトホーム下の.zabbixから読み込めるようにした
 
 Bug fixes:
 * 
