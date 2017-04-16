@@ -178,7 +178,7 @@ task "install_package", sub {
       build-essential
       apache2 php5 libapache2-mod-php5
       libssl-dev libexpat1-dev
-      openjdk-8-jdk
+      openjdk-7-jdk
       lsb-release
       curl git rrdtool zip unzip
     /],
@@ -188,7 +188,7 @@ task "install_package", sub {
       httpd php php-mbstring
       php-mysql php-pear php-common php-gd php-devel php-cli
       openssl-devel expat-devel
-      java-1.8.0-openjdk java-1.8.0-openjdk-devel
+      java-1.7.0-openjdk java-1.7.0-openjdk-devel
       redhat-lsb
       cairo-devel libxml2-devel pango-devel pango
       libpng-devel freetype freetype-devel libart_lgpl-devel

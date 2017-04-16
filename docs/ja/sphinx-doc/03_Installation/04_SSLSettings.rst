@@ -46,12 +46,48 @@ SSL証明書の作成
 
     rex server_cert
 
+.. note::
+
+   `CentOS6.9リリースノート`_ には、"Support for insecure cryptographic protocols
+   and algorithms has been dropped. This affects usage of MD5, SHA0, RC4 and DH
+   parameters shorter than 1024 bits." の記述があり、以降のバージョンから SHA-1 の
+   サポートが終了します。
+   現在、証明書が SHA-1 の場合、中間証明書、サーバ証明書を SHA-2 に移行する必要が
+   あります。ルート証明書はそのままにして、
+   上記コマンド rex create_inter_ca、 rex server_cert を再実行してください。
+   実行後の、認証アルゴリズムは以下となります。
+
+   ::
+
+      openssl req -in /etc/getperf/ssl/ca/ca.csr -text | grep Signature
+          Signature Algorithm: sha1WithRSAEncryption
+      openssl req -in /etc/getperf/ssl/inter/ca.csr -text | grep Signature
+          Signature Algorithm: sha256WithRSAEncryption
+      openssl req -in /etc/getperf/ssl/server/server.csr -text | grep Signature
+          Signature Algorithm: sha256WithRSAEncryption
+
+   .. _CentOS6.9リリースノート: https://wiki.centos.org/Manuals/ReleaseNotes/CentOS6.9
+
+
 クライアント証明書の自動更新スケジュール登録
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 監視対象のクライアント証明書は、getperf_site.json 設定ファイルに指定した値 GETPERF_SSL_EXPIRATION_DAY(デフォルトは365日) を有効期限として設定します。以下のスケジュール登録で、
 定期的にクライアント証明書の自動更新をします。本スクリプトは登録した監視対象のクライアント証明書の
 有効期限が 1 週間前になった場合に証明書の有効期限の更新をします。
+
+.. note::
+
+   Rex 1.4 の不具合で、Cron 登録がない状態で後述の Rex コマンドを実行すると、
+   "ERROR - Rex::Helper::Run::i_run" のエラーメッセージが表示され登録に失敗します。
+   ワークアラウンドとして事前に以下の手順で空の Cron を登録してください。
+
+   ::
+
+      EDITOR=vi crontab -e
+      # 改行を追加して、Cron設定を終了する。
+
+Rex コマンドを実行します。
 
 ::
 

@@ -181,7 +181,7 @@ sub create_ssl_config_file {
 		'private_key      = $dir/ca.key',
 		'default_days     = ' . $self->{expiration_day},
 		'default_crl_days = 30',
-		'default_md       = md5',
+		'default_md       = sha256',
 		'preserve         = no',
 		'policy           = generic_policy',
 		'',
@@ -248,8 +248,8 @@ sub create_ca {
 
 	# Generate CA private key
 	{
-		# my $command = "genrsa -out $ca_root/ca.key -des3 1024";
-		my $command = "genrsa -out $ca_root/ca.key 1024";
+		# my $command = "genrsa -out $ca_root/ca.key -des3 2048";
+		my $command = "genrsa -out $ca_root/ca.key 2048";
 		$self->openssl_command($command) || return;
 	}	
 
@@ -257,7 +257,7 @@ sub create_ca {
 	{
 		my $ca_name = $self->{ca_name};
 		my $subject = "\"/commonName=${ca_name}\"";
-	    my $command = "req -new -key $ca_root/ca.key -out $ca_root/ca.csr -subj $subject";
+	    my $command = "req -new -sha256 -key $ca_root/ca.key -out $ca_root/ca.csr -subj $subject";
 	    $self->openssl_command($command) || return;
     }    
 
@@ -330,7 +330,7 @@ sub create_inter_ca {
 	# Generate CA private key.
 	{
 		my $ca_home = $inter_ca->{ca_root};
-		my $command = "genrsa -out $ca_home/ca.key 1024";
+		my $command = "genrsa -out $ca_home/ca.key 2048";
 		$self->openssl_command($command) || return;
 	}	
 
@@ -339,7 +339,7 @@ sub create_inter_ca {
 		my $ca_home = $inter_ca->{ca_root};
 		my $ca_name = $inter_ca->{ca_name};
 		my $subject = "\"/commonName=$ca_name\"";
-	    my $command = "req -new -key $ca_home/ca.key -out $ca_home/ca.csr -subj $subject";
+	    my $command = "req -new -sha256 -key $ca_home/ca.key -out $ca_home/ca.csr -subj $subject";
 	    $self->openssl_command($command) || return;
     }    
 
@@ -402,7 +402,7 @@ sub create_ca_cross_root {
 		my $inter_ca = $inter_ca->{ca_root};
 		my $ca_name = config('base')->{ssl_root_ca};
 		my $subject = "\"/commonName=$ca_name\"";
-	    my $command = "req -new -key $inter_ca/ca.key -out $inter_ca/ca.csr -subj $subject";
+	    my $command = "req -new -sha256 -key $inter_ca/ca.key -out $inter_ca/ca.csr -subj $subject";
 	    $self->openssl_command($command) || return;
     }    
 
@@ -437,7 +437,7 @@ sub create_server_certificate {
 
 	# Generate private key
 	{
-		my $command = "genrsa -out $server_key 1024";
+		my $command = "genrsa -out $server_key 2048";
 		$self->openssl_command($command) || return;
 	}	
 
@@ -445,7 +445,7 @@ sub create_server_certificate {
 	{
 		my $server_name = $self->{server_name};
 		my $subject = "\"/commonName=${server_name}\"";
-	    my $command = "req -new -key $server_key -out $server_csr -subj $subject";
+	    my $command = "req -new -sha256 -key $server_key -out $server_csr -subj $subject";
 	    $self->openssl_command($command) || return;
     }    
 
@@ -617,7 +617,7 @@ sub create_client_certificate {
 
 	# Generate private key
 	{
-		my $command = "genrsa -out $client_key 1024";
+		my $command = "genrsa -out $client_key 2048";
 		$self->openssl_command($command) || return;
 	}	
 
@@ -626,7 +626,7 @@ sub create_client_certificate {
 		my $site_agent = $sitekey . '__' . $agent;
 
 		my $subject = "\"/commonName=${site_agent}\"";
-	    my $command = "req -new -key $client_key -out $client_csr -subj $subject";
+	    my $command = "req -new -sha256 -key $client_key -out $client_csr -subj $subject";
 	    my $options = "-config $cli_config";
 	    $self->openssl_command("$command $options") || return;
     }    

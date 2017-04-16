@@ -11,7 +11,7 @@ Webサービスインストール
 .. note::
 
    "The requested URL returned error: 404 Not Found" エラーが発生する場合、
-   yum リポジトリの競合が発生している可能性が有ります。その場合、
+110   yum リポジトリの競合が発生している可能性が有ります。その場合、
    sudo yum clean all を実行してから再度実行してみてください。
 
 データ集計サービスの起動停止スクリプト /etc/init.d/sumupctl を登録します。
@@ -21,6 +21,24 @@ Webサービスインストール
     sudo -E rex install_sumupctl
 
 データ集計サービスのモニタースクリプトを cron に登録します。
+
+.. note::
+
+   前述のSSLの Cron 設定と同様に、Rex の不具合により、root の
+   Cron 登録がない状態で Cron 登録コマンドを実行すると、エラーで登録に失敗します。
+   ワークアラウンドとして事前に以下の手順で空の Cron を登録してください。
+
+   ::
+
+      sudo su -
+      # root にスイッチユーザ
+
+   ::
+
+      EDITOR=vi crontab -e
+      # 改行を追加して、Cron設定を終了する。
+
+以下 Rex コマンドで cron 登録をします。
 
 ::
 

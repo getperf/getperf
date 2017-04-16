@@ -12,3 +12,4 @@
    06_SSLCertificateInstration
    07_SiteCloning
    08_IPythonNotebook
+   09_CloneServer

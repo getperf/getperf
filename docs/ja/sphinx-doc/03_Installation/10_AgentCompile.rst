@@ -60,7 +60,9 @@ Getperf エージェントは C 言語でコーディングされたバイナリ
 
     rex make_agent_src
 
-これは、Webサービス用 SSL　証明書、エージェントソースコード、Zabbix エージェントをパッケージングしたモジュールとなります。 Web ブラウザでhttp://{サーバアドレス}/download を開いてください。リストの中の getperf-2.x-BuildX-source.zip がプリコンパイルパッケージとなります。
+これは、Webサービス用 SSL　証明書、エージェントソースコード、Zabbix エージェントをパッケージングしたモジュールとなります。 Web ブラウザで
+http://{サーバアドレス}/docs/agent/
+を開いてください。リストの中の getperf-2.x-BuildX-source.zip がプリコンパイルパッケージとなります。
 
 .. note::
 
