@@ -53,13 +53,14 @@ sub parse_command_option {
 	my ($self, $args) = @_;
 
 	$self->{usage} = "Usage : initsite {site_dir}\n" .
-	               "\t[--update] [--template] [--force] [--disable-git-clone] [--mysql-passwd=s]\n" .
+	               "\t[--update] [--drop] [--template] [--force] [--disable-git-clone] [--mysql-passwd=s]\n" .
 	               "\t[--addsite=\"AAA,BBB\"]\n";
 
 	push @ARGV, grep length, split /\s+/, $args if ($args);
-	my ($update_opt, $template_opt, $cacit_templates_opt, $sitekeys_opt);
+	my ($update_opt, $template_opt, $cacit_templates_opt, $sitekeys_opt, $drop_opt);
 	GetOptions (
 		'--update'            => \$update_opt,
+		'--drop'              => \$drop_opt,
 		'--template'          => \$template_opt,
 		'--force'             => \$self->{force},
 		'--disable-git-clone' => \$self->{disable_git_clone},
@@ -75,7 +76,9 @@ sub parse_command_option {
 	$self->parse_site_home(shift(@ARGV)) || die $self->{usage};
 
 	$self->{command} = 'init_site';
-	if ($update_opt) {
+	if ($drop_opt) {
+		$self->{command} = 'drop_site';
+	} elsif ($update_opt) {
 		$self->{command} = 'update_site';
 	} elsif ($template_opt) {
 		$self->{command} = 'update_template';
@@ -122,6 +125,8 @@ sub run {
 
 	if ($command eq 'init_site') {
         return $self->init_site;
+	} elsif ($command eq 'drop_site') {
+        return $self->drop_site;
 	} elsif ($command eq 'update_site') {
         return $self->update_site;
 	} elsif ($command eq 'update_template') {
@@ -137,8 +142,50 @@ sub drop_site {
 	my $self = shift;
 
 	my $sitekey  = $self->{sitekey};
+	my $rootpass = $self->{mysql_passwd};
 	my $site_dir = dir($self->{site_dir});
-	dir($self->{site_dir})->rmtree || die "$! : $site_dir";
+	my $current_dir = getcwd;
+	if ($current_dir eq $site_dir) {
+		die "Cannot remove '${sitekey}' home when cwd is the same '${site_dir}'.\n";
+	}
+
+	print "Drop all configuration file, MySQL DB, Git repository, site home directory " .
+		  "for site '${sitekey}'.\nAre you OK ? [n] ";
+	my $res = <>;
+	$res =~ s/[\r\n]+//g;	# chomp
+	if ($res ne 'y') {
+		return;
+	}
+
+	# Drop MySQL Database
+	my $drh = DBI->install_driver('mysql');
+	my $dbh = DBI->connect("dbi:mysql:${sitekey}",'root', $rootpass,
+		                   { PrintError => 0, PrintWarn => 0 });
+	if ($dbh) {
+		LOG->notice("DropDB '${sitekey}'.");
+		$drh->func('dropdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
+	}
+
+	# Drop Git repository
+	my $base = config('base');
+	my $git_dir  = $base->{home} . "/var/site/${sitekey}.git";
+	if (-d $git_dir) {
+		LOG->notice("Remove Git repository '${git_dir}'.");
+		dir($git_dir)->rmtree || die "$! : $git_dir";
+	}
+
+	# Drop site home
+	if (-d $site_dir) {
+		LOG->notice("Remove site home '${site_dir}'.");
+		dir($site_dir)->rmtree || die "$! : $git_dir";
+	}
+
+	# サイト構成ファイル削除
+	my $site_config = $base->{home} . "/config/site/${sitekey}.json";
+	if (-f $site_config) {
+		LOG->notice("Remove site config '${site_config}'.");
+		unlink $site_config || die "$! : $site_config";
+	}
 }
 
 sub set_site_mysql_passwd {

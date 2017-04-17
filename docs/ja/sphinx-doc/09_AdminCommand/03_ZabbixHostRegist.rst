@@ -39,6 +39,36 @@ zabbix-cli は監視対象のIPアドレスをZabbixに登録します。DNSな�
     -  大文字は小文字に変換
     -  ドメインのサフィックス部分を取り除く(.your-company.co.jpなど)
 
+.zabbix ファイルの作成(オプション)
+----------------------------------
+
+1台の監視サーバで複数サイトを管理している場合、サイト毎に Zabbix の接続情報などの
+変更が必要な場合があります。その場合、サイトホーム下に .zabbix というファイルを作成し、
+本ファイルにサイト固有のZabbix 設定情報を追加します。
+
+はじめにサイトホームディレクトリに移動します。
+ここでは、~/work/site1 というサイトホームの手順を記します。
+
+::
+
+   cd ~/work/site1
+
+既定のZabbix設定ファイル ~/getperf/config/getperf_zabbix.json をサイトホーム下の .zabbix にコピーします。
+
+::
+
+   cp ~/getperf/config/getperf_zabbix.json .zabbix
+
+.zabbix ファイルを編集します。
+
+::
+
+   vi .zabbix
+
+"ZABBIX_SERVER_IP","ZABBIX_ADMIN_PASSWORD" の箇所を指定したサイトの Zabbix 接続情報に変更します。
+
+本設定後、zabbix-cli コマンドを実行時には、~/getperf/config/getperf_zabbix.json ではなく、サイト固有の .zabbix ファイルが読み込まれます。
+
 オプション
 ----------
 

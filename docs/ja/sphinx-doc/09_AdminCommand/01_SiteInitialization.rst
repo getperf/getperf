@@ -22,7 +22,7 @@ Zabbixの監視登録コマンド zabbix-cli については :doc:`../06_Monitor
 ::
 
   Usage : initsite {site_dir}
-          [--update] [--template] [--force] [--disable-git-clone] [--mysql-passwd=s]
+          [--update] [--drop] [--template] [--force] [--disable-git-clone] [--mysql-passwd=s]
           [--addsite="AAA,BBB"]
 
   initsite ~/work/site1
@@ -115,3 +115,7 @@ Cacti 用 MySQL データベースのパスワードを指定します。
 
 監視サイト作成時にサイトキーを複数追加します。--addsite で指定された値が追加するサイトキーのリストとなります。既設の複数の監視サイトを新たに1つのサイトにまとめて構築する場合に使用します。
 
+--drop
+~~~~~~
+
+指定したサイトを削除します。
