@@ -157,6 +157,10 @@ sub drop_site {
 		return;
 	}
 
+	# Stop sumup Daemon
+	my $sumup_bin = $FindBin::Bin . "/sumup";
+	system("${sumup_bin} stop");
+
 	# Drop MySQL Database
 	my $drh = DBI->install_driver('mysql');
 	my $dbh = DBI->connect("dbi:mysql:${sitekey}",'root', $rootpass,
