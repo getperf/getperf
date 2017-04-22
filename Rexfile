@@ -173,7 +173,11 @@ task "install_package", sub {
     _sudo $deploy;
   }
 
-  my $base_package = case operating_system, {
+  my $os_type = operating_system;
+  if ($os_type eq 'Raspbian') {
+    $os_type = 'Ubuntu';
+  }
+  my $base_package = case $os_type, {
     Ubuntu  => [ qw/
       build-essential
       apache2 php5 libapache2-mod-php5
@@ -198,7 +202,7 @@ task "install_package", sub {
   };
   sudo {
     command => sub {
-      if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
+      if ($os_type =~/(CentOS|RedHatEnterpriseServer)/) {
         _sudo "yum -y install epel-release";
         my $yum_conf = "/etc/yum.repos.d/epel.repo";
         _sudo 'sed -i -e \"s/enabled=0/enabled=1/g;s/^#baseurl/baseurl/g;s/^mirror/#mirror/g\" '. $yum_conf;
@@ -214,15 +218,15 @@ task "install_package", sub {
           mysql-server
         /];
 
-      } elsif (operating_system eq 'Ubuntu') {
+      } elsif ($os_type eq 'Ubuntu') {
         say install package => $base_package;
         my $pass = config('base')->{mysql_passwd};
         for my $deb_config(qw/root_password root_password_again/) {
-          my $conf = "mysql-server-5.6 mysql-server-5.6/$deb_config password $pass";
+          my $conf = "mysql-server mysql-server/$deb_config password $pass";
           my $cmd  = "echo $conf | debconf-set-selections";
           _sudo $cmd;
         }
-        _sudo "apt-get -y install mysql-server-5.6";
+        _sudo "apt-get -y install mysql-server php5-mysql";
 
       } else {
         say install package => $base_package;

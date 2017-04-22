@@ -558,7 +558,7 @@ sub config_apache_tomcat_init_script {
 		chdir($self->{home});
 		my $osname = `lsb_release -i -s`;
 		chomp($osname);
-		if ($osname!~/(CentOS|Ubuntu|RedHatEnterpriseServer)/) {
+		if ($osname!~/(CentOS|Ubuntu|Raspbian|RedHatEnterpriseServer)/) {
 	        LOG->crit("Can't find script/template/tomcat-$osname.tpl");
 	        return;		
 		}

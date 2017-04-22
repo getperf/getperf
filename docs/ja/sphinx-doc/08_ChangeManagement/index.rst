@@ -13,3 +13,4 @@
    07_SiteCloning
    08_IPythonNotebook
    09_CloneServer
+   10_SetupRaspberryPi
