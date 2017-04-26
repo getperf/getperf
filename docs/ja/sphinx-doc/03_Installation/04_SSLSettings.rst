@@ -87,6 +87,13 @@ SSL証明書の作成
       EDITOR=vi crontab -e
       # 改行を追加して、Cron設定を終了する。
 
+    root の cron についても同様の設定をします
+
+   ::
+
+      sudo EDITOR=vi crontab -e
+      # 改行を追加して、Cron設定を終了する。
+
 Rex コマンドを実行します。
 
 ::

@@ -10,6 +10,7 @@
    02_PackageInstallation
    03_CreatingConfigurationFiles
    04_SSLSettings
+   05_InstallPackage
    05_WebServiceInstallation
    06_ServiceRegistration
    07_MySQLCactiInstallation

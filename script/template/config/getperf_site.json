@@ -19,7 +19,7 @@
 	"GETPERF_ADMIN_SSL_DIR":	 "/etc/getperf/ssl",
 	"GETPERF_SSL_COMMON_NAME_ROOT_CA": "[% ssl_common_name_root_ca %]",
 	"GETPERF_SSL_COMMON_NAME_INTER_CA": "[% ssl_common_name_inter_ca %]",
-	"GETPERF_SSL_EXPIRATION_DAY": 365,
+	"GETPERF_SSL_EXPIRATION_DAY": 10000,
 	"GETPERF_LICENSE_POLICY": "none",
 
 	"GETPERF_WS_TOMCAT_OWNER": "[% user %]",

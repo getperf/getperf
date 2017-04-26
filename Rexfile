@@ -163,6 +163,27 @@ task "install_ssh_key", sub {
   chdir $current_dir;
 };
 
+desc "Need to run sudo. Install ant packages";
+task "install_ant", sub {
+      # Install Apache Ant
+      unless (-f '/usr/local/bin/ant') {
+        my $version  = '1.9.4';
+        my $ftpsite  = 'http://ftp.tsukuba.wide.ad.jp/software/apache/ant/binaries/';
+
+        my $check_ver = run 'curl -sSL ' . $ftpsite;
+        if ($check_ver=~m|href="apache-ant-(\d.*?)-bin.tar.gz"|) {
+          $version = $1;
+        }
+        my $module = "apache-ant-${version}";
+        if (!-f "/tmp/rex/${module}-bin.tar.gz") {
+          download "$ftpsite/${module}-bin.tar.gz", "/tmp/rex/${module}-bin.tar.gz";
+        }
+        _run "cd /tmp/rex; tar xf ${module}-bin.tar.gz";
+        _sudo "mv /tmp/rex/${module} /usr/local/";
+        _sudo "ln -s /usr/local/${module}/bin/ant /usr/local/bin/ant";
+      }
+};
+
 desc "Need to run sudo. Install Various packages";
 task "install_package", sub {
   my $config = config('base');

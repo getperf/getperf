@@ -101,6 +101,12 @@ secure_pathの行を探して行の最後に、/usr/local/bin:/usr/local/sbinを
 
     Defaults secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
+Cron の sudo 実行許可設定をするため、以下の行をコメントアウトします
+
+::
+
+    #Defaults   !visiblepw
+
 最終行にユーザ登録の行を追加します。インストールスクリプトを用いてバッチで実行するため、sudo
 ユーザは NOPASSWD のパスワードなしの設定にしてください。
 
