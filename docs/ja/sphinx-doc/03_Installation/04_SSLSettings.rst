@@ -66,6 +66,20 @@ SSL証明書の作成
       openssl req -in /etc/getperf/ssl/server/server.csr -text | grep Signature
           Signature Algorithm: sha256WithRSAEncryption
 
+   また、クライアント証明書発行用の設定ファイル
+   client.conf のアルゴリズムの変更が必要です。
+
+   ::
+
+      vi /etc/getperf/ssl/ca/client.conf
+
+   以下行のパラメータをmd5からsha256に変更します
+
+   ::
+
+      default_md       = sha256
+
+
    .. _CentOS6.9リリースノート: https://wiki.centos.org/Manuals/ReleaseNotes/CentOS6.9
 
 
@@ -80,14 +94,14 @@ SSL証明書の作成
 
    Rex 1.4 の不具合で、Cron 登録がない状態で後述の Rex コマンドを実行すると、
    "ERROR - Rex::Helper::Run::i_run" のエラーメッセージが表示され登録に失敗します。
-   ワークアラウンドとして事前に以下の手順で空の Cron を登録してください。
+   ワークアラウンドとして事前に以下の手順でダミー用の空の Cron を登録してください。
 
    ::
 
       EDITOR=vi crontab -e
       # 改行を追加して、Cron設定を終了する。
 
-    root の cron についても同様の設定をします
+   root の cron についても同様の設定をします
 
    ::
 

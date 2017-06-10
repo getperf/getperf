@@ -645,7 +645,7 @@ int gpfGetHostname (char *hostName)
 	char *p;
 	
 #if defined(_WINDOWS)
-	DWORD computerNameLen = MAX_COMPUTERNAME_LENGTH;
+	DWORD computerNameLen = MAX_COMPUTERNAME_LENGTH + 1;
 
 	if ( GetComputerName(hostName, &computerNameLen) )  
 	{
@@ -663,7 +663,7 @@ int gpfGetHostname (char *hostName)
 	} 
 	else 
 	{
-		return gpfError( "gethostname" );
+		return gpfSystemError( "gethostname : host='%s'", hostName );
 	}
 
 	return 1;
