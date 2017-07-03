@@ -1,0 +1,180 @@
+Cacti受信ノードのHA化手順
+=========================
+
+事前準備
+--------
+
+* マスター、スレーブノードでエージェントからデータ受信できるようにします。
+* RSyncにて受信データを転送できるようにします。
+
+スレーブノード設定
+^^^^^^^^^^^^^^^^^^
+
+マスターノードは既設のサーバを使用します。
+スレーブノードは基本モジュールのセットアップをします。
+物理IPでエージェントと接続できるようにします。
+
+RSync設定
+^^^^^^^^^
+
+受信ノード側Rsync設定
+~~~~~~~~~~~~~~~~~~~~~
+
+RSyncにて受信データを転送できるようにします。
+
+::
+
+   sudo -E yum -y install rsync xinetd
+
+受信データ保存ディレクトリを確認します。$GETPERF_HOME/t/staging_data/{サイトID}
+
+::
+
+   /home/psadmin/getperf/t/staging_data/site1
+
+rsyncd.conf 編集します。
+
+::
+
+   [archive_site1]
+   path =  /home/psadmin/getperf/t/staging_data/site1
+   hosts allow = *
+   hosts deny = *
+   list = true
+   uid = psadmin
+   gid = psadmin
+   read only = false
+   dont compress = *.gz *.tgz *.zip *.pdf *.sit *.sitx *.lzh *.bz2 *.jpg *.gif *.png
+
+RSync サービスを起動します。
+
+::
+
+   sudo /etc/rc.d/init.d/xinetd restart
+
+サービスノード側での受信確認
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+手動確認
+
+::
+
+   rsync -av --delete \
+   rsync://192.168.10.41/archive_site1 \
+   ./tmp
+
+sitesync 動作確認
+
+::
+
+   cd {サイトディレクトリ}
+   ${GETPERF_HOME}/script/sitesync \
+   rsync://{旧監視サーバアドレス}/archive_{サイトキー}
+
+::
+
+   cd /home/psadmin/work/site1
+   ${GETPERF_HOME}/script/sitesync \
+   rsync://192.168.10.41/archive_site1
+
+スレーブノードのサービスIPのVIP化
+---------------------------------
+
+スレーブノードでGetperfのサービスIPをVIPに変更します
+スレーブノードをVIPでサービス受信できるようにする
+
+* VIPは現マスターノードのIPとします
+* Apache設定で物理IPからVIPに変更します
+
+Getperf 設定ファイルを編集します。
+
+::
+
+   vi config/getperf_site.json
+
+        "GETPERF_SSL_COMMON_NAME_INTER_CA": "getperf_inter_192.168.10.41",
+        "GETPERF_WS_SERVER_NAME": "192.168.10.41",
+        "GETPERF_WS_ADMIN_SERVER":   "192.168.10.41",
+        "GETPERF_WS_DATA_SERVER":    "192.168.10.41",
+
+中間認証局とサーバ証明書更新
+
+::
+
+   rex create_inter_ca  # 中間認証局証明書更新
+   rex server_cert      # サーバ証明書更新
+
+設定ファイル確認。
+
+::
+
+   grep CN /etc/getperf/ssl/*/*.crt
+   /etc/getperf/ssl/inter/ca.crt:        Issuer: CN=getperf_ca_192.168.10.1
+   /etc/getperf/ssl/inter/ca.crt:        Subject: CN=getperf_inter_192.168.10.41
+   /etc/getperf/ssl/server/server.crt:        Issuer: CN=getperf_inter_192.168.10.41
+   /etc/getperf/ssl/server/server.crt:        Subject: CN=192.168.10.41
+
+Webサービス再起動
+
+::
+
+   rex restart_ws_data
+   rex restart_ws_admin
+
+起動確認
+
+::
+
+   tail -f /usr/local/tomcat-data/logs/catalina.out
+
+マスターノードの物理IPをVIPに変更
+---------------------------------
+
+ネットワークスクリプトの編集
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   ifcfg-eth0
+   ifcfg-eth0:1
+    70-persistent-net.rules
+
+ネットワークサービス再起動
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+keepaliveによるノードの冗長化
+-----------------------------
+
+::
+
+   ! Configuration File for keepalived
+
+   global_defs {
+      router_id LVS_GETPERF_WS
+   }
+
+   vrrp_script check_getperf_ws {
+     script       "/home/psadmin/getperf/script/check_getperf_ws.sh"
+     interval 2   # check every 2 seconds
+     fall 3       # require 3 failures for KO
+     rise 2       # require 2 successes for OK
+   }
+
+   vrrp_instance VirtualInstance1 {
+       state BACKUP        # マスター MASTER に変更
+       interface eth0      # VIPを追加する NIC名
+       virtual_router_id 1 # 一意にするID
+       priority 100
+       advert_int 5
+       nopreempt
+       authentication {
+           auth_type PASS
+           auth_pass passwd
+       }
+       virtual_ipaddress {
+           192.168.10.41/24
+       }
+       track_script {
+         check_getperf_ws
+       }
+   }

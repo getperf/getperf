@@ -5,7 +5,7 @@ Zabbix定義ファイル作成
 
 .. note::
 
-   以下説明で使用するファイルの確認をする場合は事前にサイトを初期化して、Oracleテンプレートをインポートする必要が有ります。Oracle テンプレートは `t_Oracle <https://github.com/getperf/t_Oracle>`_ からダウンロードしてください。テンプレートのインポート手順は、:doc:`../../09_AdminCommand/02_SiteDataAggregation` を参照してください。
+   以下説明で使用するファイルの確認をする場合は事前にサイトを初期化して、Oracleテンプレートをインポートする必要が有ります。Oracle テンプレートは `t_Oracle <https://github.com/getperf/t_Oracle>`_ からダウンロードしてください。テンプレートのインポート手順は、:doc:`../../10_AdminCommand/02_SiteDataAggregation` を参照してください。
 
 ファイル構成
 ------------
