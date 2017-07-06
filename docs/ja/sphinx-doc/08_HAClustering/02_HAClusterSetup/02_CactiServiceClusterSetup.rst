@@ -68,7 +68,6 @@ Cacti リポジトリデータベースをダンプします。
 
 ::
 
-   cd ~/work/site1
    tar cvf - mysql.dmp lib script/ Rexfile node/ html/ view/ | gzip > /tmp/archive_site1.tar.gz
 
 新規 Cacti サービスノードでのリストア
@@ -77,10 +76,32 @@ Cacti リポジトリデータベースをダンプします。
 構築した Cacti サービスノードでサイト定義のリストアをします。
 オンプレの場合、マスター、スレーブの両ノードでリストアをしてください。
 バックアップしたサイトIDと同じ名前で、サイトの初期化を作成します。
+既設のCactiサイトの Git リポジトリからサイトをクローンします。
 
 ::
 
-   initsite -f ~/site1
+   cat ~/work/site1/.git/config
+
+::
+
+   [core]
+           repositoryformatversion = 0
+           filemode = true
+           bare = false
+           logallrefupdates = true
+   [remote "origin"]
+           fetch = +refs/heads/*:refs/remotes/origin/*
+           url = ssh://psadmin@alpaca2.rama//home/psadmin/getperf/var/site/site1.git
+
+::
+
+   cd work
+   git clone ssh://psadmin@192.168.10.32//home/psadmin/getperf/var/site/site1.git
+
+::
+
+   cd site1
+   initsite --update -f .
 
 .. note::
 
@@ -232,47 +253,28 @@ server-id は、マスターノードを 101、スレーブノードを 102　�
 **マスターノードMySQLデータのバックアップ**
 
 マスターノードでMySQLデータのバックアップをします。マスターノードでMySQLに接続します。
-全テーブルをロックします。
 
 ::
 
-   flush tables with read lock;
-
-バイナリログのステータスを表示します。
-
-::
-
-   show master status;
-
-スレーブノードのスレーブ設定で、File, Position を使用するので値を控えておきます。
-
-::
-
-   +-------------------+----------+--------------+------------------+
-   | File              | Position | Binlog_Do_DB | Binlog_Ignore_DB |
-   +-------------------+----------+--------------+------------------+
-   | mysqld-bin.000002 |      107 |              |                  |
-   +-------------------+----------+--------------+------------------+
-
-上記端末は残したまま、別端末を追加で開き、ダンプを実行します。
-
-::
-
-   mysqldump -u root -p --all-databases --lock-all-tables --events \
+   mysqldump --all-databases -u root -p --master-data --single-transaction --routines \
    > mysql_dump.sql
 
-元の端末に戻って、ロックを解除します。
+
+バックアップが完了したファイルから、CHANGE MASTER TOが含まれる行をgrepして、メモしておきます。
 
 ::
 
-   unlock tables;
-   exit;
+   cat mysql_dump.sql | grep -i "CHANGE MASTER TO" | more
+
+::
+
+   CHANGE MASTER TO MASTER_LOG_FILE='mysqld-bin.000001', MASTER_LOG_POS=3443;
 
 ダンプファイルをマスターノードからスレーブノードにコピーします。
 
 ::
 
-   scp mysql_dump.sql 192.168.10.2:/tmp/
+   scp mysql_dump.sql 192.168.10.32:/tmp/
 
 **MySQLバックアップデータのリストア**
 
@@ -333,7 +335,7 @@ Web サービス死活監視スクリプトの動作確認をします。
 ::
 
    cd ~/getperf/script
-   sh -x sh -x check_getperf_cacti.sh
+   sh -x check_getperf_cacti.sh
    echo $?
 
 各ノードにkeepalived をインストールします。
@@ -391,7 +393,7 @@ keepalived を起動します。
 
 ::
 
-   sudo service keepalived start
+   sudo service keepalived restart
 
 システムログから keepalived 起動を確認します。
 
