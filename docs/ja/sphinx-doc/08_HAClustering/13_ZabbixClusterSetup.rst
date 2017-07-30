@@ -1,5 +1,5 @@
-ZabbixのHA化
-------------
+ZabbixのHA化手順
+----------------
 
 構成概要
 ^^^^^^^^
@@ -7,39 +7,68 @@ ZabbixのHA化
 HA化ポリシー
 ~~~~~~~~~~~~
 
-既設のZabbixサーバの IPをVIPに変更する
+Zabbix サーバをHA化します。
+マスター／スレーブの 2台構成で、VIP をサービス用IPとし、
+マスターノードノードに VIP を付加することにより、
+ホットスタンバイ型のHA構成を組みます。
 
-MHAでMySQLデータベースの冗長化をする
-
-オンプレ。マスター・スレーブ構成
+* 新たにスレーブノードを追加し、マスター／スレーブ構成にします。
+* keepalived をもちいて Zabbix サーバ受信用の VIP を冗長化します。
+* 既設の Zabbix サーバの IP を VIP に変更します。
 
 冗長化する機能
 ~~~~~~~~~~~~~~
+以下の機能を二重化します。
 
-MySQL
-Zabbix
+* MySQL データベース
+* Zabbix サーバー
+
+記載した手順の構成
+~~~~~~~~~~~~~~~~~~
+
+以下マスターノード、スレーブノード構成での手順を記します。
+
+* マスターノード
+
+   - VIP : 192.168.10.51
+   - 物理IP : 192.168.10.52
+
+* スレーブノード
+
+   - 物理IP : 192.168.10.53
+
+* ネットワークデバイスは eth0
 
 事前準備
 ^^^^^^^^
 
-スタンドアロン構成での基本モジュールセットアップ
+スレーブノードの基本モジュールセットアップ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+スタンドアロン構成での基本モジュールセットアップをします。
+:doc:`../../03_Installation/index` の手順に従い、「Zabbixインストール」
+までを行います。
+
+.. note::
+
+   Webサービスは不要なため、「Web サービスインストール」の手順は省略してください。
 
 マスター、スレーブノードの接続設定
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **root の ssh 公開鍵の配布**
 
 MHA のリモート操作用にノード間で root の ssh 接続許可設定をします。
-稼働系、待機系の順で各ノードに ssh 公開鍵の配布をします。
+マスターノード、スレーブノードの順で各ノードに ssh 公開鍵の配布をします。
 
 ::
 
    sudo ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -N ""
-   sudo ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.1
-   sudo ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.2
+   sudo ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.52
+   sudo ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.53
 
 **MySQL 監視用のユーザ作成**
 
-MySQL Ping監視用ユーザを作成します。稼働系、待機系の順で実行します。
+MySQL Ping監視用ユーザを作成します。マスターノード、スレーブノードの順で実行します。
 
 ::
 
@@ -56,7 +85,12 @@ MySQL コンソールから監視用ユーザ mha と、レプリケーション
    exit
 
 
-CactiサービスノードのZABBIX宛先を VIP に設定
+CactiサーバのZABBIX宛先を VIP に設定
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+全てのCacti 受信ノード、サービスノードのZabbix宛先設定を VIP に変更します。
+各ノードに接続して設定ファイル getperf_zabbix.json の ZABBIX_SERVER_IP の
+箇所を変更してください。
 
 ::
 
@@ -103,8 +137,8 @@ CactiサービスノードのZABBIX宛先を VIP に設定
 
    ::
 
-      sudo cp ifcfg-eth0 ifcfg-eth0.bak
-      sudo vi ifcfg-eth0
+      sudo cp ifcfg-eth0 ifcfg-eth0:1
+      sudo vi ifcfg-eth0:1
 
    以下の、DEVICE と IPADDR の箇所を VIP に変更します。
 
@@ -165,9 +199,9 @@ Zabbix 本体の設定ファイルにVIP設定を追加します。
 
 ::
 
-   sudo vi /etc/zabbix/zabbix_server.conf
+   sudo grep SourceIP /etc/zabbix/zabbix_server.conf
 
-以下の行をVIPに変更して追加します。
+SourceIP の設定がある場合は、VIPに変更します。
 
 ::
 
@@ -194,23 +228,6 @@ MySQLレプリケーションセットアップ
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 MySQLデータレプリケーション設定をします。
-
-**MySQL 監視用のユーザ作成**
-
-MySQL Ping監視用ユーザを作成します。マスターノード、スレーブノードの順で実行します。
-
-::
-
-   mysql -u root -p
-
-MySQL コンソールからレプリケーション用ユーザ repl を作成します。
-
-::
-
-   grant replication slave on *.* to repl@'%' identified by 'repl';
-   grant all privileges on *.* to repl with grant option;
-   flush privileges;
-   exit
 
 **MySQL 設定ファイル編集**
 
@@ -247,6 +264,7 @@ server-id は、マスターノードを 101、スレーブノードを 102　�
 
 ::
 
+   cd ~/
    mysqldump --all-databases -u root -p --master-data --single-transaction --routines \
    > mysql_dump.sql
 
@@ -259,17 +277,17 @@ server-id は、マスターノードを 101、スレーブノードを 102　�
 
 ::
 
-   CHANGE MASTER TO MASTER_LOG_FILE='mysqld-bin.000001', MASTER_LOG_POS=3443;
+   CHANGE MASTER TO MASTER_LOG_FILE='mysqld-bin.000001', MASTER_LOG_POS=641;
 
 ダンプファイルをマスターノードからスレーブノードにコピーします。
 
 ::
 
-   scp mysql_dump.sql 192.168.10.32:/tmp/
+   scp mysql_dump.sql 192.168.10.53:/tmp/
 
 **MySQLバックアップデータのリストア**
 
-マスターノードから転送したダンプデータをインポートします。
+スレーブノードにて、マスターノードから転送したダンプデータをインポートします。
 
 ::
 
@@ -290,11 +308,11 @@ change master to コマンドでレプリケーションの開始位置を指定
 ::
 
    change master to
-        master_host='192.168.10.1',    # マスターサーバーのIP
+        master_host='192.168.10.52',    # マスターサーバーのIP
         master_user='repl',           # レプリケーション用ID
         master_password='repl',       # レプリケーション用IDのパスワード
-        master_log_file='mysqld-bin.000002',    # マスターサーバーで確認した File 値
-        master_log_pos=107;    # マスターサーバーで確認した Position 値
+        master_log_file='mysqld-bin.000001',    # マスターサーバーで確認した File 値
+        master_log_pos=641;    # マスターサーバーで確認した Position 値
 
 レプリケーションを開始します。
 
@@ -315,30 +333,24 @@ MHAセットアップ
 ^^^^^^^^^^^^^^^
 
 MHAインストール
+~~~~~~~~~~~~~~~
 
-MHA拡張スクリプトセットアップ
-
-MHA設定ファイルの編集
-
-MHAサービス起動
-
-フェイルオーバーテスト
-
-**MHAインストール**
-
-稼働系、待機系の順に実施します。
-`MHA ダウンロードサイト <https://code.google.com/p/mysql-master-ha/wiki/Downloads?tm=2>`_ から最新版のモジュールをダウンロードします。ここでは以下モジュールをダウンロードします。
+マスターノード、スレーブノードの順に実施します。
+`MHA ダウンロードサイト
+<https://github.com/yoshinorim/mha4mysql-manager/wiki/Downloads>`_
+から最新版のモジュールをダウンロードします。
+ここでは以下モジュールをダウンロードします。
 
 - MHA Manager 0.56 rpm RHEL6
 - MHA Node 0.56 rpm RHEL6
 
-稼働系で MHA Node をインストールします。
+マスターノードで MHA Node をインストールします。
 
 ::
 
    sudo -E yum localinstall -y mha4mysql-node-0.56-0.el6.noarch.rpm
 
-待機系で MHA Node と、MHA Manager をインストールします。
+スレーブノードで MHA Node と、MHA Manager をインストールします。
 
 ::
 
@@ -348,7 +360,7 @@ MHAサービス起動
 
 **MHA拡張スクリプト配布**
 
-待機系でMHA拡張スクリプトを配布します。配布するスクリプトは以下の2種です。
+スレーブノードでMHA拡張スクリプトを配布します。配布するスクリプトは以下の2種です。
 
 - master_ip_failover
 
@@ -360,7 +372,8 @@ MHAサービス起動
 
 - master_ip_online_change
 
-   手動でスイッチオーバーをする際の系切替拡張スクリプト。master_ip_failoverと同様の機能を追加。
+   手動でスイッチオーバーをする際の系切替拡張スクリプト。
+   master_ip_failoverと同様の機能を追加。
 
 以下ディレクトリからスクリプトをコピーします。
 
@@ -375,7 +388,7 @@ MHAサービス起動
 
 **MHA設定ファイルの編集**
 
-待機系で MHA 設定ファイル /etc/mha.conf を作成します。
+スレーブノードで MHA 設定ファイル /etc/mha.conf を作成します。
 $GETPERF_HOME/script/template/mha/ の下の、サンプル mha.conf.sample を参考に設定ファイルを編集してください。
 
 ::
@@ -384,6 +397,25 @@ $GETPERF_HOME/script/template/mha/ の下の、サンプル mha.conf.sample を�
    sudo vi /etc/mha.conf
 
 IPアドレスとネットワークデバイスの箇所を環境に合わせて変更します。
+
+::
+
+   # 仮想IPのフェイルオーバ用のスクリプト
+   master_ip_failover_script=/usr/bin/master_ip_failover --virtual_ip=192.168.10.51 --orig_master_vip_eth=eth0:1 --new_master_vip_eth=eth0:1
+   # 仮想IPの切り戻し用のスクリプト
+   master_ip_online_change_script=/usr/bin/master_ip_online_change --virtual_ip=192.168.10.51 --orig_master_vip_eth=eth0:1 --new_master_vip_eth=eth0:1
+
+   #監視対処サーバ
+   [server1]
+   candidate_master=1
+   hostname=192.168.10.52
+   ignore_fail=1
+
+   [server2]
+   candidate_master=1
+   hostname=192.168.10.53
+   ignore_fail=1
+
 編集後、以下のコマンドでMHAの動作確認をします。
 
 ::
@@ -393,7 +425,7 @@ IPアドレスとネットワークデバイスの箇所を環境に合わせて
 
 **MHAデーモンの常駐化**
 
-待機系でMHAデーモンの常駐設定をします。
+スレーブノードでMHAデーモンの常駐設定をします。
 起動設定は CentOSで標準インストールされている `upstart <http://upstart.ubuntu.com/>`_ を使用します。
 
 ::
@@ -444,14 +476,14 @@ MHAデーモンを起動します。
 
 **フェイルオーバーテスト**
 
-ここでは、簡単に稼働系でMySQLをkillしてフェイルオーバー動作を確認します。
-待機系でMHAログを確認します。
+ここでは、簡単にマスターノードでMySQLをkillしてフェイルオーバー動作を確認します。
+スレーブノードでMHAログを確認します。
 
 ::
 
    sudo tail -f /var/log/masterha/masterha_manager.log
 
-別端末で稼働系を開き、MySQL を kill します。
+別端末でマスターノードを開き、MySQL を kill します。
 
 ::
 
@@ -461,14 +493,10 @@ MHAデーモンを起動します。
 
 - MHAログからフェイルオーバーが処理されていること
 - WebブラウザからVIPで Zabbix、Cacti のコンソールに接続できること
-   - http://192.168.10.10/zabbix/
-   - http://192.168.10.10/{サイトキー}/
-- Getperf WebサービスのAxis2コンソールに接続できること
-   - http://192.168.10.10:57000/axis2/
-   - http://192.168.10.10:57000/axis2/
-- 現稼働系(旧待機系)でZabbix サーバが起動されていること。以下のログから確認する
+   - http://192.168.10.51/zabbix/
+- 現マスターノード(旧スレーブノード)でZabbix サーバが起動されていること。以下のログから確認する
    - /var/log/zabbix/zabbix_server.log
-- 現稼働系でMySQLが稼働されていること。以下のコマンドで確認する
+- 現マスターノードでMySQLが稼働されていること。以下のコマンドで確認する
 
    ::
 
@@ -478,17 +506,17 @@ MHAデーモンを起動します。
 フェイルオーバー後の切り戻し
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-フェイルオーバー発生後は、手動で旧稼働系を復帰させ、切り戻し作業を行います。
-その手順を以下に記します。前提条件として、フェールオーバー後の旧稼働系は以下の状態となっていることとします。
+フェイルオーバー発生後は、手動で旧マスターノードを復帰させ、切り戻し作業を行います。
+その手順を以下に記します。前提条件として、フェールオーバー後の旧マスターノードは以下の状態となっていることとします。
 
-- 旧稼働系でOSが起動ができる状態にする。
+- 旧マスターノードでOSが起動ができる状態にする。
 - 以下のサービスは停止した状態にする。
    - MySQL
    - Zabbix Server
 
-**旧稼働系をスレーブとして復帰**
+**旧マスターノードをスレーブとして復帰**
 
-新稼働系でバイナリログチェックポイントを確認します。
+新マスターノードでバイナリログチェックポイントを確認します。
 
 ::
 
@@ -496,16 +524,16 @@ MHAデーモンを起動します。
    +-------------------+-----------+--------------+------------------+
    | File              | Position  | Binlog_Do_DB | Binlog_Ignore_DB |
    +-------------------+-----------+--------------+------------------+
-   | mysqld-bin.000001 | 620812883 |              |                  |
+   | mysqld-bin.000001 | 2597042   |              |                  |
    +-------------------+-----------+--------------+------------------+
 
-旧稼働系をMySQLスレーブとして設定します。MySQLがダウンしている場合は起動します。
+旧マスターノードをMySQLスレーブとして設定します。MySQLがダウンしている場合は起動します。
 
 ::
 
    sudo /etc/init.d/mysqld start
 
-旧稼働系のMySQLに接続して、レプリケーション設定をします。
+旧マスターノードのMySQLに接続して、レプリケーション設定をします。
 
 ::
 
@@ -513,19 +541,17 @@ MHAデーモンを起動します。
 
 ::
 
-   SET GLOBAL read_only = 1;
    SET GLOBAL sql_slave_skip_counter = 1;
    change master to
-       master_host='192.168.10.2',
+       master_host='192.168.10.53',
        master_user='repl',
        master_password='repl',
        master_log_file='mysqld-bin.000001',
-       master_log_pos=620812883;
+       master_log_pos=2597042;
    start slave;
-   show slave status;
-   exit;
+   show slave status \G;
 
-旧待機系でMHAチェックコマンドを実行して、sshとレプリケーションの状態確認をします。
+旧スレーブノードでMHAチェックコマンドを実行して、sshとレプリケーションの状態確認をします。
 
 ::
 
@@ -535,22 +561,22 @@ MHAデーモンを起動します。
 
 **系の切り戻し**
 
-旧待機系で切り戻しを実行します。
+旧スレーブノードで切り戻しを実行します。
 フェイルオーバー後に生成されるフラグファイルを削除します。
 
 ::
 
    sudo rm -f /tmp/mha/mha.failover.complete
 
-手動切り戻しスクリプトを実行します。IPアドレスは旧稼働系のIPアドレスを指定します。
+手動切り戻しスクリプトを実行します。IPアドレスは旧マスターノードのIPアドレスを指定します。
 
 ::
 
    sudo masterha_master_switch --master_state=alive \
    --conf=/etc/mha.conf \
-   --new_master_host=192.168.10.1  --orig_master_is_new_slave
+   --new_master_host=192.168.10.52  --orig_master_is_new_slave
 
-旧稼働系でデーモンを再起動します。
+旧マスターノードでデーモンを再起動します。
 
 ::
 
@@ -570,4 +596,4 @@ MHAデーモンを起動します。
 
       mysql -u root -p
       STOP SLAVE; SET GLOBAL SQL_SLAVE_SKIP_COUNTER=1; START SLAVE;
-      show slave status;
+      show slave status \G;

@@ -1620,7 +1620,7 @@ int gpfCheckDiskUtil( GPFConfig *config)
 	limit = config->schedule->diskCapacity;
 
 	rc = gpfCheckDiskFree(config->home, &free);
-	rc = rc && (free < limit)?0:1;
+	rc = rc && (free <= limit)?0:1;
 	
 	gpfNotice("Disk Free[%d] > %d : %s", free, limit, (rc == 1)?"OK":"NG");
 

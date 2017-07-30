@@ -35,7 +35,7 @@ import java.text.SimpleDateFormat;
 public class ReserveManager {
 	private static final Logger LOG = LoggerFactory.getLogger(ReserveManager.class);
     private static final Config CONF = ConfigFactory.load();
-    private static final int A_DAY_MSEC = 24 * 3600 * 1000;
+    private static final int A_MINUTE_MSEC = 60 * 1000;
     private static int maxServers = 0;
     private static ReserveManager instance = new ReserveManager();
     private static HashMap<String,StagingFileInfo> reserves;
@@ -112,19 +112,13 @@ public class ReserveManager {
     }
 
     /**
-     * Remove the hash that was reserved for 1 day.
+     * Remove the hash that was reserved for 1 minute.
      */
 
     public void purge_timeout() {
-        Date now = new Date();
-        long current_timestamp = now.getTime();
         for (Map.Entry<String, StagingFileInfo> entry : reserves.entrySet()) {
             String stagingFileKey = entry.getKey();
-            StagingFileInfo stagingFileInfo = entry.getValue();
-            long timestamp = stagingFileInfo.getTimestamp();
-            if (timestamp < current_timestamp - A_DAY_MSEC) {
-                reserves.remove(stagingFileKey);
-            }
+            reserves.remove(stagingFileKey);
         }
     }
 

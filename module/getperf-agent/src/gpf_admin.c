@@ -183,7 +183,7 @@ int gpfRunSetup( GPFSetupOption *options )
 	}
 
 	if ( options->adminWebService ) {
-		char *url = options->adminWebService;
+		char *url = strdup(options->adminWebService);
 		gpfRtrim(url, "/");
 		url = gpfStrdcat( url, GPF_SOAP_URL_SUFFIX );
 		gpfFree(schedule->urlCM);

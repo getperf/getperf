@@ -68,4 +68,37 @@ public class ReserveManagerTest {
             assertThat(result, is("OK"));
         }
     }
+
+    @Test
+    public void setter3() {
+        ReserveManager reserves = ReserveManager.getInstance();
+        reserves.truncate();
+        int n = reserves.get_max_servers();
+        for (int i = 0; i < n; i++) {
+            String host = "host" + i;
+            String filename = "arc_" + host + "__22977_02_20150127_1000.zip";
+            String result = reserves.regist("site1", filename);
+            assertThat(reserves.get_size(), is(i+1));
+            assertThat(result, is("OK"));
+        }
+        {
+            String host = "host" + n;
+            String filename = "arc_" + host + "__22977_02_20150127_1000.zip";
+            String result = reserves.regist("site1", filename);
+            assertThat(reserves.get_size(), is(n));
+            assertThat(result, is(not("OK")));
+        }
+        try {
+            Thread.sleep(61000);
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+        {
+            String host = "host" + n;
+            String filename = "arc_" + host + "__22977_02_20150127_1000.zip";
+            String result = reserves.regist("site1", filename);
+            assertThat(reserves.get_size(), is(n));
+            assertThat(result, is("OK"));
+        }
+    }
 }

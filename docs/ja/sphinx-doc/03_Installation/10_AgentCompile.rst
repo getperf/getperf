@@ -203,6 +203,8 @@ OpenSSL-Win32 ディレクトリにアーカイブし、監視サーバの /tmp/
 
 DLL を $WIN32_HOME/bin にコピーします。
 
+::
+
   cd OpenSSL-Win32/bin
   cp msvcr120.dll libeay32.dll ssleay32.dll $WIN32_HOME/bin/
 
@@ -211,7 +213,7 @@ include と lib を $WIN32_HOME/ssl にコピーします。
 ::
 
   cd ../include
-  mkdir $WIN32_HOME/ssl/include/
+  mkdir -p $WIN32_HOME/ssl/include/
   cp -r openssl $WIN32_HOME/ssl/include/
   cd ../lib
   mkdir $WIN32_HOME/ssl/lib/
