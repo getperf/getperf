@@ -40,6 +40,7 @@ sub parse_path {
 	my $site_info = Getperf::Data::SiteInfo->get_instance_from_path($node_path);
 	$self->site_info($site_info);
 	my @node_info_jsons = ();
+print "node_path:$node_path\n";
 	if (-d $node_path && $node_path=~m|(^\|/)node|) {
 		dir($node_path)->recurse(callback => sub {
 			push(@node_info_jsons, shift);
@@ -50,15 +51,30 @@ sub parse_path {
 		LOG->crit("Node directory must be specified '$node_path'.");
 		return;
 	}
+# print Dumper \@node_info_jsons;
 	my %node_infos = ();
 	my $metric_count = 0;
 	for my $node_info_json(@node_info_jsons) {
-		next if ($node_info_json!~m|(^\|/)node/(.+)/(.+)/info/(.+)\.json|);
-		my ($domain, $node, $metric) = ($2, $3, $4);
-		my $node_info_text = $node_info_json->slurp || die "$!";
-		my $node_info = decode_json($node_info_text);
-		$node_infos{$domain}{$node} = merge($node_infos{$domain}{$node}, $node_info);
+		if ($node_info_json=~m|(^\|/)node/(.+)/(.+)/info/(.+)\.json|) {
+			my ($domain, $node, $metric) = ($2, $3, $4);
+			my $node_info_text = $node_info_json->slurp || die "$!";
+			my $node_info = decode_json($node_info_text);
+			$node_infos{$domain}{$node} = merge($node_infos{$domain}{$node},
+                                                $node_info);
+			$metric_count ++;
+		# ディレクトリが、'node/{ホスト}/{ドメイン}' の場合は空のノード情報を登録
+		} elsif ($node_info_json=~m|(^\|/)node/(.+)|) {
+			my @paths = split(/\//, $2);
+			if (scalar(@paths) == 2) {
+				my ($domain, $node) = @paths;
+				$node_infos{$domain}{$node} = {};
+				$metric_count ++;
+				# print Dumper \@paths;
+			}
+		}
 	}
+print "metric_count:$metric_count\n";
+print Dumper \%node_infos;
 	$self->{node_infos} = \%node_infos;
 	if (! $self->load_node_ip_lists ) {
 		LOG->error("Load error of node IP List file");
