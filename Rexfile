@@ -738,7 +738,7 @@ task "run_client_cert_update", sub {
 
   cron_entry "client_cert_update",
    ensure       => "present",
-   command      => "(perl $script --update_client_cert > /dev/null 2>&1) &",
+   command      => "(perl $script update_client_cert > /dev/null 2>&1) &",
    minute       => "15",
    hour         => "0",
    month        => "*",

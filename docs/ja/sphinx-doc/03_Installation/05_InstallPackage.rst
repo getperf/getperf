@@ -49,7 +49,7 @@ Gradle をインストールします
 
 ::
 
-   cd $GETPERF
+   cd $GETPERF_HOME
    sudo -E ./script/gradle-install.sh
    sudo ln -s /usr/local/gradle/latest/bin/gradle /usr/local/bin/gradle
 
