@@ -1,0 +1,52 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Events",
+      "graph_tree": "/Oracle/<node_path>/Event",
+      "chart_style": "stack",
+      "legend_type": "show_average",
+      "graph_item_cols": 2,
+      "graph_items": [
+        "CPUTime",
+        "DBScattRd",
+        "DBSeqRd",
+        "SQLNetMsg",
+        "SQLNetMoreDat",
+        "LogSync",
+        "LogParaWr",
+        "BufferWait",
+        "Enqueue",
+        "DBParaWr",
+        "SQLNetClient",
+        "LatchFree",
+        "GlobalCacheCr",
+        "FreeBufWait",
+        "ReadByOther"
+      ],
+      "graph_item_texts": [
+        "CPU time",
+        "db file scattered read",
+        "db file sequential read",
+        "SQL*Net message from dblink",
+        "SQL*Net more data from dblink",
+        "log file sync",
+        "log file parallel write",
+        "buffer busy waits",
+        "Enque:",
+        "db file parallel write",
+        "SQL*Net more data to client",
+        "latch:",
+        "global cache cr request",
+        "free buffer",
+        "read by other session"
+      ],
+      "vertical_label": "sec",
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - Event",
+      "datasource_title": "Oracle - <node> - Event"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+export ORACLE_SID=ALDB
+export ORACLE_BASE=/opt/oracle/app
+export ORACLE_HOME=${ORACLE_BASE}/oracle/product/10.2.0/db_1
+export ORA_NLS10=${ORACLE_HOME}/nls/data
+export NLS_LANG=JAPANESE_JAPAN.JA16EUC
+export TNS_ADMIN=${ORACLE_HOME}/network/admin
+export PATH=/bin:/usr/bin:/usr/ccs/bin:/usr/openwin/bin:/usr/ucb:/usr/sbin:/usr/local/bin:.
+export LD_LIBRARY_PATH=${ORACLE_HOME}/lib32:/usr/lib:/usr/openwin/lib
+export LD_LIBRARY_PATH_64=${ORACLE_HOME}/lib
+export PATH=${ORACLE_HOME}/bin:${PATH}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ORACLE_HOME}/ctx/lib
+export XMLHOME=${ORACLE_HOME}
+export CLASSPATH=${XMLHOME}/lib/xmlparserv2.jar
+export CLASSPATH=${CLASSPATH}:${XMLHOME}/lib/classgen.jar
+export LANG=ja

@@ -1,0 +1,36 @@
+{
+  "host_template": "SNMPNetwork",
+  "host_title": "SNMPNetwork - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "SNMPNetwork - Main Traffic Received - <devn> cols",
+      "graph_tree": "/LAN/Summary/",
+      "graph_title": "Network Main Port - <node> - Traffic Received",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "graph_items": ["ifInOctets"],
+      "vertical_label": "byte/s",
+      "datasource_title": "Network Main Port - <node> - Traffic Received - <device>"
+    },
+    {
+      "graph_template": "SNMPNetwork - Main Traffic Sent - <devn> cols",
+      "graph_tree": "/LAN/Summary/",
+      "graph_title": "Network Main Port - <node> - Traffic Sent",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "graph_items": ["ifOutOctets"],
+      "vertical_label": "byte/s",
+      "datasource_title": "Network Main Port - <node> - Traffic Sent - <device>"
+    }
+  ]
+}
+
+
+
+
+

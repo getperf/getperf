@@ -1,0 +1,42 @@
+{
+  "host_template": "SNMPNetwork",
+  "host_title": "SNMPNetwork - <node>",
+  "priority": 2,
+  "graphs": [
+    {
+      "graph_template": "SNMPNetwork - Port Traffic",
+      "graph_tree": "/LAN/Detail/<node_path>/MBs",
+      "graph_title": "Network Port - <node> - <device> - Traffic",
+      "chart_style": "line1",
+      "graph_items": ["ifInOctets", "ifOutOctets"],
+      "graph_item_texts": ["in", "out"],
+      "vertical_label": "byte/s",
+      "datasource_title": "Network Port - <node> - <device> - Traffic"
+    },
+    {
+      "graph_template": "SNMPNetwork - Port Packets",
+      "graph_tree": "/LAN/Detail/<node_path>/packets",
+      "graph_title": "Network Port - <node> - <device> - Packet/sec",
+      "chart_style": "line1",
+      "graph_items": ["ifInUcastPkts", "ifOutUcastPkts", "ifInNUcastPkts", "ifOutNUcastPkts"],
+      "graph_item_texts": ["in ucast", "out ucast", "in non ucast", "out non ucast"],
+      "vertical_label": "packets/s",
+      "datasource_title": "Network Port - <node> - <device> - Packet/sec"
+    },
+    {
+      "graph_template": "SNMPNetwork - Port Errors",
+      "graph_tree": "/LAN/Detail/<node_path>/errors",
+      "graph_title": "Network Port - <node> - <device> - Error Packet/sec",
+      "chart_style": "line1",
+      "graph_items": ["ifInDiscards", "ifInErrors", "ifOutDiscards", "ifOutErrors"],
+      "graph_item_texts": ["in discard", "in error", "out discard", "out error"],
+      "vertical_label": "packets/s",
+      "datasource_title": "Network Port - <node> - <device> - Error Packet/sec"
+    }
+  ]
+}
+
+
+
+
+

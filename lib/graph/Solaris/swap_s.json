@@ -1,0 +1,29 @@
+{
+  "host_template": "Solaris",
+  "host_title": "Solaris - <node>",
+  "priority": 2,
+  "graphs": [
+    {
+      "graph_template": "Solaris - Memory Usage",
+      "graph_tree": "/HW/<node_path>/Memory/",
+      "graph_title": "Solaris - <node> - Memory Usage",
+      "graph_items": ["alloc", "reserve"],
+      "chart_style": "stack",
+      "vertical_label": "Byte",
+      "cdef": "Multiply by 1024",
+      "total_data_source": "Total All Data Sources, Multiply by 1024",
+      "graph_comment": "Memory : <total>",
+      "graph_borderline": "<total>",
+      "datasource_title": "Solaris - <node> - Memory Usage"
+    },
+    {
+      "graph_template": "Solaris - Memory Detail",
+      "graph_tree": "/HW/<node_path>/Memory/Detail/",
+      "graph_title": "Solaris - <node> - Memory Detail",
+      "graph_items": ["alloc"],
+      "vertical_label": "Byte",
+      "cdef": "Multiply by 1024",
+      "datasource_title": "Solaris - <node> - Memory Detail"
+    }
+  ]
+}
