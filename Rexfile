@@ -466,7 +466,11 @@ task "prepare_zabbix", sub {
           zabbix-get zabbix-sender
         /],
       };
-      say install package => $base_package;
+      if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
+        _sudo 'yum -y install --enablerepo=epel,remi ' . $base_package;
+      } else {
+        say install package => $base_package;
+      }
 
       _sudo $config->{home} . '/script/deploy-zabbix.pl';
 
@@ -577,7 +581,7 @@ task "prepare_graphite", sub {
         _sudo 'yum -y install --enablerepo=epel graphite-web graphite-web-selinux mysql mysql-server MySQL-python';
         _sudo 'yum -y install --enablerepo=epel python-carbon python-whisper';
       } else {
-        die "Operating system 'CentOS'";
+        die "Operating system is not 'CentOS'";
       }
 
       _sudo $config->{home} . '/script/deploy-graphite.pl';
