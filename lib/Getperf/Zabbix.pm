@@ -59,7 +59,6 @@ sub new {
 		my $config_json_text = $zabbix_config_file->slurp || die $@;
     	$zabbix_conf = decode_json($config_json_text);
 	}
-
 	my $server = $zabbix_conf->{ZABBIX_SERVER_IP} || 'localhost';
 
 	bless {
@@ -491,6 +490,7 @@ sub parse_zabbix_item_rule {
 sub merge_additional_node_path_host_info {
 	my ($self, $zabbix_host, $node_path) = @_;
 
+	$node_path=~s/,/_/g;
 	my $node_dir = $node_path || '';
 	$node_dir =~s|^/*(.*)/(.+?)$|$1|;
 	$node_dir =~s|/| - |g;

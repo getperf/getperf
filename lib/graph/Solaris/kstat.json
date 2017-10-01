@@ -1,0 +1,58 @@
+{
+  "host_template": "Solaris",
+  "host_title": "Solaris - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "Solaris - Network Recieve Traffic - net_dev - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "Solaris - <node> - Network Recieve Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["rbytes"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Solaris - <node> - Recieve Bytes/sec - <device>"
+    },
+    {
+      "graph_template": "Solaris - Network Transfer Traffic - net_dev - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "Solaris - <node> - Network Transfer Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["obytes"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Solaris - <node> - Transfer Bytes/sec - <device>"
+    },
+    {
+      "graph_template": "Solaris - Network Traffic - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Solaris - <node> - Network Bytes/sec - <device>",
+      "graph_items": ["rbytes", "obytes"],
+      "graph_item_texts": ["inBytes", "outBytes"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Solaris - <node> - Network Bytes/sec - <device>"
+    },
+    {
+      "graph_template": "Solaris - Network Packet - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Solaris - <node> - Network Packet - <device>",
+      "graph_items": ["ipackets", "opackets"],
+      "graph_item_texts": ["inPackets", "outPackets"],
+      "vertical_label": "Packet/sec",
+      "unit_exponent_value": 1,
+      "datasource_title": "Solaris - <node> - Network Packet - <device>"
+    },
+    {
+      "graph_template": "Solaris - Network Error - net_dev",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "Solaris - <node> - Network Error - <device>",
+      "graph_items": ["ierrors", "oerrors", "collisions"],
+      "chart_style": "line2",
+      "vertical_label": "Errors/sec",
+      "unit_exponent_value": 1,
+      "datasource_title": "Solaris - <node> - Network Error - <device>"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "host_template": "HW",
+  "host_title": "PS - <node>",
+  "priority": 5,
+  "graphs": [
+    {
+      "graph_template": "HW - Process - CPU - <devn> cols",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["cpu"],
+      "chart_style": "stack",
+      "graph_tree": "/Process/CPU/",
+      "graph_title": "Process - <node> - CPU Util%",
+      "datasource_title": "Process - <node> - CPU Util% - <device>"
+    },
+    {
+      "graph_template": "HW - Process - Memory - <devn> cols",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["mem"],
+      "chart_style": "stack",
+      "graph_tree": "/Process/Memory/",
+      "graph_title": "Process - <node> - Memory Util%",
+      "datasource_title": "Process - <node> - Memory Util% - <device>"
+    }
+  ]
+}

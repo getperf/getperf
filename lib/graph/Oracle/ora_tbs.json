@@ -1,0 +1,19 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Tablespace util% - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Tablespace",
+      "graph_title": "Oracle - <node> - Tablespace util%",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["usage"],
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "vertical_label": "percent",
+      "datasource_title": "Oracle - <node> - Tablespace util% - <device>"
+    }
+  ]
+}
