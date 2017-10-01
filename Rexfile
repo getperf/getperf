@@ -467,7 +467,7 @@ task "prepare_zabbix", sub {
         /],
       };
       if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
-        _sudo "yum -y install --enablerepo=epel,remi $base_package";
+        _sudo "yum -y install --enablerepo=epel,remi @{$base_package}"
       } else {
         say install package => $base_package;
       }
