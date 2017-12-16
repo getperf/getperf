@@ -9,14 +9,21 @@ WK_DIR="${CWD}/../_wk"
 PID_FILE="${WK_DIR}/_pid_getperf"
 RUN_FLAG="${WK_DIR}/_running_flg"
 
-PID=0
+PID=1
 if [ -f "${PID_FILE}" ]; then
 	PID=`cat ${PID_FILE}`
 fi
 
 #if [ -f "${RUN_FLAG}" ]; then
-	if [ ! -d "/proc/${PID}" ]; then
-		${CWD}/getperfctl start
-	fi
+	# if [ ! -d "/proc/${PID}" ]; then
+	# 	${CWD}/getperfctl start
+	# fi
 #fi
 
+if [ -f "${RUN_FLAG}" ]; then
+    EXIST_AGENT=`ps $PID | grep _getperf | wc -l`
+    if [ "$EXIST_AGENT" = "0" ]; then
+        rm $PID_FILE
+        ${CWD}/getperfctl start
+    fi
+fi
