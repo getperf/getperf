@@ -655,6 +655,7 @@ sub create_zabbix_repository_db {
 	if (!$is_exist_db) {
 		$drh->func('createdb', $zabbixdb, 'localhost', 'root', $rootpass, 'admin');
 		$dbh = DBI->connect("dbi:mysql:mysql", 'root', $rootpass);
+		$dbh->do("ALTER DATABASE $zabbixdb DEFAULT CHARACTER SET=utf8");
 		$dbh->do("GRANT ALL ON $zabbixdb.* TO $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
 		$dbh->disconnect();
 		if ($zabbix_sql_dir) {

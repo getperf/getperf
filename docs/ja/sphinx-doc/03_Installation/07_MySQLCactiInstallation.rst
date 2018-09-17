@@ -8,6 +8,18 @@ MySQLとCactiを設定します。はじめに、MySQL　の root
 
     rex prepare_mysql
 
+my.cnfにutf8の設定を追加します。
+
+::
+
+   sudo vi /etc/my.cnf
+
+[mysqld]の箇所
+
+::
+
+   character-set-server=utf8
+
 PHP ライブラリ構成管理ツール composer を用いて PHP
 ライブラリをインストールします。
 
