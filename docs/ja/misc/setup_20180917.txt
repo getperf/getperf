@@ -1,0 +1,43 @@
+getperf インストール
+=========================
+
+Apache
+----------
+
+Apache インストールで、ソースモジュールのダウンロードができない。
+手動でダウンロードして解凍後、実行する。
+
+cd /tmp/rex
+wget https://archive.apache.org/dist/httpd/httpd-2.2.29.tar.gz 
+tar xvf httpd-2.2.29.tar.gz
+cd ~/getperf
+httpd-2.2.29.tar.gz
+
+Zabbix
+----------
+
+インストールスクリプトでパッケージバージョンの互換性エラーが発生するので、
+パッケージは以下で手動インストールする
+
+cd /tmp/rex
+wget https://repo.zabbix.com/zabbix/2.2/rhel/6/x86_64/zabbix-release-2.2-1.el6.noarch.rpm
+rpm -ivh zabbix-release-2.2-1.el6.noarch.rpm
+
+2.2.23
+
+sudo -E bash -c "yum -y install --enablerepo=zabbix,epel,remi zabbix-server zabbix-web zabbix-server-mysql zabbix-web-mysql zabbix-web-japanese zabbix-get zabbix-sender"
+
+以下の依存パッケージの解決エラーが発生した場合の対処
+zabbix-server-mysql-1.8.22-1.el6.x86_64 (epel) 要求: libiksemel.so.3()(64bit)
+
+Zabbixサイトから手動インストールする
+
+mkdir -p work/zabbix
+cd work/zabbix/
+
+wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-1.4-2.el6.x86_64.rpm
+wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-devel-1.4-2.el6.x86_64.rpm
+wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-utils-1.4-2.el6.x86_64.rpm
+
+sudo -E yum localinstall *.rpm
+

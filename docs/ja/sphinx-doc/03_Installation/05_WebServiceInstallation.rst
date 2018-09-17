@@ -22,11 +22,24 @@ Apacheインストール
 Apache HTTP サーバのソースをダウンロードして、/usr/local の下にインストールします。管理用とデータ受信用の2つのインスタンスをインストールし、
 それぞれ、/usr/local/apache-admin　と　/usr/local/apache-data のホームディレクトリにインストールします。
 
+Apache バージョンは、2.2 系の最新をダウンロードサイトから検出してインストールします
+
+.. note::
+
+   セットアップスクリプトでApache 2.2系のダウンロードに失敗する場合があります。
+   その場合は以下の手順で手動ダウンロードして、アーカイブを解凍した後に
+   セットアップスクリプトを実行してください。
+
+   ::
+
+      cd /tmp/rex
+      wget https://archive.apache.org/dist/httpd/httpd-2.2.29.tar.gz 
+      tar xvf httpd-2.2.29.tar.gz
+      cd ~/getperf
+
 ::
 
     sudo -E rex prepare_apache
-
-Apache バージョンは、2.2 系の最新をダウンロードサイトから検出してインストールします
 
 Tomcatインストール
 ------------------

@@ -50,6 +50,24 @@ Zabbix インストール
 
 Zabbix サーバ一式のインストールと、エージェント一式のダウンロードをします。Zabbix サーバは開発元が提供するyumリポジトリからインストールをします。
 
+.. note::
+
+   スクリプトの実行で以下の依存パッケージの解決エラーが発生した場合、
+   以下のZabbixサイトから手動インストールをしてください。
+
+   zabbix-server-mysql-1.8.22-1.el6.x86_64 (epel) 要求: libiksemel.so.3()(64bit)
+
+   ::
+
+      mkdir -p work/zabbix
+      cd work/zabbix/
+      wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-1.4-2.el6.x86_64.rpm
+      wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-devel-1.4-2.el6.x86_64.rpm
+      wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-utils-1.4-2.el6.x86_64.rpm
+      sudo -E yum localinstall *.rpm
+
+
+
 ::
 
     sudo -E rex prepare_zabbix

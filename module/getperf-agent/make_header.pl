@@ -8,7 +8,7 @@ my ($osname, $os, $osver, $arch, $module_tag);
 
 my $uname = `uname -a`;
 # Solaris,FreeBSD Distributor
-if ($uname=~/^(\S+)\s+(\S+)\s+(\S+).+(x86_64|i386|amd64)/) {
+if ($uname=~/^(\S+)\s+(\S+)\s+(\S+).+(x86_64|i386|i686|amd64)/) {
 	($os, $osver, $arch) = ($1, $3, $4);
 	$osver = $1 if ($osver=~/^(\d+\.\d+)/);
 	if ($os eq 'Linux') {

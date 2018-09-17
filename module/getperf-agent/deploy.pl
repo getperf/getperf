@@ -144,7 +144,7 @@ sub getModuleTag {
 	} else {
 		my $uname = `uname -a`;
 		# Solaris,FreeBSD ディストリビューション
-		if ($uname=~/^(\S+)\s+(\S+)\s+(\S+).+(x86_64|i386|amd64)/) {
+		if ($uname=~/^(\S+)\s+(\S+)\s+(\S+).+(x86_64|i386|i686|amd64)/) {
 			my ($os, $osver, $arch) = ($1, $3, $4);
 			$osver = $1 if ($osver=~/^(\d+\.\d+)/);
 			if ($os eq 'Linux') {
@@ -175,10 +175,11 @@ sub getZabbixArchiveName {
 	} else {
 		my $uname = `uname -a`;
 		# UNIX ディストリビューション
-		if ($uname=~/^(\S+)\s+(\S+)\s+(\S+).+(x86_64|i386|amd64|sparc)/) {
+		if ($uname=~/^(\S+)\s+(\S+)\s+(\S+).+(x86_64|i386|i686|amd64|sparc)/) {
 			my ($os, $osver, $arch) = ($1, $3, $4);
 			if ($os eq 'Linux') {
 				$arch  = 'amd64' if ($arch eq 'x86_64');
+				$arch  = 'i386' if ($arch eq 'i686');
 				$osver = "${1}_${2}" if ($osver=~/^(\d+)\.(\d+)\./);
 				# set Kernel2.6, if the major version is more than 3
 				$osver = '2_6' if ($osver=~/^[3-9]/);
