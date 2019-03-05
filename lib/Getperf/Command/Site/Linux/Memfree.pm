@@ -43,8 +43,12 @@ sub parse {
 		} elsif ($line=~/\-\/\+ buffers\/cache:\s+(.*)/) {
 			my @item = split(/\s/, $1);
 			$used = shift(@item);
-
-			$results{$sec} = join(' ', ($used, $free, $shared, $buffers - $shared, $cached));
+			if ($buffers - $shared > 0) {
+				$buffers = $buffers - $shared;
+			}else {
+				$cached = $cached - $shared;
+			}
+			$results{$sec} = join(' ', ($used, $free, $shared, $buffers, $cached));
 			$sec += $step;
 		}
 	}
