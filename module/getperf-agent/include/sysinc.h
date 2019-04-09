@@ -46,6 +46,7 @@
 # include <sys/timeb.h>
 # include <tlhelp32.h>
 # include <assert.h>
+#include <psapi.h>
 
 # ifndef S_ISDIR
 #  define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)

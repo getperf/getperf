@@ -184,6 +184,24 @@ BOOL CALLBACK TerminateAppEnum( HWND hwnd, LPARAM lParam )
 	}
 	return TRUE ;
 }
+
+void UpdatePrivilege(void)
+{
+    HANDLE hToken;
+    TOKEN_PRIVILEGES tp;
+    LUID luid;
+
+    if(OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,&hToken))
+    {
+       LookupPrivilegeValue(NULL,SE_DEBUG_NAME, &luid);
+
+       tp.PrivilegeCount = 1;
+       tp.Privileges[0].Luid = luid;
+       tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED; 
+
+       AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), NULL, NULL);
+    }
+}
 #endif
 
 int gpfKill( pid_t pid )
@@ -193,20 +211,33 @@ int gpfKill( pid_t pid )
 
 	int rc = 1;
 	HANDLE ph = NULL;
-	int dwTimeout = 1000;
+  	TCHAR filename[MAX_PATH];
+  	int dwTimeout = 1000;
 
 	if ( pid <= 1 )
 		return gpfError("wrong pid %d", pid);
 
-	if ( (ph = OpenProcess( PROCESS_TERMINATE, 0, pid )) == NULL)
+	// if ( (ph = OpenProcess( PROCESS_TERMINATE, 0, pid )) == NULL)
+	if ( (ph = OpenProcess( PROCESS_ALL_ACCESS, TRUE, pid )) == NULL)
 		return gpfError( "process [pid=%d] not exist", pid );
 
-	EnumWindows((WNDENUMPROC)TerminateAppEnum, (LPARAM) pid ) ;
+    // if (GetModuleFileNameEx(ph, NULL, filename, MAX_PATH) == 0) {
+    //   printf("Failed to get module filename.\n");
+    //   return rc;
+    // } else {
+    //   printf("Module filename is: %s.\n", filename);
+    // }
+
+	// EnumWindows((WNDENUMPROC)TerminateAppEnum, (LPARAM) pid ) ;
 
 	if ( WaitForSingleObject( ph, dwTimeout ) != WAIT_OBJECT_0 )
 	{
+		UpdatePrivilege();
+		gpfDebug("[TerminateProcess] START");
 		if ( TerminateProcess(ph, 0) == 0 )
+			// rc = gpfSystemError( "kill %d, %s", pid, filename );
 			rc = gpfSystemError( "kill %d", pid );
+		gpfDebug("[TerminateProcess] END");
 	}
 
 	CloseHandle(ph);
@@ -294,7 +325,9 @@ int gpfExecCommand(char *execCommand, int timeout, char *outPath, char *errPath,
 
 	/* プロセスの生成 */
 //	if ( !CreateProcess( NULL, command, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, si, pi) )
-	if ( !CreateProcess( NULL, command, sa, sa, TRUE, CREATE_NO_WINDOW, NULL, NULL, si, pi) )
+	// if ( !CreateProcess( NULL, command, sa, sa, TRUE, CREATE_NO_WINDOW, NULL, NULL, si, pi) )
+	// 第5引数を FALSE にしてプロセスハンドルを敬称しない
+	if ( !CreateProcess( NULL, command, sa, sa, FALSE, CREATE_NO_WINDOW, NULL, NULL, si, pi) )
 	{
 		gpfSystemError("%s", command);
 		ret = 0;
@@ -307,7 +340,13 @@ int gpfExecCommand(char *execCommand, int timeout, char *outPath, char *errPath,
 	if ( hStdError )	{ CloseHandle(hStdError);	hStdError = NULL; }
 
 	*child = GetProcessId( pi->hProcess );  
-	gpfInfo("[Exec] %s, pid=%d", command, *child );
+	gpfNotice("[Exec] %s, pid=%d", command, *child );
+
+	// 不要なスレッドハンドルをクローズする
+	if (!CloseHandle(pi->hThread)) {
+		gpfSystemError("CloseHandle(hThread)");
+		goto lbl_exit;
+	}
 
 	/* タイムアウト値が0の場合は何もせずに1を返す */
 	if ( timeout <= 0 )
@@ -339,7 +378,7 @@ lbl_exit:
 	if ( hStdOutput )	{ CloseHandle(hStdOutput);	hStdOutput = NULL; }
 	if ( hStdError )	{ CloseHandle(hStdError);	hStdError = NULL; }
 	CloseHandle(pi->hProcess);
-	CloseHandle(pi->hThread);
+	// CloseHandle(pi->hThread);
 	gpfFree(pi);
 	gpfFree(si);
 	gpfFree(sa);

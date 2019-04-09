@@ -94,7 +94,7 @@ void *gpfRemovePids( ght_hash_table_t *Pids, GPFThreadId threadKey )
 int gpfInitAgent( GPFConfig **_config, char *executePath, char *configFile, int mode )
 {
 	char cwd[MAXFILENAME], programPath[MAXFILENAME], configPath[MAXFILENAME];
-	char hostname[MAX_COMPUTERNAME_LENGTH];
+	char hostname[MAX_COMPUTERNAME_LENGTH + 1];
 	char *configName, *home  = NULL;
 	char *eol                = NULL;
 	char *binDir             = NULL;
@@ -512,8 +512,6 @@ int gpfExecSOAPCommandPM( GPFConfig *config, char *option, char *filePath )
 		gpfDebug( "[S] LOCK SOAP");
 		zbx_mutex_lock( &gpfSoapAccessFlag );
 	}
-	unlink( outPath );
-	unlink( errPath );
 	gpfNotice( "[Exec]\n%s", command );
 	if ( ( rc = gpfExecCommand(command, GPF_SOAP_CMD_TIMEOUT, outPath, errPath, &child, &exitCode) ) == 0)
 	{
@@ -524,6 +522,7 @@ int gpfExecSOAPCommandPM( GPFConfig *config, char *option, char *filePath )
 				gpfNotice( line );
 			}
 			gpf_fclose( file );
+			unlink( outPath );
 		}
 
 		if( (file = fopen(errPath, "r")) != NULL)
@@ -533,6 +532,7 @@ int gpfExecSOAPCommandPM( GPFConfig *config, char *option, char *filePath )
 				gpfError( line );
 			}
 			gpf_fclose( file );
+			unlink( errPath );
 		}
 	}
 	if ( config->mode == GPF_PROCESS_RUN )

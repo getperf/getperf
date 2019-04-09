@@ -34,7 +34,7 @@ register cacti_db => sub {
         return;
     }
     my $passwd = $site_info->{site_mysql_passwd};
-
+    print "PASS:$sitekey,$passwd\n";
     DBI->connect("dbi:mysql:$sitekey", $sitekey, $passwd, {
         RaiseError        => 1,
         PrintError        => 0,
