@@ -769,7 +769,7 @@ int gpfRunScheduler( GPFConfig *config )
 		if ( ( exitStatus = gpfCheckExitFile( config ) ) != NULL )
 		{
 			gpfWarn( "Catch exit signal %s", exitStatus );
-			gpfFree( exitStatus );
+ 			gpfFree( exitStatus );
 			config->mode = GPF_PROCESS_END;
 			gpfStopProcess( config->managedPid );
 			break;
@@ -2287,6 +2287,15 @@ void gpfRunExit()
 			gpfNotice("kill Collector's workers [ %s ]", statName);
 			task->mode = GPF_PROCESS_END;
 			gpfReapTimeoutWorkers( workerPids, 0, 1 );
+		// for ( task = (GPFTask *) ght_first( collectorPids, &iterator, &pidKey );
+		// 	task ;
+		// 	task = (GPFTask *) ght_next( collectorPids, &iterator, &pidKey ) )
+		// {
+		// 	ght_hash_table_t *workerPids = task->workerPids;
+		// 	statName = task->collector->statName;
+		// 	gpfNotice("kill Collector's workers [ %s ]", statName);
+		// 	task->mode = GPF_PROCESS_END;
+		// 	gpfReapTimeoutWorkers( workerPids, 0, 1 );
 //			sleep( 1 );
 		}
 //		gpfDebug("[S] Wait collector running ");
@@ -2305,7 +2314,7 @@ void gpfRunExit()
 		gpfRemoveWorkFile( config, "_running_flg" );
 		unlink( config->exitFlag );
 		gpfRemoveWorkDir( config );
-		gpfCloseLog( config );
+		// gpfCloseLog( config );
 	}
 }
 

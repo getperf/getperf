@@ -56,7 +56,6 @@ static VOID WINAPI ServiceCtrlHandler(DWORD ctrlCode)
 	{
 		case SERVICE_CONTROL_STOP:
 		case SERVICE_CONTROL_SHUTDOWN:
-			gpfNotice( "Getperf %s (build %d) Agent shutdown requested", GPF_VERSION, GPF_BUILD );
 
 			serviceStatus.dwCurrentState	= SERVICE_STOP_PENDING;
 			serviceStatus.dwWaitHint	= 4000;
@@ -64,7 +63,6 @@ static VOID WINAPI ServiceCtrlHandler(DWORD ctrlCode)
 
 			/* notify other threads and allow them to terminate */
 			gpfRunExit();
-			gpfNotice("Getperf Windows Service stopping");
 			sleep(1);
 
 			serviceStatus.dwCurrentState	= SERVICE_STOPPED;
@@ -78,7 +76,6 @@ static VOID WINAPI ServiceCtrlHandler(DWORD ctrlCode)
 	}
 
 	SetServiceStatus(serviceHandle, &serviceStatus);
-	gpfNotice("Getperf Windows Service stopped");
 }
 
 static VOID WINAPI ServiceEntry(DWORD argc, LPTSTR *argv)
