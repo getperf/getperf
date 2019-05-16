@@ -1,4 +1,4 @@
-﻿/*
+/*
    minizip.c
    Version 1.1, February 14h, 2010
    sample part of the MiniZip project - ( http://www.winimage.com/zLibDll/minizip.html )
@@ -277,7 +277,7 @@ int addZipfile(zipFile zf, char *basedir, char *filenameinzip, char *password)
 	return err;
 }
 
-// ディレクトリ下のファイルを再帰的に検索し、zip圧縮する
+// �ィレクトリ下�ファイルを�帰�に検索し�zip圧縮する
 int addZipTree(zipFile zf, char *basedir, char *parentpath, char *passwd) {
 	char fullname[MAXFILENAME];
 	char *fullpath = NULL;
@@ -289,7 +289,7 @@ int addZipTree(zipFile zf, char *basedir, char *parentpath, char *passwd) {
 	char strFindPath[MAXFILENAME];
 	errno = 0;
 
-	// 指定パスの*検索
+	// �定パスの*検索
 	fullpath = gpfCatFile(basedir, parentpath, NULL);
 	sprintf(strFindPath, "%s/*", fullpath); 
 	gpfFree(fullpath);
@@ -366,7 +366,9 @@ int addZipTree(zipFile zf, char *basedir, char *parentpath, char *passwd) {
 			strcat(fullname, "/"); 
 			strcat(fullname, dcon->d_name); 
 
-			if (dcon->d_type == 4) {
+            stat(dcon->d_name, &dstuff);
+            if (dstuff.st_mode & S_IFDIR) {
+            // if (dcon->d_namelen == 4) {
 				addZipTree(zf, basedir, fullname, passwd); 
 			} else {
 				addZipfile(zf, basedir, fullname, passwd);
@@ -381,7 +383,7 @@ int addZipTree(zipFile zf, char *basedir, char *parentpath, char *passwd) {
 	return(0);
 }
 
-// ディレクトリをzip圧縮する
+// �ィレクトリをzip圧縮する
 int zipDir(char *zipfile, char *basedir, char *parentpath, char *passwd) 
 {
 	int err = 0;

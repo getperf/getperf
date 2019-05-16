@@ -1,0 +1,59 @@
+
+事前準備
+
+環境変数の設定
+
+export PATH=/opt/freeware/bin:$PATH
+exprot LD_LIBRARY_PATH=/opt/freeware/lib:/tmp/agent/local/lib:/opt/freeware/bin
+exprot C_INCLUDE_PATH=/tmp/agent/local/include
+
+検証作業
+
+コンパイルエラーが発生したgcc実行行に -v オプションをつけて原因切り分け
+
+変更点
+
+1. include/config.h 内未宣言のマクロのエラー
+
+コンパイル時にエラー。使用していないのでコメントアウトする
+
+/* Define to rpl_malloc if the replacement function should be used. */
+/*
+#define malloc rpl_malloc
+*/
+/* Define to rpl_realloc if the replacement function should be used. */
+/*
+#define realloc rpl_realloc
+*/
+
+2. sys/fcntl.h のパスエラー
+
+gpf_common.cコンパイル時にエラー。 sys/fcntl にない
+
+../include/sysinc.h:249:24: fatal error: sys/fcntl.h: No such file or directory
+ # include <sys/fcntl.h>
+                        ^
+                        find /opt/freeware/ -name fcntl.h
+
+# include <sys/fcntl.h>　の箇所のsysを削除して、以下に変える
+
+#       include <fcntl.h>
+
+3. treezip.c のreaddir API互換性の問題
+
+AIXにdir.h ディレクトリ構造体に d_type がない。
+以下リファレンスを参考にコードを修正。
+
+https://stackoverflow.com/questions/2197918/cross-platform-way-of-testing-whether-a-file-is-a-directory
+
+stat(de->d_name, &s);
+if (s.st_mode & S_IFDIR)
+{
+  return 0;
+}
+
+4. GetLastError の宣言エラー
+
+Windowsデバッグ用に入れたもの。コメントアウトする。
+
+

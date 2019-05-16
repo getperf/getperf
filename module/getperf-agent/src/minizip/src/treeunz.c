@@ -110,9 +110,7 @@ int mymkdir(const char* dirname)
 #ifdef _WINDOWS
     ret = _mkdir(dirname);
 #else
-#ifdef unix
     ret = mkdir (dirname,0775);
-#endif
 #endif
     return ret;
 }
@@ -368,7 +366,6 @@ int do_extract_currentfile(unzFile uf, const int* popt_extract_without_path,
         if ((skip==0) && (err==UNZ_OK))
         {
             fout=fopen64(write_filename,"wb");
-
             /* some zipfile don't contain directory alone before file */
             if ((fout==NULL) && ((*popt_extract_without_path)==0) &&
                                 (filename_withoutpath!=(char*)filename_inzip))
@@ -382,7 +379,7 @@ int do_extract_currentfile(unzFile uf, const int* popt_extract_without_path,
 
             if (fout==NULL)
             {
-                gpfError("error opening %s",write_filename);
+                gpfError("error opening %s %s",write_filename, strerror(errno));
             }
         }
 
