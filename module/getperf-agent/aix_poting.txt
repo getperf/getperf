@@ -3,9 +3,14 @@
 
 環境変数の設定
 
-export PATH=/opt/freeware/bin:$PATH
-exprot LD_LIBRARY_PATH=/opt/freeware/lib:/tmp/agent/local/lib:/opt/freeware/bin
-exprot C_INCLUDE_PATH=/tmp/agent/local/include
+/opt/freeware/bin/bash
+
+PATH=/opt/freeware/bin:$PATH
+export PATH
+LD_LIBRARY_PATH=/opt/freeware/lib:/tmp/agent/local/lib:/opt/freeware/bin
+export LD_LIBRARY_PATH
+C_INCLUDE_PATH=/tmp/agent/local/include
+export C_INCLUDE_PATH
 
 検証作業
 

@@ -15,15 +15,15 @@ if [ -f "${PID_FILE}" ]; then
 fi
 
 #if [ -f "${RUN_FLAG}" ]; then
-	# if [ ! -d "/proc/${PID}" ]; then
-	# 	${CWD}/getperfctl start
-	# fi
+	 if [ ! -d "/proc/${PID}" ]; then
+	 	${CWD}/getperfctl start
+	 fi
 #fi
 
-if [ -f "${RUN_FLAG}" ]; then
-    EXIST_AGENT=`ps $PID | grep _getperf | wc -l`
-    if [ "$EXIST_AGENT" = "0" ]; then
-        rm $PID_FILE
-        ${CWD}/getperfctl start
-    fi
-fi
+#if [ -f "${RUN_FLAG}" ]; then
+#    EXIST_AGENT=`ps $PID | grep _getperf | wc -l`
+#    if [ "$EXIST_AGENT" = "0" ]; then
+#        rm $PID_FILE
+#        ${CWD}/getperfctl start
+#    fi
+#fi

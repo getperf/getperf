@@ -157,10 +157,10 @@ class CactiGraph {
 		if ($tenant !== '_default') {
 			$title = "$title - $tenant";
 		}
-		if ( count($device_set) === 1) {
-			$title = str_replace('<device>', $device_set[0]["device_text"], $title);
-		} elseif ($graph_count >= 2) {
+		if ($graph_count >= 2) {
 			$title .= " - " . $graph_count;
+		} elseif ( count($device_set) === 1) {
+			$title = str_replace('<device>', $device_set[0]["device_text"], $title);
 		}
 		$existsAlready = 0;
 		$existsTree    = 0;
