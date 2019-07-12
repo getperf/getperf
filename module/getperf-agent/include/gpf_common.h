@@ -91,7 +91,7 @@
 
 #define APPLICATION_NAME  "GETPERF Agent"
 #define GPF_MAJOR_VER     2
-#define GPF_VERSION       "2.31.0"
+#define GPF_VERSION       "2.14.0"
 #define GPF_BUILD         10
 #define GPF_BUILD_DATE    "20190409.16.00"
 
