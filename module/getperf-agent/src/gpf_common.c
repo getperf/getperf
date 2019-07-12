@@ -663,7 +663,6 @@ int gpfGetHostname (char *hostName)
 	} 
 	else 
 	{
-		printf("DEBUG: gpfGetHostname1 NG. %s\n", GetLastError());
 		return gpfSystemError( "gethostname : host='%s'", hostName );
 	}
 
