@@ -157,11 +157,17 @@ class CactiGraph {
 		if ($tenant !== '_default') {
 			$title = "$title - $tenant";
 		}
-		if ($graph_count >= 2) {
-			$title .= " - " . $graph_count;
-		} elseif ( count($device_set) === 1) {
+		if ($graph_type == 'single' && count($device_set) === 1) {
 			$title = str_replace('<device>', $device_set[0]["device_text"], $title);
+		} else {
+			if ($graph_count >= 2) {
+				$title .= " - " . $graph_count;
+			} elseif ( count($device_set) === 1) {
+				$title = str_replace('<device>', $device_set[0]["device_text"], $title);
+			}
 		}
+		// print_r($device_set) ;
+		// echo "$graph_type, $title, $graph_count\n";
 		$existsAlready = 0;
 		$existsTree    = 0;
 		if (array_key_exists($title, $cacti_graph_set->cacti_graph_ids )) {
