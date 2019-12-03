@@ -912,7 +912,21 @@ extern zipFile ZEXPORT zipOpen3 (const void *pathname, int append, zipcharpc* gl
     }
     else
     {
-        *zi = ziinit;
+        // Fix Solaris Segmentation Error 2019.8.30 Build 10 
+        // *zi = ziinit;
+
+        zi->z_filefunc                        = ziinit.z_filefunc;
+        zi->filestream                        = ziinit.filestream;
+        zi->central_dir                       = ziinit.central_dir;
+        zi->in_opened_file_inzip              = ziinit.in_opened_file_inzip;
+        zi->ci.stream_initialised             = ziinit.ci.stream_initialised;
+        zi->begin_pos                         = ziinit.begin_pos;
+        // zi->add_position_when_writting_offset = ziinit.add_position_when_writting_offset;
+        zi->number_entry                      = ziinit.number_entry;
+#ifndef NO_ADDFILEINEXISTINGZIP
+        zi->globalcomment                     = ziinit.globalcomment;
+#endif
+
         return (zipFile)zi;
     }
 }
