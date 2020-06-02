@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Wrapper of sitesync.pl 
+#
+# Usage:
+#
+# EDITOR=vi crontab -e 
+# 0,5,10,15,20,25,30,35,40,45,50,55 * * * * (${GETPERF_HOME}/script/sitesync rsync://10.37.64.220/archive_peyok03  > /dev/null 2>&1) &
+
+LANG=C;export LANG
+CWD=`dirname $0`
+CMDNAME=`basename $0`
+
+CWD=`dirname $0`
+export SITEHOME="$(git rev-parse --show-toplevel)"
+
+if [ ! -d "$SITEHOME/lib/Getperf/Command/Site" -o ! -d "$SITEHOME/node" ]; then
+	echo "Invalid site home directory '$SITEHOME'"
+	exit -1
+fi
+
+perl -I$SITEHOME/lib $CWD/gsitesync.pl $*

@@ -43,7 +43,7 @@ sub regist {
 	$master_dir->mkpath if (!-d $master_dir);
 	if (!-f $master) {
 		LOG->notice("Create : $master");
-		return copy($template, $master) or die "error: $! : $master";
+		(return copy($template, $master)) or die "error: $! : $master";
 	}
 
 	return 1;
