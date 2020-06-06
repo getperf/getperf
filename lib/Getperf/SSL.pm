@@ -611,7 +611,7 @@ sub create_client_server_certificate {
 	my $root = dir($self->client_cert, $sitekey, $agent, 'network', 'server');
 	# Copy inter ca certifacated file
 	dir($root)->mkpath;
-	copy ($inter_ca->ca_config, $root);
+	copy (file($self->ca_root, "ca.crt"), $root);
 
 	$inter_ca->{server_cert} = $root;
 	$inter_ca->{server_name} = $agent;
