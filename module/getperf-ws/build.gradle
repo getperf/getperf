@@ -49,7 +49,7 @@ task axisJar(type: Jar) {
 
 repositories {
     jcenter {
-        url "http://jcenter.bintray.com/"
+        url "https://jcenter.bintray.com/"
     }
     // mavenCentral()
 }

@@ -89,7 +89,15 @@ sub run {
 
 	} elsif ($command eq 'client_cert') {
 		my $inter_ca = Getperf::SSL->new($base->{ssl_inter_ca}, "$ssl_home/inter");
-		return $self->create_client_certificate($self->sitekey, $self->agent);
+		$self->create_client_certificate($self->sitekey, $self->agent) || return;
+		return $self->create_client_server_certificate($self->sitekey, $self->agent);
+		
+		# my $root = dir($self->client_cert, $self->sitekey, $self->agent, 'network');
+		# $inter_ca->{server_cert} = $root;
+		# $inter_ca->{server_name} = $self->agent;
+		# # print Dumper $self;
+		# $inter_ca->reset_server_certificate;
+	 #    return $inter_ca->create_server_certificate;
 
 	} elsif ($command eq 'update_client_cert') {
 		my $inter_ca = Getperf::SSL->new($base->{ssl_inter_ca}, "$ssl_home/inter");
@@ -592,6 +600,19 @@ sub update_client_certificate {
 	my $result = sprintf("%d/%d", $licese_check_counts{'update'}, $licese_check_counts{'target'});
 	LOG->notice("check client_certificate : ${result}");
 	return 1;
+}
+
+sub create_client_server_certificate {
+	my ($self, $sitekey, $agent) = @_;
+
+	my $base = config('base');
+	my $ssl_home = $self->{ssl_home};
+	my $inter_ca = Getperf::SSL->new($base->{ssl_inter_ca}, "$ssl_home/inter");
+	my $root = dir($self->client_cert, $sitekey, $agent, 'network');
+	$inter_ca->{server_cert} = $root;
+	$inter_ca->{server_name} = $agent;
+	$inter_ca->reset_server_certificate;
+	return $inter_ca->create_server_certificate;
 }
 
 sub create_client_certificate {
