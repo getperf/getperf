@@ -36,7 +36,7 @@ sub new {
 	my $site_info     = Getperf::Data::SiteInfo->instance($sitekey);
 	my $tmpfs         = $site_info->{tmpfs};
 	my $site_home     = $site_info->{home};
-	my $rsync_zip_dir = "$site_home/.rsync";
+	my $rsync_zip_dir = "$site_home/.grsync";
 
 	mkdir($rsync_zip_dir) if (!-d $rsync_zip_dir);
 	mkdir($tmpfs)         if (!-d $tmpfs);
@@ -97,7 +97,7 @@ sub rsync {
 		}
 		$grep_opt .= " --exclude '*'"
 	} else {
-		$grep_opt = " --include '*Conf*' --exclude '*'"
+		$grep_opt = " --include '*Conf_*' --exclude '*'"
 	}
 	my $recievedZips;
 	for my $rsync_url(@rsync_urls) {
@@ -112,8 +112,8 @@ sub rsync {
     	    return;
 		}
 
-		# my @results = readpipe("$command 2>&1");
-		my @results = readpipe("cat rsync1.txt 2>&1");
+		my @results = readpipe("$command 2>&1");
+		# my @results = readpipe("cat rsync1.txt 2>&1");
 		for my $result(@results) {
 			chomp($result);
 			if ($result=~/(ERROR|error)/) {
@@ -209,7 +209,7 @@ sub unzip {
 		}
 	}
 	$self->rebuild_analysis_dir(\%rebuild_file_dirs);
-
+	# print Dumper $self->{staging_files}; 
 	return 1;
 }
 
@@ -220,7 +220,7 @@ sub parseNodeDir {
 	# win-jkssmti1tm6/VMHostConf/20200602/110000/esxi.ostrich/{all.json|...}
 	# ⇒esxi.ostrich/VMHostConf
 	# if ($file=~m|^(.+?)/(.+?)/(\d+)/(\d+)/(.+?)/(.+)$|) {
-	if ($file=~m|^(win-jkssmti1tm6)/(.+?)/(\d+)/(\d+)/(.+?)/(.+)$|) {
+	if ($file=~m|^(.+?)/(.+?)/(\d+)/(\d+)/(.+?)/(.+)$|) {
 		# print ("$1,$2,$3,$4,$5,$6\n");exit;
 		my ($nodeName, $jobName) = ($5, $2);
 		return $nodeName . '/' . $jobName;
@@ -239,20 +239,19 @@ sub parseNodeDir {
 sub aggrigate {
 	my $self = shift;
 
-	my $aggregator = Getperf::Aggregator->new();
-
 	if (!$self->{staging_files}) {
 		return 0;
 	}
 	for my $staging_file (@{$self->{staging_files}}) {
  		my $sourcePath = $self->{analysis} . '/' . $staging_file;
  		my $targetDir = parseNodeDir($staging_file);
+ 		LOG->info("parse : $staging_file $targetDir");
  		next if ($targetDir eq "");
  		my $targetPath = $self->{datastore} . '/' . $targetDir;
+ 		LOG->info("store : $targetPath");
 		dir($targetPath)->mkpath if (!-d $targetPath);
  		copy($sourcePath, $targetPath) or die "Copy failed: $!";
  	}
- 	$aggregator->flush();
  	return 1;
 }
 

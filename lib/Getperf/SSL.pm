@@ -608,7 +608,7 @@ sub create_client_server_certificate {
 	my $base = config('base');
 	my $ssl_home = $self->{ssl_home};
 	my $inter_ca = Getperf::SSL->new($base->{ssl_inter_ca}, "$ssl_home/inter");
-	my $root = dir($self->client_cert, $sitekey, $agent, 'network');
+	my $root = dir($self->client_cert, $sitekey, $agent, 'network', 'server');
 	$inter_ca->{server_cert} = $root;
 	$inter_ca->{server_name} = $agent;
 	$inter_ca->reset_server_certificate;

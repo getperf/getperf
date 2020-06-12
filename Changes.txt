@@ -3,6 +3,9 @@ Changes for 2.36.0 (2019-6-2)
 New features:
 * sitesync をベースとした、構成情報収集スクリプト gsitesync 作成
 
+Bug fixes:
+* gsitesync の対象zipファイルを *Conf_*.zip に修正
+
 Changes for 2.35.0 (2019-12-9)
 --------------------------------------------------------------------------------
 TODO:
