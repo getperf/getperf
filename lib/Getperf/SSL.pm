@@ -609,9 +609,32 @@ sub create_client_server_certificate {
 	my $ssl_home = $self->{ssl_home};
 	my $inter_ca = Getperf::SSL->new($base->{ssl_inter_ca}, "$ssl_home/inter");
 	my $root = dir($self->client_cert, $sitekey, $agent, 'network', 'server');
+
+	# Copy inter ca certifacated file
+	dir($root)->mkpath;
+	copy (file($inter_ca->ca_root, "ca.crt"), $root);
+
+	# Generate Web service config.
+	{
+		my @configs = (
+			"; --------- Archive file shareing service --------------------------------",
+			"; The presence or absence of shareing service",
+			"WEB_SERVICE_ENABLE = true",
+			"",
+			"; Describe in url format. Set http / https, allowed IP, port",
+			"WEB_SERVICE_URL = https://0.0.0.0:59443",
+		);		
+		my $config_file = file($root, "server.ini");
+	    my $writer = $config_file->openw || die "write error $config_file : $!";
+		$writer->print(join("\r\n", @configs));
+		$writer->close;
+	}
+
 	$inter_ca->{server_cert} = $root;
 	$inter_ca->{server_name} = $agent;
 	$inter_ca->reset_server_certificate;
+
+	# print "CA_CONFIG: " . $inter_ca->ca_config . "\n";
 	return $inter_ca->create_server_certificate;
 }
 
