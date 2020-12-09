@@ -7,15 +7,19 @@ CentOS7 Getperf インストール留意点
 
 CentOS6ベースの Getperf を CentOS7 環境へインストールする際の留意点は以下となります
 
-* CentOS8 系は perl ライブラリなど不明となるパッケージ群が多数出るため、CentoOS7 系が望ましい
-* MySQL は 5.7以上だと既定値がかなり変わるため、5.6 を指定する
+* MySQL は 5.7以上だと既定値の設定が大きく変わるため、5.6 を指定する
 * Apache / Tomcat 周りは Apache 2.2 , Tomcat 7 系のままで良い
-    * Tomcat の AJP 設定が変わるので手動で設定ファイルを編集
+    * Tomcat server.xml の AJP 設定が変わるので手動で設定ファイルを編集
     * jar のデプロイでエラーが発生、要調査。他サイトからのコピーで対応
 * PHP/Cacti 周りは、PHPを5.4に上げ、Cacti は0.8.8 のままとする
-    * MySQL のsql_mode 設定変更をしないとグラフ表示できないなど不具合多い
+    * MySQL のsql_mode 設定変更をしないとグラフ表示できないなど不具合あり
 * サービス起動設定が systemctl に変わるので、起動スクリプト等の移行が必要
 * 古い Getperf デーモンは動作が不安定なため、Rsync/Cron 構成に変える
+
+.. note::
+
+    CentOS8 系は perl ライブラリなど不明となるパッケージが多数あるため、
+    CentoOS7 系へのインストールが望ましい
 
 基本設定
 ---------
@@ -32,7 +36,7 @@ Firewall 無効化設定はiptables から以下に変更。
 MySQL 5.6 バージョン指定インストール
 ---------------------------------------
 
-パッケージインストールの際に初めに、バージョン5.6 を指定して MySQL
+パッケージインストールの前に、バージョン5.6 を指定して MySQL
 パッケージをインストールする
 
 ::
@@ -85,23 +89,23 @@ Rexfile のバージョン指定を、 32 から 34 に変更
     cd ~/getperf
     vi Rexfile
 
-Tomcat AJP の設定が有効にならないので手動で変える
-通信暗号化、secretRequired を無効にする
+Tomcat AJP の設定が有効にならないので手動で変える。
+通信暗号化が既定では有効のため、secretRequired を無効にする
 
 * tomcat-data
 
-::
+vi /usr/local/tomcat-data/conf/server.xml
 
-    vi /usr/local/tomcat-data/conf/server.xml
+::
 
     <Connector protocol="AJP/1.3"
                address="::1"
                port="58009"
                redirectPort="58443" secretRequired="false" />
 
-    vi /usr/local/tomcat-admin/conf/server.xml
-
 * tomcat-admin
+
+vi /usr/local/tomcat-admin/conf/server.xml
 
 ::
 
@@ -156,6 +160,12 @@ mysql のエラーが出力されていた。 sql_mode を変える必要があ�
 
     sudo vi /etc/my.cnf
 
+::
+
+    # Recommended in standard MySQL setup
+    #sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+    sql_mode=NO_ENGINE_SUBSTITUTION
+
 Rsync/ sitesync 設定
 -----------------------
 
@@ -201,6 +211,12 @@ Zabbix 設定無効化
 ::
 
     vi ~/getperf/config/getperf_zabbix.json
+
+::
+
+        "USE_ZABBIX_MULTI_SITE": 0,
+        "GETPERF_USE_ZABBIX_SEND": 0,
+        "GETPERF_AGENT_USE_ZABBIX": 0
 
 DBD::mysql が入らないので、手動で入れる
 
