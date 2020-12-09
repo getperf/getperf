@@ -263,8 +263,10 @@ sub check_or_generate_host {
 	my @templates   = @{$zabbix_host->{templates}};
 
 	# Check host exists
-	my $params = { host => $host_name, search => { host => $host_name } };
+	my $params = { host => $host_name, search => { host => $host_name }};
+	# my $params = { host => $host_name, search => { host => $host_name }, searchWildcardsEnabled => "true" };
 	my $hosts = $zabber->fetch('Host', params => $params);
+	#print Dumper $hosts; exit(0);
 	if (@$hosts) {
 		$zabbix_host->{hostid} = @$hosts[0]->{data}{hostid};
 		return 1;
@@ -319,6 +321,10 @@ sub get_host_interface_id {
 	my $host_interfaces = $zabber->query(
 		{method => 'hostinterface.get', params => $filter }
 	);
+	# print Dumper $zabbix_host;
+	# print Dumper $filter;
+
+	# print Dumper $host_interfaces;
 	for my $host_interface(@$host_interfaces) {
 		if ($host_interface->{ip} eq $ip) {
 			return $host_interface->{interfaceid};

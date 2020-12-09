@@ -19,3 +19,4 @@
    10_AgentCompile
    11_BuildDocument
    12_AgentInstall
+   20_CentOS7Installation
