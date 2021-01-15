@@ -33,9 +33,23 @@ Apache バージョンは、2.2 系の最新をダウンロードサイトから
    ::
 
       cd /tmp/rex
-      wget https://archive.apache.org/dist/httpd/httpd-2.2.29.tar.gz 
-      tar xvf httpd-2.2.29.tar.gz
+      wget https://archive.apache.org/dist/httpd/httpd-2.2.34.tar.gz
+      tar xvf httpd-2.2.34.tar.gz
+
+   Rexfile のバージョン指定を、 32 から 34 に変更
+
+   ::
+
       cd ~/getperf
+      vi Rexfile
+
+   ::
+
+      task "prepare_apache", sub {
+        my $version = '2.2.34';
+        my $module  = 'httpd-2.2.34';
+        my $archive = "${module}.tar.gz";
+        my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
 
 ::
 
@@ -53,6 +67,41 @@ Apache と同様に、管理用とデータ受信用で、それぞれ、/usr/lo
     sudo -E rex prepare_tomcat
 
 Tomcat バージョンは 7.0 系の最新をダウンロードサイトから検出してインストールします
+
+.. note::
+
+   Tomcat AJP の設定が有効にならないので手動で変える。
+   通信暗号化が既定では有効のため、secretRequired を無効にします。
+   "Define an AJP 1.3 Connector on port" のコメント行の後ろに
+   以下を追加します。
+
+   * tomcat-data
+
+   ::
+
+      vi /usr/local/tomcat-data/conf/server.xml
+
+   ::
+
+      <!-- Define an AJP 1.3 Connector on port 8009 -->
+      <Connector protocol="AJP/1.3"
+                 address="::1"
+                 port="58009"
+                 redirectPort="58443" secretRequired="false" />
+
+   * tomcat-admin
+
+   ::
+
+      vi /usr/local/tomcat-admin/conf/server.xml
+
+   ::
+
+      <!-- Define an AJP 1.3 Connector on port 8009 -->
+      <Connector protocol="AJP/1.3"
+                 address="::1"
+                 port="57009"
+                 redirectPort="57443" secretRequired="false" />
 
 Webサービスインストール
 -----------------------
@@ -78,3 +127,23 @@ Axis2 管理画面のアクセスが確認できたら、Getperf Web サービ�
 
 デプロイに成功すると、前述の Axis2 管理画面のメニューからWebサービスの確認ができます。
 管理画面の Services メニューを選択し、GetperfService　を選択します。選択するとWSDL(Webサービスの定義情報)が表示されます。
+
+.. note::
+
+   現在、デプロイした getperf-ws-1.0.0.jar は、Axis2 のサービス登録で
+   エラーが発生します。
+   別サイトから jarファイルをアップロードしてtomcatを再起動します。
+
+   ::
+
+      # 旧サイトから、getperf-ws-1.0.0.jar ファイルを/tmpにコピー
+      cp /tmp/getperf-ws-1.0.0.jar \
+      /usr/local/tomcat-data/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
+      cp /tmp/getperf-ws-1.0.0.jar \
+      /usr/local/tomcat-admin/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
+
+   ::
+
+      cd $HOME/getperf
+      sudo rex restart_ws_admin
+      sudo rex restart_ws_data

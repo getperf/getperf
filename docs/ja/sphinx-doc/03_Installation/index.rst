@@ -18,5 +18,6 @@
    09_InfluxDBInstllation
    10_AgentCompile
    11_BuildDocument
-   12_AgentInstall
+   12_RsyncSetup
+   13_AgentInstall
    20_CentOS7Installation

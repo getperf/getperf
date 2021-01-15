@@ -8,6 +8,29 @@ Package requirement
 * OpenSSL 1.0e
 * CUnit 2.1.8 (Option for test)
 
+2021年のコンパイル環境状況
+==========================
+
+Cコンパイラは VisualStudio2015 が利用可能
+
+	choco install vcbuildtools
+
+
+インストール後、「VS 2015 x86 Native Tools Command Prompt」 を起動する
+
+OpenSSL v1.1.x ではリンクエラーが発生するため、v1.0.2g を使用する必要がある
+
+	error LNK2019: unresolved external symbol _OPENSSL_sk_num referenced 
+
+以下記載のサイトからはすでに v1.0.2g のダウンロードができないため、
+別のプロバイダを選ぶ必要がある。
+過去に保存した、OpenSSL-Win32-v1.0.2g.zip を使用すればコンパイルは可能。
+
+リファレンス
+
+* [Shining Light Productions](http://slproweb.com/products/Win32OpenSSL.html)
+* [OpenSSL Binary](https://wiki.openssl.org/index.php/Binaries)
+
 Package install
 ===============
 
