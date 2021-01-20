@@ -24,8 +24,8 @@ AC_CHECK_LIB(ssl, OPENSSL_init_ssl, [ACCEPT_SSL_LIB="yes"])
 AC_CHECK_LIB(ssl, SSL_library_init, [ACCEPT_SSL_LIB="yes"])
 AS_IF([test "x$ACCEPT_SSL_LIB" = xno], [AC_MSG_ERROR([library 'ssl' is required for OpenSSL])])
 
-AC_CHECK_LIB([crypto], [SSL_library_init], [], 
-	[AC_MSG_FAILURE([OpenSSL not found, see http://www.openssl.org/])])
+#AC_CHECK_LIB([crypto], [SSL_library_init], [], 
+#	[AC_MSG_FAILURE([OpenSSL not found, see http://www.openssl.org/])])
 
 AC_CHECK_LIB([pthread], [main], [],
 	[AC_MSG_FAILURE([pthread not found])])

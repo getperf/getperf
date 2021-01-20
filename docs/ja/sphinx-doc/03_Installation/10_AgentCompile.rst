@@ -85,8 +85,8 @@ Linux環境でのコンパイル
 
 ::
 
-    mkdir -p ~/work/src
-    cd ~/work/src
+    mkdir -p ~/work/agent/src
+    cd ~/work/agent/src
     wget http://{サーバアドレス}/docs/agent/getperf-2.x-Build5-source.zip
 
 ソースモジュールを解凍します。
@@ -103,6 +103,27 @@ Linux ディストリビューションのヘッダファイルを作成しま�
     perl make_header.pl
 
 ソースをコンパイルします。
+
+.. note::
+
+   OpenSSL 1.1.x の互換性の問題で configure に失敗するため
+   configure.ac の以下の箇所をコメントアウト
+
+   ::
+
+      vi configure.ac
+
+      #AC_CHECK_LIB([crypto], [SSL_library_init], [],
+      #       [AC_MSG_FAILURE([OpenSSL not found, see http://www.openssl.org/])])
+
+   configure を再作成
+
+   ::
+
+      autoheader 
+      aclocal 
+      automake --add-missing --copy 
+      autoconf 
 
 ::
 

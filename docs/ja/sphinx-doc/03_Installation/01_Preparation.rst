@@ -55,9 +55,9 @@ iptables 自体を停止して全ポートのアクセス許可設定をしま�
 
 ::
 
-    sudo /etc/rc.d/init.d/iptables stop 
-    sudo chkconfig iptables off 
-    sudo chkconfig ip6tables off 
+    sudo systemctl is-enabled firewalld
+    sudo systemctl stop firewalld
+    sudo systemctl disable firewalld
 
 また、DNSなどでホストの名前解決ができない場合は、/etc/hosts にホストのIPアドレスと登録してください。
 

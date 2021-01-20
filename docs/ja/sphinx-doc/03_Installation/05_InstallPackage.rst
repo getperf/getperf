@@ -5,7 +5,30 @@
 yum を用いて gcc,JDK等の開発環境、Apache、PHP をインストールします。
 また、Javaプログラムのビルドツール Apache Antと、Gradleをインストールします
 
-RedHat6,CentOS6の場合
+MySQL 5.6 バージョン指定インストール
+---------------------------------------
+
+パッケージインストールの前に、バージョン5.6 を指定して MySQL
+パッケージをインストールする
+
+::
+
+    sudo -E yum localinstall http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+    sudo -E yum repolist all | grep mysql
+
+    sudo -E yum -y install yum-utils
+    sudo -E yum-config-manager --disable mysql57-community
+    sudo -E yum-config-manager --enable mysql56-community
+
+    yum info mysql-community-server
+
+    sudo  yum -y install mysql-community-server
+    sudo systemctl enable mysqld
+    sudo systemctl start mysqld
+
+以降は、mysql-devel 等の依存パッケージも 5.6 系がインストールされるようになる
+
+RedHat7,CentOS7の場合
 ---------------------
 
 EPEL yum リポジトリをインストールします
@@ -19,8 +42,8 @@ REMI yum リポジトリをインストールします
 ::
 
    cd /tmp
-   wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-   sudo rpm -Uvh remi-release-6.rpm
+   wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+   sudo rpm -Uvh remi-release-7.rpm
 
 基本パッケージをインストールします
 
@@ -39,13 +62,20 @@ REMI yum リポジトリをインストールします
          curl git rrdtool zip unzip \
          mysql-devel
 
-MySQL をインストールします
+Gradle をインストールします
+
+インストールスクリプトを編集して、バージョンを最新 6.7.1 に変更
+ダウンロードサイトのURLをhttpからhttpsに変更します
 
 ::
 
-   sudo -E yum  --enablerepo=remi,epel install mysql-server
+   cd $GETPERF_HOME
+   vi ./script/gradle-install.sh
+   #gradle_version=2.3
+   gradle_version=6.7.1
 
-Gradle をインストールします
+   #wget -N http://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
+   wget -N https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
 
 ::
 
@@ -63,7 +93,7 @@ Apache Ant をインストールします
 
 ::
 
-   sudo -E rex install_ant
+   sudo -E yum -y install ant
 
 PHP設定ファイル /etc/php.ini を変更します
 

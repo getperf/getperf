@@ -1,0 +1,62 @@
+{
+	"GETPERF_HOME":        "/home/psadmin//getperf",
+	"GETPERF_SITE_DIR":    "/home/psadmin//getperf/t",
+	"GETPERF_STAGING_DIR": "/home/psadmin//getperf/t/staging_data",
+	"GETPERF_TMPFS_DIR":   "/tmp",
+	"GETPERF_LOG_DIR":     "/home/psadmin//getperf/log",
+
+	"GETPERF_LOG_LEVEL":        "notice",
+	"GETPERF_STDOUT_LOG_LEVEL": "error",
+
+	"GETPERF_DISK_UTIL_LIMIT_MB": 100,
+
+	"GETPERF_REDIS_PORT": 6379,
+	"GETPERF_REDIS_HOST": "localhost",
+	"GETPERF_QUEUE":      "getperf:queue:default",
+
+	"GETPERF_CACTI_MYSQL_ROOT_PASSWD": "getperf",
+
+	"GETPERF_ADMIN_SSL_DIR":	 "/etc/getperf/ssl",
+	"GETPERF_SSL_EXPIRATION_DAY": 365,
+	"GETPERF_LICENSE_POLICY": "none",
+
+	"GETPERF_WS_TOMCAT_OWNER": "psadmin",
+	"GETPERF_WS_SERVER_NAME": "192.168.232.132",
+	"GETPERF_WS_SERVER_ADMIN": "you@example.com",
+	"GETPERF_WS_PROTOCOL": "https",
+
+	"GETPERF_WS_ADMIN_SUFFIX":	 "admin",
+	"GETPERF_WS_ADMIN_SERVER":   "192.168.232.132",
+	"GETPERF_WS_ADMIN_PORT_SSL": 57443,
+	"GETPERF_WS_ADMIN_PORT_RUN": 57005,
+	"GETPERF_WS_ADMIN_PORT_AJP": 57009,
+	"GETPERF_WS_ADMIN_PORT":     57000,
+	"GETPERF_WS_ADMIN_DIR":      "/axis2/services/GetperfService",
+
+	"GETPERF_WS_DATA_SUFFIX":	 "data",
+	"GETPERF_WS_DATA_SERVER":    "192.168.232.132",
+	"GETPERF_WS_DATA_PORT_SSL":  58443,
+	"GETPERF_WS_DATA_PORT_RUN":  58005,
+	"GETPERF_WS_DATA_PORT_AJP":  58009,
+	"GETPERF_WS_DATA_PORT":      58000,
+	"GETPERF_WS_DATA_DIR":       "/axis2/services/GetperfService",
+
+	"GETPERF_WS_APACHE_HOME":    "/usr/local/apache",
+	"GETPERF_WS_TOMCAT_HOME":    "/usr/local/tomcat",
+
+	"GETPERF_WS_MAX_SERVERS": 30,
+	"GETPERF_WS_TIMEOUT":     30,
+	"GETPERF_WS_WAIT_TIME":   60,
+
+	"GETPERF_ZIP_PURGE_ENABLE":   true,
+	"GETPERF_ZIP_RETENTION_HOUR": 1,
+	"GETPERF_ZIP_PURGE_HOUR":     3,
+
+	"GETPERF_AGENT_TAR":   "/home/psadmin/work/getperf/var/agent",
+	"GETPERF_AGENT_MAJOR_VERSION": 2,
+	
+	"GETPERF_PURGE_DATA_HOUR": {
+		"analysis": 1,
+		"summary": 1
+	}
+}

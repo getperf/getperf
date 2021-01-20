@@ -59,11 +59,13 @@ getperf_zabbix.json
 
     vi config/getperf_zabbix.json
 
-本ソフトのインストールはオプションで、デフォルトは有効となります。無効にする場合は、"GETPERF_AGENT_USE_ZABBIX" を 0　にしてください。
+本ソフトのインストールはオプションで、デフォルトは有効となります。
+無効にする場合は、以下パラメータを 0　にしてください。
 
 ::
 
-    "GETPERF_AGENT_USE_ZABBIX": 1
+      "GETPERF_USE_ZABBIX_SEND": 0,
+      "GETPERF_AGENT_USE_ZABBIX": 0
 
 また、有効にする場合はセキュリティの観点から、 Zabbix　Web コンソールの管理者ユーザ admin のパスワード　"ZABBIX_ADMIN_PASSWORD" を変更してください。
 
