@@ -20,7 +20,7 @@ export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
 export CATALINA_HOME=$1
 #export CATALINA_HOME=/usr/local/tomcat7-admin
 export AXIS2_WS_HOME="$CWD/../module/getperf-ws"
-export AXIS2_WS_MODULE=getperf-ws-1.0.0.jar
+export AXIS2_WS_MODULE=getperf-ws-1.0.0-all.jar
 export WARFILE="$AXIS2_WS_HOME/build/libs/$AXIS2_WS_MODULE"
 # ./script/../module/getperf-ws/build/libs/getperf-ws-1.0.0.jar
 export WARFILE_DEST=$CATALINA_HOME/webapps/axis2/WEB-INF/services
@@ -28,7 +28,7 @@ export WARFILE_DEST=$CATALINA_HOME/webapps/axis2/WEB-INF/services
 #if [ ! -f $WARFILE ]; then
 	cd $AXIS2_WS_HOME
 	gradle axisJar
-	gradle jar
+	gradle shadowJar
 	if [ $? -ne 0 ]; then
         echo "gradle error. please cehck ; " 1>&2
         echo "'cd $AXIS2_WS_HOME; gradle axisJar; gradle jar'" 1>&2
