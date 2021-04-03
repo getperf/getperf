@@ -335,10 +335,10 @@ task "prepare_mysql", sub {
 
 desc "Need to run sudo. Install Apache HTTPD";
 task "prepare_apache", sub {
-  my $version = '2.2.32';
-  my $module  = 'httpd-2.2.32';
+  my $version = '2.2.34';
+  my $module  = 'httpd-2.2.34';
   my $archive = "${module}.tar.gz";
-  my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.32.tar.gz';
+  my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
 
   # Parse Apache download page, and check version.
   # Source:

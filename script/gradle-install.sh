@@ -4,11 +4,12 @@
 # seamless upgrades/downgrades
 # $GRADLE_HOME points to latest *installed* (not released)
 
-gradle_version=2.3
+gradle_version=6.7.1
 
 sudo mkdir -p /usr/local/gradle
 cd /tmp/rex
-wget -N http://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
+#wget -N http://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
+wget -N https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
 sudo unzip -q gradle-${gradle_version}-all.zip -d /usr/local/gradle
 sudo ln -sfn gradle-${gradle_version} /usr/local/gradle/latest
 sudo printf "export GRADLE_HOME=/usr/local/gradle/latest\nexport PATH=\$PATH:\$GRADLE_HOME/bin" > /etc/profile.d/gradle.sh

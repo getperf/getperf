@@ -9,6 +9,11 @@ Set up the gradle environment in Rex
 	cd $ GETPERF_HOME
 	rex install_package
 
+Create test site
+
+    mkdir -p ~/site
+    initsite -f ~/site/cacit_cli
+
 Test
 ====
 
