@@ -27,12 +27,12 @@ sub new {
 	my $sites = config('sites');
 	my $base  = config('base');
 
-	if  (!$sitekey) {
-		if (my $site_home_dir = dir($ENV{'SITEHOME'})) {
-			$sitekey = pop(@{$site_home_dir->{dirs}});
-		}
-		die "Invalid 'SITEHOME' env." if (!$sitekey);
-	}
+	# if  (!$sitekey) {
+	# 	if (my $site_home_dir = dir($ENV{'SITEHOME'})) {
+	# 		$sitekey = pop(@{$site_home_dir->{dirs}});
+	# 	}
+	# 	die "Invalid 'SITEHOME' env." if (!$sitekey);
+	# }
 	my $site_info     = Getperf::Data::SiteInfo->instance($sitekey);
 	my $tmpfs         = $site_info->{tmpfs};
 	my $site_home     = $site_info->{home};

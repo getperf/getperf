@@ -14,9 +14,9 @@ CMDNAME=`basename $0`
 CWD=`dirname $0`
 export SITEHOME="$(git rev-parse --show-toplevel)"
 
-if [ ! -d "$SITEHOME/lib/Getperf/Command/Site" -o ! -d "$SITEHOME/node" ]; then
-	echo "Invalid site home directory '$SITEHOME'"
-	exit -1
-fi
+# if [ ! -d "$SITEHOME/lib/Getperf/Command/Site" -o ! -d "$SITEHOME/node" ]; then
+# 	echo "Invalid site home directory '$SITEHOME'"
+# 	exit -1
+# fi
 
 perl -I$SITEHOME/lib $CWD/gsitesync.pl $*

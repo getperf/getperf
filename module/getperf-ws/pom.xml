@@ -29,8 +29,9 @@
 	<name>Axis2 Getperf-ws Service</name>
 
 	<properties>
-		<axis2.version>1.7.0-SNAPSHOT</axis2.version>
-<!-- 
+		<axis2.version>1.7.9</axis2.version>
+<!-- 		<axis2.version>1.7.0-SNAPSHOT</axis2.version>
+ --><!-- 
 		<axis2.version>1.6.2</axis2.version>
  -->
  	</properties>
