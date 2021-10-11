@@ -169,12 +169,20 @@ sub unzip {
 		}
 		my $rsync_zip_dir = $self->{rsync_zip_dir};
 		LOG->notice("SyncExtract : ${zip}");
-		my $command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
+		# my $command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
+		my $command = "cd ${target}; LANG=c jar xvf ${rsync_zip_dir}/${zip}";
 		my @results = readpipe("$command 2>&1");
+# print Dumper \@results;
+		# my $line = ;
+		if ($results[0]=~/ZipException/) {
+			$command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
+			@results = readpipe("$command 2>&1");
+		}
 		for my $result(@results) {
 			chomp($result);
 			#   inflating: ELA/20141009/1400/cluster_all_stat.out
-			if ($result=~/(inflating|extracting): (.*?)\s*$/) {
+			if ($result=~/(inflated|inflating|extracting): (.*?)\s*$/) {
+			# if ($result=~/(inflating|extracting): (.*?)\s*$/) {
 				next if ($2=~/^\./);	# skip .dot file
 				my $staging_file = $agent . '/' . $2;
 				# 時刻ディレクトリが 4桁の場合のパス補正、yia3vm2/MSSQL/20150619/1416
