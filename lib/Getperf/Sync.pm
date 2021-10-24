@@ -24,6 +24,7 @@ sub new {
 
 	my $MONITOR_CYCLE = 30;
 	my $MONITOR_TIMES = 9;
+	my $RSYNC_TIMEOUT = 600;
 	my $sites = config('sites');
 	my $base  = config('base');
 
@@ -49,6 +50,7 @@ sub new {
 		analysis      => $site_info->{analysis},
 		cycle         => $MONITOR_CYCLE,
 		times         => $MONITOR_TIMES,
+		rsync_timeout => $RSYNC_TIMEOUT,
 		purge         => 0,
 		grep          => undef,
 		zips          => undef,
@@ -101,6 +103,10 @@ sub rsync {
 		$rsync_base=~s/^.+\///g;	# trim rsync://{ip}/
 		my $dest = $self->{rsync_zip_dir} . '/' . $rsync_base;
 		my $command = "rsync -av $delete_opt $grep_opt $rsync_url $dest";
+		if (my $rsync_timeout = $self->{rsync_timeout}) {
+			$command ="timeout ${rsync_timeout} " . $command;
+		}
+
 		LOG->notice($command);
 		if (!File::Path::Tiny::mk($dest)) {
     	    LOG->crit("Could not make path '$dest': $!");
@@ -169,12 +175,19 @@ sub unzip {
 		}
 		my $rsync_zip_dir = $self->{rsync_zip_dir};
 		LOG->notice("SyncExtract : ${zip}");
-		my $command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
+		# my $command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
+		my $command = "cd ${target}; LANG=c jar xvf ${rsync_zip_dir}/${zip}";
 		my @results = readpipe("$command 2>&1");
+
+		if ($results[0]=~/ZipException/) {
+			$command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
+			@results = readpipe("$command 2>&1");
+		}
 		for my $result(@results) {
 			chomp($result);
 			#   inflating: ELA/20141009/1400/cluster_all_stat.out
-			if ($result=~/(inflating|extracting): (.*?)\s*$/) {
+			if ($result=~/(inflated|inflating|extracting): (.*?)\s*$/) {
+			# if ($result=~/(inflating|extracting): (.*?)\s*$/) {
 				next if ($2=~/^\./);	# skip .dot file
 				my $staging_file = $agent . '/' . $2;
 				# 時刻ディレクトリが 4桁の場合のパス補正、yia3vm2/MSSQL/20150619/1416
