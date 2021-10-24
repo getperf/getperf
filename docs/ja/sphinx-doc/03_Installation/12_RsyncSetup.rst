@@ -13,6 +13,12 @@ rsync のインストール
 
     sudo -E yum -y install rsync xinetd
 
+.. note::
+
+    RHEL8 の場合、
+
+        sudo -E yum -y install rsync-daemon
+
 サイト作成
 ~~~~~~~~~~
 
@@ -65,7 +71,7 @@ getperf-Build10-CentOS7-x86_64.tar.gz を $HOME の下に解凍します。
 
 ::
 
-   sudo insta.pl
+   sudo ./install.pl
 
 rsync 設定
 ~~~~~~~~~~

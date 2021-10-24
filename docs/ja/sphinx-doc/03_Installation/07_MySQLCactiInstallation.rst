@@ -67,6 +67,14 @@ my.cnfにutf8の設定を追加します。
 PHP ライブラリ構成管理ツール composer を用いて PHP
 ライブラリをインストールします。
 
+.. note::
+
+   RHEL8 の場合、事前に以下パッケージを追加します。
+
+   ::
+
+      sudo dnf install php php-cli php-zip php-json
+
 ::
 
     rex prepare_composer

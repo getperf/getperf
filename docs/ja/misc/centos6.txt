@@ -1,0 +1,41 @@
+CentOS6 サポート終了後のセットアップ
+
+1. /etc/yum.repos.d/の変更
+
+「mirrorlist」から始まる行をコメントアウトする。
+「baseurl」から始まる行のコメントを外して「mirror.centos.org」の部分を「vault.centos.org」に書き換える
+
+sudo sed -i -e "s/^mirrorlist=http:\/\/mirrorlist.centos.org/#mirrorlist=http:\/\/mirrorlist.centos.org/g" /etc/yum.repos.d/CentOS-Base.repo
+sudo sed -i -e "s/^#baseurl=http:\/\/mirror.centos.org/baseurl=http:\/\/vault.centos.org/g" /etc/yum.repos.d/CentOS-Base.repo
+
+sudo -E yum -y install keepalived
+
+2. tomcat7 のダウンロード
+
+Tomcat 7 サポート終了により、指定のサイトからはダウンロードできない。
+Rexfile を編集し、archive.apach.org からダウンロードする。
+
+desc "Need to run sudo. Install Apache Tomcat";
+task "prepare_tomcat", sub {
+
+  my $version  = '7.0.105';
+  my $url = 'https://archive.apache.org/dist/tomcat';
+#  my $check_ver = run 'curl -sSL http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
+  my $check_ver = run "curl -sSL $url/tomcat-7";
+
+#  if ($check_ver=~/href="v(7.*?)\/"/) {
+#    $version = $1;
+#  }
+  my $download = "$url/tomcat-7";
+
+sudo -E rex prepare_tomcat
+
+3. cpanm と、Perl ライブラリをインストールのエラー
+
+Fetching http://www.cpan.org/authors/id/R/RJ/RJBS/Pod-Eventual-0.094002.tar.gz ... OK
+Configuring Pod-Eventual-0.094002 ... N/A
+! Configure failed for Pod-Eventual-0.094002. See /root/.cpanm/work/1632950762.31147/build.log for details.
+! Installing the dependencies failed: Module 'Pod::Eventual::Simple' is not installed
+
+Perl v5.12.0 required--this is only v5.10.1, stopped at Makefile.PL
+

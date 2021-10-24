@@ -48,13 +48,16 @@ sub unzip {
 		}
 		my $staging_dir = $self->site->staging_dir;
 		LOG->debug("Extract : ${zip}");
-		my $command = "cd ${target}; unzip -o ${staging_dir}/${zip}";
+		# my $command = "cd ${target}; unzip -o ${staging_dir}/${zip}";
+		my $command = "cd ${target}; LANG=c jar xvf ${staging_dir}/${zip}";
 		my @results = readpipe("$command 2>&1");
 		for my $result(@results) {
 			chomp($result);
 			#   inflating: ELA/20141009/1400/cluster_all_stat.out
-			if ($result=~/(inflating|extracting): (.*?)\s*$/) {
+			if ($result=~/(inflated|inflating|extracting): (.*?)\s*$/) {
+			# if ($result=~/(inflating|extracting): (.*?)\s*$/) {
 				next if ($2=~/^\./);	# skip .dot file
+print "EXTRACT:$2\n";
 				push(@{$self->{staging_files}}, $agent . '/' . $2);
 			} elsif ($result=~/unzip: (.*?)\s*$/) {
 				LOG->error("unzip: $1 [SKIP]");

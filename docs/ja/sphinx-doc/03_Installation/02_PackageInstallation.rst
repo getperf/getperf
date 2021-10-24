@@ -4,6 +4,25 @@
 はじめに基本パッケージをインストールします。管理ユーザで **sudo -E yum**
 コマンドでインストールします。-E は sudo ユーザの環境変数を読みこむオプションで、前節で設定したプロキシー設定を有効にするために必要になります。
 
+.. note::
+
+    RHEL 環境の場合、サブスクリプション登録が必要になります。
+
+    ::
+
+        # サブスクリプション登録の確認
+        sudo subscription-manager list
+
+        # サブスクリプション登録。事前に Red Hatアカウントの登録が必要。
+        sudo subscription-manager register
+
+        # 登録後、利用なサブスクリプションリストを表示し、プールIDを確認
+        sudo subscription-manager list --available
+
+        # プールIDを指定してサブスクリプションを有効化
+        sudo subscription-manager subscribe --pool={プールID}
+
+
 ::
 
     sudo -E yum -y groupinstall "Development Tools"

@@ -385,12 +385,15 @@ task "prepare_apache", sub {
 desc "Need to run sudo. Install Apache Tomcat";
 task "prepare_tomcat", sub {
 
-  my $version  = '7.0.57';
-  my $check_ver = run 'curl -sSL http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
-  if ($check_ver=~/href="v(7.*?)\/"/) {
-    $version = $1;
-  }
-  my $download = 'http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
+  my $version  = '7.0.105';
+  my $url = 'https://archive.apache.org/dist/tomcat';
+#  my $check_ver = run 'curl -sSL http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
+  my $check_ver = run "curl -sSL $url/tomcat-7";
+
+#  if ($check_ver=~/href="v(7.*?)\/"/) {
+#    $version = $1;
+#  }
+  my $download = "$url/tomcat-7";
   my $module   = "apache-tomcat-${version}";
   my $config = config('base');
   my $osname = operating_system;

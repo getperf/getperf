@@ -115,6 +115,8 @@ vi /usr/local/tomcat-admin/conf/server.xml
                redirectPort="57443" secretRequired="false" />
 
 
+
+
 サービス自動起動設定
 ---------------------
 

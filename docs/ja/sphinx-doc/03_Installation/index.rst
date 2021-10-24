@@ -21,3 +21,4 @@
    12_RsyncSetup
    13_AgentInstall
    20_CentOS7Installation
+   21_RHEL8Installation

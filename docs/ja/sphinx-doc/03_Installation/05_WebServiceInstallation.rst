@@ -51,6 +51,32 @@ Apache バージョンは、2.2 系の最新をダウンロードサイトから
         my $archive = "${module}.tar.gz";
         my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
 
+.. note::
+
+   RHEL8 の場合、OpenSSL1.0 共有ライブラリをインストールする
+
+   ::
+
+      mkdir -p ~/work/sfw; cd ~/work/sfw
+      wget https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz
+      https://www.openssl.org/source/openssl-1.1.1k.tar.gz
+      tar xvfz openssl-1.0.2u.tar.gz
+      cd openssl-1.0.2u
+      ./config shared
+      make
+      sudo make install
+      sudo vi /etc/ld.so.conf
+      # 最終行に以下を追加
+      /usr/local/ssl/lib
+
+      sudo /sbin/ldconfig
+
+   Rexfile のapache configure コマンドのオプションにsslホームを指定
+
+   ::
+   
+      --with-ssl=/usr/local/ssl
+
 ::
 
     sudo -E rex prepare_apache
@@ -129,6 +155,8 @@ Axis2 管理画面のアクセスが確認できたら、Getperf Web サービ�
 管理画面の Services メニューを選択し、GetperfService　を選択します。選択するとWSDL(Webサービスの定義情報)が表示されます。
 
 .. note::
+
+   2020/12 に以下の課題を解消しました。
 
    現在、デプロイした getperf-ws-1.0.0.jar は、Axis2 のサービス登録で
    エラーが発生します。

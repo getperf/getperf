@@ -8,9 +8,9 @@ PTUNE_HOME=__PTUNE_HOME__
 GETPERF_USER=__PTUNE_USER__
 GETPERF_PROG=getperfctl
 
-if [ -f "$PTUNE_HOME/_wk/_running_flg" ]; then
+#if [ -f "$PTUNE_HOME/_wk/_running_flg" ]; then
     rm "$PTUNE_HOME/_wk/_pid_getperf"  2> /dev/null
-fi
+#fi
 
 # See how we were called.
 case "$1" in
