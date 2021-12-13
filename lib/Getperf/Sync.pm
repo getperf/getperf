@@ -178,12 +178,6 @@ sub unzip {
 		# my $command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
 		my $command = "cd ${target}; LANG=c jar xvf ${rsync_zip_dir}/${zip}";
 		my @results = readpipe("$command 2>&1");
-<<<<<<< HEAD
-
-=======
-# print Dumper \@results;
-		# my $line = ;
->>>>>>> 0ee13430fe5f32373a0a80ecc46a054478b7ed5d
 		if ($results[0]=~/ZipException/) {
 			$command = "cd ${target}; unzip -o ${rsync_zip_dir}/${zip}";
 			@results = readpipe("$command 2>&1");
