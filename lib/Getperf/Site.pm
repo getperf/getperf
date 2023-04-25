@@ -450,7 +450,12 @@ sub create_cacti_repository_db {
 		$rc  = 1;
 	}
 	$dbh = DBI->connect("dbi:mysql:mysql", 'root', $rootpass);
-	$dbh->do("GRANT ALL ON $sitekey.* TO $sitekey\@localhost IDENTIFIED BY '$sitepass'");
+	# $dbh->do("GRANT ALL ON $sitekey.* TO $sitekey\@localhost IDENTIFIED BY '$sitepass'");
+
+	$dbh->do("CREATE USER IF NOT EXISTS '$sitekey'\@'%' IDENTIFIED BY '$sitepass'");
+    $dbh->do("SET PASSWORD FOR '$sitekey'\@'%' = '$sitepass'");
+	$dbh->do("GRANT all PRIVILEGES ON *.* TO '$sitekey'\@'%'  WITH GRANT OPTION");
+
 	$dbh->disconnect();
 
 	return $rc;

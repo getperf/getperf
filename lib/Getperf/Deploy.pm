@@ -558,7 +558,7 @@ sub config_apache_tomcat_init_script {
 		chdir($self->{home});
 		my $osname = `lsb_release -i -s`;
 		chomp($osname);
-		if ($osname!~/(CentOS|Ubuntu|Raspbian|RedHatEnterprise)/) {
+		if ($osname!~/(CentOS|Ubuntu|Raspbian|RedHatEnterprise|AlmaLinux)/) {
 	        LOG->crit("Can't find script/template/tomcat-$osname.tpl");
 	        return;		
 		}
@@ -656,7 +656,9 @@ sub create_zabbix_repository_db {
 		$drh->func('createdb', $zabbixdb, 'localhost', 'root', $rootpass, 'admin');
 		$dbh = DBI->connect("dbi:mysql:mysql", 'root', $rootpass);
 		$dbh->do("ALTER DATABASE $zabbixdb DEFAULT CHARACTER SET=utf8");
-		$dbh->do("GRANT ALL ON $zabbixdb.* TO $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
+		# $dbh->do("GRANT ALL ON $zabbixdb.* TO $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
+        $dbh->do("CREATE USER $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
+        $dbh->do("GRANT ALL PRIVILEGES ON $zabbixdb.* TO $zabbixdb\@localhost WITH GRANT OPTION");
 		$dbh->disconnect();
 		if ($zabbix_sql_dir) {
 			for my $sql(qw/schema.sql images.sql data.sql/) {

@@ -326,7 +326,7 @@ class CactiGraphTemplate {
 	function check_or_create_graph_items($graph_template_id, $items, $graph_template_item_id = NULL, $ds_name = 'comment', $graph_template_item_seq = NULL, $column_name = 'task_item_id') {
 
 		$graph_template_item_ids = array();
-		$graph_templates_item = $this->get_instance_of_graph_templates_item($graph_template_id);
+		$graph_templates_items = $this->get_instance_of_graph_templates_item($graph_template_id);
 		$is_exists = false;
 
 		foreach ($items as $item) {
@@ -337,7 +337,7 @@ class CactiGraphTemplate {
 			}
 
 			$id = NULL;
-			foreach ($graph_templates_item as $graph_template_item) {
+			foreach ($graph_templates_items as $graph_template_item) {
 				$is_exists = ($graph_template_item["text_format"] === $ds_name);
 				if (!is_null($graph_template_item_id)) {
 					if ($graph_template_item["task_item_id"] !== $graph_template_item_id) {
@@ -381,12 +381,14 @@ class CactiGraphTemplate {
 			// $input_text = "Data Source [ $seq / $ds_name ]";
 			$input_text = "Data Source [ $seq / $ds_name ]";
 		}
-		$sql = "select id from graph_template_input where graph_template_id=$graph_template_id and name = '$input_text'";
+		$sql = "select id from graph_template_input where graph_template_id=$graph_template_id and name = \"$input_text\"";
 		$graph_template_input_id = db_fetch_cell($sql, 'id');
-		if (is_null($graph_template_input_id)) {
+		// $graph_template_input_id = db_fetch_cell_return($sql);
+		if (!($graph_template_input_id)) {
 			$hash = get_hash_graph_template(0, "graph_template_input");
-			db_execute("replace into graph_template_input (hash,graph_template_id,name,column_name) " . 
-				"values ('$hash', $graph_template_id, '$input_text', '$column_name')");
+			$sql = "replace into graph_template_input (hash,graph_template_id,name,column_name) " . 
+				"values ('$hash', $graph_template_id, '$input_text', '$column_name')";
+			db_execute($sql);
 			$graph_template_input_id = db_fetch_insert_id();
 		}
 
@@ -445,7 +447,7 @@ class CactiGraphTemplate {
 		echo "Check graph template : $name\n";
 		$graph_template_id = CactiModelTemplate::fetch_id_by_name('graph_templates',  $name);
 		if (empty($graph_template_id)) {
-			duplicate_graph(0, $graph_template_source_id, $name);
+			api_duplicate_graph(0, $graph_template_source_id, $name);
 			$graph_template_id = CactiModelTemplate::fetch_id_by_name('graph_templates', $name);
 			echo "Create graph template[$graph_template_id] : $name\n";
 		}

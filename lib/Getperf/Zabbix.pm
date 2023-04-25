@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+# use experimental 'switch';
 package Getperf::Zabbix;
 use Clone qw(clone);
 use Getopt::Long;
@@ -12,7 +13,7 @@ use Getperf::Data::NodeInfo;
 use parent qw(Class::Accessor::Fast);
 use Log::Handler app => "LOG";
 use Zabbix::API;
-use JSON::RPC::Client;
+use JSON::RPC::Legacy::Client;
 
 __PACKAGE__->mk_accessors(qw/server url enable/);
 
@@ -60,11 +61,12 @@ sub new {
     	$zabbix_conf = decode_json($config_json_text);
 	}
 	my $server = $zabbix_conf->{ZABBIX_SERVER_IP} || 'localhost';
+	my $url_prefix = $zabbix_conf->{ZABBIX_SERVER_URL} || "http://${server}/zabbix";
 
 	bless {
 		server     => $server,
-		url        => "http://${server}/zabbix/api_jsonrpc.php",
-		user       => 'admin',
+		url        => "${url_prefix}/api_jsonrpc.php",
+		user       => $zabbix_conf->{ZABBIX_ADMIN_USER}        || 'Admin',
 		password   => $zabbix_conf->{ZABBIX_ADMIN_PASSWORD}    || 'zabbix',
 		enable     => $zabbix_conf->{GETPERF_AGENT_USE_ZABBIX} || 1,
 		multi_site => $zabbix_conf->{USE_ZABBIX_MULTI_SITE}    || 0,
@@ -141,7 +143,7 @@ sub login {
 	my $zabber = Zabbix::API->new(server => $self->{url});
 	eval {
 		# $zabber->login(user => $self->{user}, password => $self->{password});
-		my $client = new JSON::RPC::Client;
+		my $client = new JSON::RPC::Legacy::Client;
 		my $json = {
 			jsonrpc => "2.0",
 			method 	=> "user.login",
@@ -563,7 +565,7 @@ sub regist_node {
 		}
 		if ($zabbix_host) {
 			# If a node_path is set, add it for the host groups and templates
-			my $node_path = $node->{node_info}{node_path};
+			my $node_path = $node->{node_info}{node_path} || '';
 			if ($self->{node_dir}) {
 				$node_path = $self->{node_dir} . '/' . $node_name;
 			}

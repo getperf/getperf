@@ -99,7 +99,6 @@ class CactiGraph {
 			return false;
 		if (! $this->regist_node() )
 			return false;
-
 		$graph_count = 1;
 		if ($metric->devices) {
 			$metric->sort_device($options['device_sort']);
@@ -157,13 +156,15 @@ class CactiGraph {
 		if ($tenant !== '_default') {
 			$title = "$title - $tenant";
 		}
-		if ($graph_type == 'single' && count($device_set) === 1) {
-			$title = str_replace('<device>', $device_set[0]["device_text"], $title);
-		} else {
-			if ($graph_count >= 2) {
-				$title .= " - " . $graph_count;
-			} elseif ( count($device_set) === 1) {
+		if ($device_set) {
+			if ($graph_type == 'single' && count($device_set) === 1) {
 				$title = str_replace('<device>', $device_set[0]["device_text"], $title);
+			} else {
+				if ($graph_count >= 2) {
+					$title .= " - " . $graph_count;
+				} elseif ( count($device_set) === 1) {
+					$title = str_replace('<device>', $device_set[0]["device_text"], $title);
+				}
 			}
 		}
 		// if ( count($device_set) === 1) {
@@ -384,7 +385,7 @@ class CactiGraph {
 		$path = str_replace('<node>', $node_alias, $graph_config['graph_tree']);
 		$path = str_replace('<domain>', $domain_name, $path);
 		$path = str_replace('<node_path>', $node_path, $path);
- 		if ( count($device_set) === 1) {
+ 		if ($device_set && count($device_set) === 1) {
 			$path = str_replace('<device>', $device_set[0]["device"], $path);
 			$path = str_replace('<device_text>', $device_set[0]["device_text"], $path);
 		}
@@ -427,21 +428,31 @@ class CactiGraph {
 //				echo "[" . __LINE__ . "] [$lvl][$cond]($path) id : $parent_id\n";
 				continue;
 			}
-			$sql  = "select * from graph_tree_items where graph_tree_id=$cacti_tree_id ";
-			$sql .= "and order_key like '{$cond}___000%'";
+			// $sql  = "select * from graph_tree_items where graph_tree_id=$cacti_tree_id ";
+			// $sql .= "and order_key like '{$cond}___000%'";
 
+			$sql  = "select * from graph_tree_items where graph_tree_id=$cacti_tree_id ";
+			$sql .= "and parent = $parent_id and title = \"$path\"";
+			// print($sql);
 			$tree_field = db_fetch_assoc($sql);
+// var_dump($tree_field);
 			$found = 0;
 			if (sizeof($tree_field)) {
 				foreach ($tree_field as $field) {
-					if (strcmp($field["title"], $path) == 0) {
-						$parent_id = $field["id"];
-						$order_key = $field["order_key"];
-						$found = 1;
-						break;
-					}
+					$parent_id = $field["id"];
+					$found = 1;
+					break;
 				}
+				// foreach ($tree_field as $field) {
+				// 	if (strcmp($field["title"], $path) == 0) {
+				// 		$parent_id = $field["id"];
+				// 		$order_key = $field["order_key"];
+				// 		$found = 1;
+				// 		break;
+				// 	}
+				// }
 			}
+// print("FOUND : $found");
 			// 検索結果が0の場合は、新規にパスを追加する
 			if ($found == 0) {
 				# Blank out the graphId, rra_id, hostID and host_grouping_style  fields
@@ -457,11 +468,11 @@ class CactiGraph {
 				# $nodeId could be a Header Node, a Graph Node, or a Host node.
 				$parent_id = api_tree_item_save(0, $cacti_tree_id, $itemType, $parent_id, $path, $graphId, $rra_id, $hostId, $hostGroupStyle, $sortMethod, false);
 
-				$sql = "select order_key from graph_tree_items where id=$parent_id";
-				$order_key = db_fetch_cell($sql, "order_key");
+				// $sql = "select order_key from graph_tree_items where id=$parent_id";
+				// $order_key = db_fetch_cell($sql, "order_key");
 			}
 
-			$cond .= substr($order_key, 3 * $lvl, 3);
+			// $cond .= substr($order_key, 3 * $lvl, 3);
 			$lvl ++;
 
 //			echo "[" . __LINE__ . "] [$lvl][$cond]($path) id : $parent_id\n";
@@ -486,7 +497,7 @@ class CactiGraph {
 		$treeOpts["sort_type"] = 1; # 'manual' => 1, 'alpha' => 2, 'natural' => 4, 'numeric' => 3
 		$treeId = sql_save($treeOpts, "graph_tree");
 
-		sort_tree(SORT_TYPE_TREE, $treeId, $treeOpts["sort_type"]);
+//		sort_tree(SORT_TYPE_TREE, $treeId, $treeOpts["sort_type"]);
 		$this->cacti_tree_id = $treeId;
 		echo "Tree Created - tree-id: ($treeId)\n";
 
@@ -540,7 +551,7 @@ class CactiGraph {
 		$ping_retries         = 10;
 		$max_oids             = 10;
 		$device_threads       = 1;
-		$host_id = api_device_save(0, $template_id, $description, $ip,
+		$host_id = api_device_save('0', $template_id, $description, $ip,
 					$community, $snmp_ver, $snmp_username, $snmp_password,
 					$snmp_port, $snmp_timeout, $disable, $avail, $ping_method,
 					$ping_port, $ping_timeout, $ping_retries, $notes,

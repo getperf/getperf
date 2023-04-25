@@ -73,7 +73,7 @@ class CactiModelTemplate {
 		}
 		$data_template_id = $this->fetch_id_by_name('data_template',  $data_template_title);
 		if (empty($data_template_id)) {
-			duplicate_data_source(0, $data_template_source_id, $data_template_title);
+			api_duplicate_data_source(0, $data_template_source_id, $data_template_title);
 			$data_template_id = $this->fetch_id_by_name('data_template', $data_template_title);
 			echo "Create data template[$data_template_id] : $data_template_title\n";
 		}
@@ -125,8 +125,8 @@ class CactiModelTemplate {
 		$title = str_replace("<devn>", "%", $title, $count);
 		$conditions = ($count > 0) ? "name like '$title'" : "name = '$title'";
 		$graph_template_ids = db_fetch_assoc("SELECT id FROM graph_templates WHERE $conditions");
-
-		if (sizeof($graph_template_ids) > 0) {
+		// if (sizeof($graph_template_ids) > 0) {
+		if (!empty($graph_template_ids)) {
 			$ids = array_map(function($r){return $r['id'];}, $graph_template_ids);
 
 			db_execute("delete from graph_templates where " . array_to_sql_or($ids, "id"));

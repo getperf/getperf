@@ -46,11 +46,16 @@ class NodeManager {
 	}
 
 	function find_next_metric_set() {
-		if ( $metric_key = each($this->metric_keys) ) {
-			list($key, $set) = $metric_key;
-			return $set;
-		}
-		return null;
+// 		if ( $metric_key = each($this->metric_keys) ) {
+// 			list($key, $set) = $metric_key;
+// print_r($set);
+// 			return $set;
+// 		}
+// 		return null;
+		$set = current($this->metric_keys);
+		next($this->metric_keys);
+// print_r($set);
+		return $set;
 	}
 
 	// 現在は名前順(ディレクトリのリスト順)のみだが、登録日付順、更新日付順にソートできる様に機能拡張
