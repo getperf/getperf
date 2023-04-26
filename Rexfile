@@ -335,17 +335,23 @@ task "prepare_mysql", sub {
 
 desc "Need to run sudo. Install Apache HTTPD";
 task "prepare_apache", sub {
-  my $version = '2.2.34';
-  my $module  = 'httpd-2.2.34';
+  # my $version = '2.2.34';
+  # my $module  = 'httpd-2.2.34';
+  # my $archive = "${module}.tar.gz";
+  # my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
+
+  my $version = '2.4.57';
+  my $module  = 'httpd-2.4.57';
   my $archive = "${module}.tar.gz";
-  my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
+  my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.4.57.tar.gz';
 
   # Parse Apache download page, and check version.
   # Source:
   # <a href="http://ftp.riken.jp/net/apache//httpd/httpd-2.2.29.tar.gz">
   #   httpd-2.2.29.tar.gz</a>
   my $download_page = run 'curl -sSL http://httpd.apache.org/download.cgi';
-  if ($download_page=~m|Source: <a href="(.+?)/(httpd-)(2.2.\d+)(\.tar\.gz?)">|) {
+  if ($download_page=~m|Source: <a href="(.+?)/(httpd-)(2.4.\d+)(\.tar\.gz?)">|) {
+  # if ($download_page=~m|Source: <a href="(.+?)/(httpd-)(2.2.\d+)(\.tar\.gz?)">|) {
     $version = $3;
     $module  = "httpd-${version}";
     $archive = "${module}.tar.gz";
@@ -362,14 +368,18 @@ task "prepare_apache", sub {
   my $apache_dir = $config->{ws_apache_dir} || die;
   my $src_dir = "/tmp/rex/${module}";
 
+  # for my $ws_suffix($config->{ws_admin_suffix}) {
   for my $ws_suffix($config->{ws_admin_suffix}, $config->{ws_data_suffix}) {
     my $apache_home = $apache_dir . '-' . $ws_suffix;
     if (!-x "$apache_home/bin/httpd") {
       cd $src_dir;
       _run 'make distclean';
       _run './configure --prefix=' . $apache_home .
-        ' -enable-modules=all --with-included-apr --enable-mpm=event' .
-        ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl --with-ssl=/usr/local/ssl';
+        ' -enable-modules=all --enable-mpm=event' .
+        ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl';
+      # _run './configure --prefix=' . $apache_home .
+      #   ' -enable-modules=all --with-included-apr --enable-mpm=event' .
+      #   ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl --with-ssl=/usr/local/ssl';
       _run 'make';
       _sudo 'make install';
     }

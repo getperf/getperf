@@ -24,6 +24,7 @@ cpanfile.*
 **/*.rrd
 docs/html.zip
 docs/ja/docs/_build/
+.vstags
 
 !.gitkeep
 /config/ssl/

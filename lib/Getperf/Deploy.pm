@@ -253,8 +253,16 @@ sub config_apache_httpd {
  			#CustomLog "logs/access_log" common
  			} elsif ($line=~/^\s*CustomLog "logs\/access_log" common/) {
  				push @out, '#CustomLog "logs/access_log" common';
- 			# } elsif ($line=~/LoadModule socache_shmcb_module modules\/mod_socache_shmcb\.so/) {
- 			# 	push @out, "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so";
+ 			} elsif ($line=~m|LoadModule proxy_module modules/mod_proxy\.so|) {
+ 				push @out, "LoadModule proxy_module modules/mod_proxy.so";
+ 			} elsif ($line=~m|LoadModule proxy_connect_module modules/mod_proxy_connect\.so|) {
+ 				push @out, "LoadModule proxy_connect_module modules/mod_proxy_connect.so";
+ 			} elsif ($line=~m|LoadModule proxy_http_module modules/mod_proxy_http\.so|) {
+ 				push @out, "LoadModule proxy_http_module modules/mod_proxy_http.so";
+ 			} elsif ($line=~m|LoadModule proxy_ajp_module modules/mod_proxy_ajp\.so|) {
+ 				push @out, "LoadModule proxy_ajp_module modules/mod_proxy_ajp.so";
+ 			} elsif ($line=~m|LoadModule socache_shmcb_module modules/mod_socache_shmcb\.so|) {
+ 				push @out, "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so";
  			# } elsif ($line=~/LoadModule slotmem_shm_module/) {
  			# 	push @out, "LoadModule slotmem_shm_module modules/mod_slotmem_shm.so";
 
