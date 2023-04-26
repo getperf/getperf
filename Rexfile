@@ -369,7 +369,7 @@ task "prepare_apache", sub {
       _run 'make distclean';
       _run './configure --prefix=' . $apache_home .
         ' -enable-modules=all --with-included-apr --enable-mpm=event' .
-        ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl';
+        ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl --with-ssl=/usr/local/ssl';
       _run 'make';
       _sudo 'make install';
     }
