@@ -22,3 +22,4 @@
    13_AgentInstall
    20_CentOS7Installation
    21_RHEL8Installation
+   22_Cacti12Installation
