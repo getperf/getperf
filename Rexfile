@@ -126,7 +126,9 @@ sub _restart_ws {
   my $tomcat_home = $config->{ws_tomcat_dir} . '-' . $ws_suffix;
   my $apache_home = $config->{ws_apache_dir} . '-' . $ws_suffix;
    _sudo "/etc/init.d/tomcat-${ws_suffix} stop";
+   sleep 5;
    _sudo "/etc/init.d/tomcat-${ws_suffix} start";
+   sleep 30;
    _sudo "$apache_home/bin/apachectl restart";
 }
 
@@ -395,19 +397,33 @@ task "prepare_apache", sub {
 desc "Need to run sudo. Install Apache Tomcat";
 task "prepare_tomcat", sub {
 
-  my $version  = '7.0.105';
+  my $version  = '8.5.88';
   my $url = 'https://archive.apache.org/dist/tomcat';
 #  my $check_ver = run 'curl -sSL http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
-  my $check_ver = run "curl -sSL $url/tomcat-7";
+  my $check_ver = run "curl -sSL $url/tomcat-8";
 
 #  if ($check_ver=~/href="v(7.*?)\/"/) {
 #    $version = $1;
 #  }
-  my $download = "$url/tomcat-7";
+  my $download = "$url/tomcat-8";
   my $module   = "apache-tomcat-${version}";
   my $config = config('base');
   my $osname = operating_system;
   my $tomcat_dir = $config->{ws_tomcat_dir} || die;
+
+#   my $version  = '7.0.105';
+#   my $url = 'https://archive.apache.org/dist/tomcat';
+# #  my $check_ver = run 'curl -sSL http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
+#   my $check_ver = run "curl -sSL $url/tomcat-7";
+
+# #  if ($check_ver=~/href="v(7.*?)\/"/) {
+# #    $version = $1;
+# #  }
+#   my $download = "$url/tomcat-7";
+#   my $module   = "apache-tomcat-${version}";
+#   my $config = config('base');
+#   my $osname = operating_system;
+#   my $tomcat_dir = $config->{ws_tomcat_dir} || die;
 
   # download tomcat binary
   if (!-f "/tmp/rex/${module}.tar.gz") {

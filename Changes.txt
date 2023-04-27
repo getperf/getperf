@@ -5,6 +5,9 @@ New features:
 * AlmaLinux 用 Tomcat 起動スクリプトテンプレート tomcat-AlmaLinux.tpl 追加
 * lib/cacti/template に Cacti1.2 移行用設定ファイルテンプレート,MySQL ダンプ追加
 * getperf2 プロセス監視不具合対応、Go 依存ライブラリ timeout v0.4.0 のアップデート
+* Webサービス用 Apache バージョンを 2.4 に、Tomcat を 8.5 に移行
+* Web サービス Apache, Tomcat 間の通信を暗号化する設定に変更
+* Webサービス再起動コマンドのコンフリクト問題修正。各プロセス起動後にスリープ処理追加
 
 ToDo: ★ 優先度高
 
@@ -31,10 +34,10 @@ ToDo: ★ 優先度高
       * Web サービスTomcat8  移行 []
 * Webサービス移行 []
       * Webサービス移行 []  ★
-      * Webサービスインストール手順修正 []
-        * Apacheインストール []
-        * Tomcatインストール []
-        * Webサービスインストール []
+      * Webサービスインストール手順修正 [x]
+        * Apacheインストール [x]
+        * Tomcatインストール [x]
+        * Webサービスインストール [x]
 * Zabbix移行 []
       * Zabbix5.0 移行 []
       * Zabbixインストール手順修正 []

@@ -1,20 +1,27 @@
 Webサービスインストール
 =======================
 
-エージェント Web サービスのインストールを行います。
+監視エージェント通信用 Web サービスのインストールを行います。
 
-データ集計サービスの起動停止スクリプト /etc/init.d/sumupctl を登録します。
+.. データ集計サービスの起動停止スクリプト /etc/init.d/sumupctl を登録します。
 
-::
+.. ::
 
-    sudo -E rex install_sumupctl
+..     sudo -E rex install_sumupctl
 
-データ集計サービスのモニタースクリプトを cron に登録します。
-以下 Rex コマンドで cron 登録をします。
+.. データ集計サービスのモニタースクリプトを cron に登録します。
+.. 以下 Rex コマンドで cron 登録をします。
 
-::
+.. ::
 
-	sudo -E rex run_monitor_sumup
+.. 	sudo -E rex run_monitor_sumup
+
+事前準備
+--------
+
+Webサービスのインストールで、Java ビルドツール Gradle, Apache Ant を使用します。
+前頁にインストール手順の記載がありますので、事前にインストールしてください。
+
 
 Apacheインストール
 ------------------
@@ -22,64 +29,159 @@ Apacheインストール
 Apache HTTP サーバのソースをダウンロードして、/usr/local の下にインストールします。管理用とデータ受信用の2つのインスタンスをインストールし、
 それぞれ、/usr/local/apache-admin　と　/usr/local/apache-data のホームディレクトリにインストールします。
 
-Apache バージョンは、2.2 系の最新をダウンロードサイトから検出してインストールします
+* 管理用の場合、57443 ポートでサーバ証明書を使用します
+* データ用の場合、 58443 ポートで各監視対象で発行したクライアント証明書を使用します
 
-.. note::
+rex コマンドを用いてインストールします。
+Apache バージョンは、2.4 系の最新をダウンロードサイトから検出してインストールします
 
-   セットアップスクリプトでApache 2.2系のダウンロードに失敗する場合があります。
-   その場合は以下の手順で手動ダウンロードして、アーカイブを解凍した後に
-   セットアップスクリプトを実行してください。
+.. .. note::
 
-   ::
+..    セットアップスクリプトでApache 2.2系のダウンロードに失敗する場合があります。
+..    その場合は以下の手順で手動ダウンロードして、アーカイブを解凍した後に
+..    セットアップスクリプトを実行してください。
 
-      cd /tmp/rex
-      wget https://archive.apache.org/dist/httpd/httpd-2.2.34.tar.gz
-      tar xvf httpd-2.2.34.tar.gz
+..    ::
 
-   Rexfile のバージョン指定を、 32 から 34 に変更
+..       cd /tmp/rex
+..       wget https://archive.apache.org/dist/httpd/httpd-2.2.34.tar.gz
+..       tar xvf httpd-2.2.34.tar.gz
 
-   ::
+..    Rexfile のバージョン指定を、 32 から 34 に変更
 
-      cd ~/getperf
-      vi Rexfile
+..    ::
 
-   ::
+..       cd ~/getperf
+..       vi Rexfile
 
-      task "prepare_apache", sub {
-        my $version = '2.2.34';
-        my $module  = 'httpd-2.2.34';
-        my $archive = "${module}.tar.gz";
-        my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
+..    ::
 
-.. note::
+..       task "prepare_apache", sub {
+..         my $version = '2.2.34';
+..         my $module  = 'httpd-2.2.34';
+..         my $archive = "${module}.tar.gz";
+..         my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
 
-   RHEL8 の場合、OpenSSL1.0 共有ライブラリをインストールする
+.. .. note::
 
-   ::
+..    RHEL8 の場合、OpenSSL1.0 共有ライブラリをインストールする
 
-      mkdir -p ~/work/sfw; cd ~/work/sfw
-      wget https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz
-      https://www.openssl.org/source/openssl-1.1.1k.tar.gz
-      tar xvfz openssl-1.0.2u.tar.gz
-      cd openssl-1.0.2u
-      ./config shared
-      make
-      sudo make install
-      sudo vi /etc/ld.so.conf
-      # 最終行に以下を追加
-      /usr/local/ssl/lib
+..    ::
 
-      sudo /sbin/ldconfig
+..       mkdir -p ~/work/sfw; cd ~/work/sfw
+..       wget https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2u.tar.gz
+..       https://www.openssl.org/source/openssl-1.1.1k.tar.gz
+..       tar xvfz openssl-1.0.2u.tar.gz
+..       cd openssl-1.0.2u
+..       ./config shared
+..       make
+..       sudo make install
+..       sudo vi /etc/ld.so.conf
+..       # 最終行に以下を追加
+..       /usr/local/ssl/lib
 
-   Rexfile のapache configure コマンドのオプションにsslホームを指定
+..       sudo /sbin/ldconfig
 
-   ::
+..    Rexfile のapache configure コマンドのオプションにsslホームを指定
+
+..    ::
    
-      --with-ssl=/usr/local/ssl
+..       --with-ssl=/usr/local/ssl
 
 ::
 
-    sudo -E rex prepare_apache
+   # Getperfホームディレクトリに移動し、Apache インストールコマンドを実行します。
+   cd ~/getperf
+   sudo -E rex prepare_apache
+
+Apache インストール後の HTTPS 疎通確認(オプション)
+--------------------------------------------------
+
+インストールした Apache で HTTPS の疎通テストを行います。
+
+テスト用クライアント証明書の発行
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+テスト用に証明書発行スクリプト ssladmin.pl を用いて、クライアント
+証明書を発行します。以下のコマンドを実行します。
+
+::
+
+   # テスト用の、クライアント 証明書を発行します
+   ssladmin.pl client_cert --sitekey=test1 --agent=host1
+
+上記は、 test1 サイトのでホスト名が host1 のクライアント証明書を発行します。
+作成された証明書を確認します。
+
+::
+
+   # 証明書発行ディレクトリに移動します。
+   # パスは、/etc/getperf/ssl/client/{サイト名}/{ホスト名}/network となり、上記コマンドの場合は以下になります。
+   cd /etc/getperf/ssl/client/test1/host1/network
+
+   # 発行された証明書ファイルを確認します
+   ls
+   License.txt  client.crt  client.key  getperf_ws.ini  zabbix.ini
+   ca.crt       client.csr  client.pem  server
+
+上記証明書を使用して、 Apache の HTTPS 疎通確認を行います。
+
+管理用 Apache のHTTPS疎通確認
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+先ほど確認した証明書保存ディレクトリ下で以下のコマンドを実行します。
+
+::
+
+   # 証明書保存ディレクトリに移動し、サーバ認証接続確認のコマンドを実行します
+   cd /etc/getperf/ssl/client/test1/host1/network
+   openssl s_client -connect {監視サーバIPアドレス}:57443 -CAfile ./ca.crt
+
+上記はルート証明書を指定して、管理用 Apache に接続します。
+実行後、以下のような Verification: OK がでれば OK です。
+
+::
+
+   SSL handshake has read 2144 bytes and written 403 bytes
+   Verification: OK
+
+
+その後にENTER を押して、以下のような 400 Bad Request と HTML が出力されれば OK です。
+
+::
+
+   HTTP/1.1 400 Bad Request
+
+
+データ用 Apache のHTTPS疎通確認
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+先ほど確認した証明書保存ディレクトリ下で以下のコマンドを実行します。
+
+::
+
+   # 同様にクライアント認証接続確認のコマンドを実行します
+   cd /etc/getperf/ssl/client/test1/host1/network
+   openssl s_client -connect {監視サーバIPアドレス}:58443 \
+   -CAfile ./ca.crt -cert ./client.pem -key ./client.key
+
+
+上記はルート証明書、クライアント証明書、クライアント鍵を指定して、
+データ用 Apache に接続します。
+実行後、以下のような Verification: OK がでれば OK です。
+
+::
+
+   SSL handshake has read 2144 bytes and written 403 bytes
+   Verification: OK
+
+
+その後にENTER を押して、以下のような 400 Bad Request と HTML が出力されれば OK です。
+
+::
+
+   HTTP/1.1 400 Bad Request
+
 
 Tomcatインストール
 ------------------
@@ -88,46 +190,49 @@ Tomcat Webコンテナをダウンロードして、/usr/local の下にイン�
 Apache と同様に、管理用とデータ受信用で、それぞれ、/usr/local/tomcat-admin と
 /usr/local/tomcat-data のホームディレクトにインストールします。
 
+
 ::
 
-    sudo -E rex prepare_tomcat
+   # Getperfホームディレクトリに移動し、Tomcat インストールコマンドを実行します。
+   cd ~/getperf
+   sudo -E rex prepare_tomcat
 
-Tomcat バージョンは 7.0 系の最新をダウンロードサイトから検出してインストールします
+Tomcat バージョンは 8.5 系の最新をダウンロードサイトから検出してインストールします
 
-.. note::
+.. .. note::
 
-   Tomcat AJP の設定が有効にならないので手動で変える。
-   通信暗号化が既定では有効のため、secretRequired を無効にします。
-   "Define an AJP 1.3 Connector on port" のコメント行の後ろに
-   以下を追加します。
+..    Tomcat AJP の設定が有効にならないので手動で変える。
+..    通信暗号化が既定では有効のため、secretRequired を無効にします。
+..    "Define an AJP 1.3 Connector on port" のコメント行の後ろに
+..    以下を追加します。
 
-   * tomcat-data
+..    * tomcat-data
 
-   ::
+..    ::
 
-      vi /usr/local/tomcat-data/conf/server.xml
+..       vi /usr/local/tomcat-data/conf/server.xml
 
-   ::
+..    ::
 
-      <!-- Define an AJP 1.3 Connector on port 8009 -->
-      <Connector protocol="AJP/1.3"
-                 address="::1"
-                 port="58009"
-                 redirectPort="58443" secretRequired="false" />
+..       <!-- Define an AJP 1.3 Connector on port 8009 -->
+..       <Connector protocol="AJP/1.3"
+..                  address="::1"
+..                  port="58009"
+..                  redirectPort="58443" secretRequired="false" />
 
-   * tomcat-admin
+..    * tomcat-admin
 
-   ::
+..    ::
 
-      vi /usr/local/tomcat-admin/conf/server.xml
+..       vi /usr/local/tomcat-admin/conf/server.xml
 
-   ::
+..    ::
 
-      <!-- Define an AJP 1.3 Connector on port 8009 -->
-      <Connector protocol="AJP/1.3"
-                 address="::1"
-                 port="57009"
-                 redirectPort="57443" secretRequired="false" />
+..       <!-- Define an AJP 1.3 Connector on port 8009 -->
+..       <Connector protocol="AJP/1.3"
+..                  address="::1"
+..                  port="57009"
+..                  redirectPort="57443" secretRequired="false" />
 
 Webサービスインストール
 -----------------------
@@ -139,39 +244,69 @@ Webサービスエンジンの Apache Axis2 をダウンロードして、Tomcat
     rex prepare_tomcat_lib
 
 デプロイ処理は最後に、Apache, Tomcat プロセスの再起動を行います。
-サービス再起動時のサービス停止エラーが発生する場合がありますが、本エラーは無視して構いません。デプロイに成功すると、Web
-ブラウザから Axis2 の管理画面へのアクセスが可能となります。
+サービス再起動時のサービス停止エラーが発生する場合がありますが、本エラーは無視して
+構いません。
 
--  Axis2 管理用 http://{監視サーバのIPアドレス}:57000/axis2/
--  Axis2 データ受信用 http://{監視サーバのIPアドレス}:58000/axis2/
+デプロイに成功すると、Web ブラウザから Axis2 の管理画面へのアクセスが可能となります。
 
-Axis2 管理画面のアクセスが確認できたら、Getperf Web サービスを Axis2 にデプロイします。
+-  Axis2 管理用 http://{監視サーバIPアドレス}:57000/axis2/
+-  Axis2 データ受信用 http://{監視サーバIPアドレス}:58000/axis2/
+
+
+Axis2 管理画面のアクセスが確認できたら、Getperf Web サービスをデプロイします。
+
+Axis2 設定ファイルを更新します。
 
 ::
 
-    rex prepare_ws
+    # 管理者用Webサービスの設定
+    sudo -E perl ~/getperf/script/deploy-ws.pl config_axis2 --suffix=admin
+
+    # データ用Webサービスの設定
+    sudo -E perl ~/getperf/script/deploy-ws.pl config_axis2 --suffix=data
+
+Getperf Web サービスをビルドしてデプロイします。
+
+::
+
+    # 管理者用Webサービスのデプロイ
+    sh ~/getperf/script/axis2-install-ws.sh /usr/local/tomcat-admin
+
+    # データ用Webサービスのデプロイ
+    sh ~/getperf/script/axis2-install-ws.sh /usr/local/tomcat-data
+
+設定を反映させるため、Web サービスを再起動します。
+
+::
+
+    cd ~/getperf
+    # 管理者用Webサービスのデプロイ
+    rex restart_ws_admin
+
+    # データ用Webサービスのデプロイ
+    rex restart_ws_data
 
 デプロイに成功すると、前述の Axis2 管理画面のメニューからWebサービスの確認ができます。
 管理画面の Services メニューを選択し、GetperfService　を選択します。選択するとWSDL(Webサービスの定義情報)が表示されます。
 
-.. note::
+.. .. note::
 
-   2020/12 に以下の課題を解消しました。
+..    2020/12 に以下の課題を解消しました。
 
-   現在、デプロイした getperf-ws-1.0.0.jar は、Axis2 のサービス登録で
-   エラーが発生します。
-   別サイトから jarファイルをアップロードしてtomcatを再起動します。
+..    現在、デプロイした getperf-ws-1.0.0.jar は、Axis2 のサービス登録で
+..    エラーが発生します。
+..    別サイトから jarファイルをアップロードしてtomcatを再起動します。
 
-   ::
+..    ::
 
-      # 旧サイトから、getperf-ws-1.0.0.jar ファイルを/tmpにコピー
-      cp /tmp/getperf-ws-1.0.0.jar \
-      /usr/local/tomcat-data/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
-      cp /tmp/getperf-ws-1.0.0.jar \
-      /usr/local/tomcat-admin/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
+..       # 旧サイトから、getperf-ws-1.0.0.jar ファイルを/tmpにコピー
+..       cp /tmp/getperf-ws-1.0.0.jar \
+..       /usr/local/tomcat-data/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
+..       cp /tmp/getperf-ws-1.0.0.jar \
+..       /usr/local/tomcat-admin/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
 
-   ::
+..    ::
 
-      cd $HOME/getperf
-      sudo rex restart_ws_admin
-      sudo rex restart_ws_data
+..       cd $HOME/getperf
+..       sudo rex restart_ws_admin
+..       sudo rex restart_ws_data

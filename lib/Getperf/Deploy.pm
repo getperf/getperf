@@ -304,7 +304,7 @@ sub config_apache_ajp {
 
 	my @out = (
 		'<Location / >',
-		'  ProxyPass ajp://localhost:' . $self->{ws_port_ajp} . '/',
+		'  ProxyPass ajp://localhost:' . $self->{ws_port_ajp} . '/ secret=getperf',
 		'</Location>',
 		'',
 	);
@@ -443,62 +443,87 @@ sub config_apache_tomcat {
  	my $config_file = file($self->{ws_tomcat_home}, 'conf/server.xml');
 	LOG->notice("patch $config_file");
  	eval {
-     	my @lines = $config_file->slurp or die $!;
-     	my @out;
-     	my $first_patch = 1;
- 		while (my $line = shift(@lines)) {
- 			chomp($line);
-
-			# @Comment out 8080 port
-			# +<!--
-		    # <Connector port="8080" protocol="HTTP/1.1"
-		    #            connectionTimeout="20000"
-		    #            redirectPort="8443" />
-			# +-->
- 			if ($line=~m|<Connector port="\d+" protocol="HTTP/1.1"|) {
- 				if ($line=~/patched/) {
- 					$first_patch = 0;
- 					push @out, $line;
- 				} else {
- 					push @out, '<!--';
- 					push @out, $line . ' patched';
- 					while (my $line = shift(@lines)) {
- 						chomp($line);
- 						push @out, $line;
- 						last if ($line=~m|/>|);
- 					}
- 					push @out, '-->';
- 				}
-
-			# @@ -20,7 +22,7 @@
-			# - <Server port="8005" shutdown="SHUTDOWN">
-			# + <Server port="58005" shutdown="SHUTDOWN">
-			} elsif ($line=~m|<Server port="\d+" shutdown="SHUTDOWN"|) {
- 				push @out, '<Server port="' . $self->{ws_port_run} . '" shutdown="SHUTDOWN">';
-
-			# @@ -90,7 +92,7 @@
-			#      <!-- Define an AJP 1.3 Connector on port 8009 -->
-			# -    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
-			# +    <Connector port="57009" protocol="AJP/1.3" redirectPort="8443" />
- 			} elsif ($line=~m|<Connector port="\d+" protocol="AJP/1.3" redirectPort="\d+"|) {
- 				push @out, '    <Connector port="' . $self->{ws_port_ajp} . 
- 					'" protocol="AJP/1.3" redirectPort="' . $self->{ws_port_ssl} . '" />';
-
- 			} else {
- 				push @out, $line;
- 			}
- 		}
+# 		$config_file->parent->mkpath;
  		my $writer = $config_file->open('w') or die $!;
-
- 		$writer->print(join("\n", @out));
- 		$writer->close;
- 		$self->change_owner($self->{ws_tomcat_owner}, $config_file);
+		unless ($writer) {
+	        LOG->crit("Could not write $config_file: $!");
+	        return;
+		}
+		chdir($self->{home});
+		my $config_template =  'script/template/axis2-server-8.5.88-xml.tpl';
+		my $tt = Template->new;
+		my $vars = { 
+			ws_port_run => $self->{ws_port_run},
+		   ws_port_ajp => $self->{ws_port_ajp}, 
+		   ws_port_ssl => $self->{ws_port_ssl}, 
+		};
+		$tt->process($config_template, $vars, \my $output) || die $tt->error;
+		$writer->print($output);
+		$writer->close;
  	};
  	if ($@) {
  		LOG->error($@);
  		return;
  	}
 	return 1;
+
+ 	# eval {
+   #   	my @lines = $config_file->slurp or die $!;
+   #   	my @out;
+   #   	my $first_patch = 1;
+ 	# 	while (my $line = shift(@lines)) {
+ 	# 		chomp($line);
+
+	# 		# @Comment out 8080 port
+	# 		# +<!--
+	# 	    # <Connector port="8080" protocol="HTTP/1.1"
+	# 	    #            connectionTimeout="20000"
+	# 	    #            redirectPort="8443" />
+	# 		# +-->
+ 	# 		if ($line=~m|<Connector port="\d+" protocol="HTTP/1.1"|) {
+ 	# 			if ($line=~/patched/) {
+ 	# 				$first_patch = 0;
+ 	# 				push @out, $line;
+ 	# 			} else {
+ 	# 				push @out, '<!--';
+ 	# 				push @out, $line . ' patched';
+ 	# 				while (my $line = shift(@lines)) {
+ 	# 					chomp($line);
+ 	# 					push @out, $line;
+ 	# 					last if ($line=~m|/>|);
+ 	# 				}
+ 	# 				push @out, '-->';
+ 	# 			}
+
+	# 		# @@ -20,7 +22,7 @@
+	# 		# - <Server port="8005" shutdown="SHUTDOWN">
+	# 		# + <Server port="58005" shutdown="SHUTDOWN">
+	# 		} elsif ($line=~m|<Server port="\d+" shutdown="SHUTDOWN"|) {
+ 	# 			push @out, '<Server port="' . $self->{ws_port_run} . '" shutdown="SHUTDOWN">';
+
+	# 		# @@ -90,7 +92,7 @@
+	# 		#      <!-- Define an AJP 1.3 Connector on port 8009 -->
+	# 		# -    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+	# 		# +    <Connector port="57009" protocol="AJP/1.3" redirectPort="8443" />
+ 	# 		} elsif ($line=~m|<Connector port="\d+" protocol="AJP/1.3" redirectPort="\d+"|) {
+ 	# 			push @out, '    <Connector port="' . $self->{ws_port_ajp} . 
+ 	# 				'" protocol="AJP/1.3" redirectPort="' . $self->{ws_port_ssl} . '" />';
+
+ 	# 		} else {
+ 	# 			push @out, $line;
+ 	# 		}
+ 	# 	}
+ 	# 	my $writer = $config_file->open('w') or die $!;
+
+ 	# 	$writer->print(join("\n", @out));
+ 	# 	$writer->close;
+ 	# 	$self->change_owner($self->{ws_tomcat_owner}, $config_file);
+ 	# };
+ 	# if ($@) {
+ 	# 	LOG->error($@);
+ 	# 	return;
+ 	# }
+	# return 1;
 }
 
 sub change_owner {
@@ -619,6 +644,34 @@ sub config_apache_axis2 {
 	return 1;
 }
 
+sub config_apache_axis2_web {
+	my $self = shift;
+
+ 	my $config_file = file($self->{ws_tomcat_home}, 'webapps/axis2/WEB-INF/web.xml');
+	LOG->notice("patch $config_file");
+ 	eval {
+# 		$config_file->parent->mkpath;
+ 		my $writer = $config_file->open('w') or die $!;
+		unless ($writer) {
+	        LOG->crit("Could not write $config_file: $!");
+	        return;
+		}
+		chdir($self->{home});
+		my $config_template =  'script/template/axis2-web-1.5.6-xml.tpl';
+		my $tt = Template->new;
+		my $vars = { 
+        	ws_tomcat_dir => $self->{ws_tomcat_home},
+		};
+		$tt->process($config_template, $vars, \my $output) || die $tt->error;
+		$writer->print($output);
+		$writer->close;
+ 	};
+ 	if ($@) {
+ 		LOG->error($@);
+ 		return;
+ 	}
+	return 1;
+}
 
 
 sub create_zabbix_repository_db {
@@ -1089,6 +1142,7 @@ sub config_tomcat {
 sub config_axis2 {
 	my $self = shift;
 	$self->config_apache_axis2  || return;
+	$self->config_apache_axis2_web  || return;
 	return 1;
 }
 
