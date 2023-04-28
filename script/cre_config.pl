@@ -114,9 +114,10 @@ sub main {
 	{
 		my $zabbix_server_ip    = ($ZABBIX_VIP) ? $ZABBIX_VIP : $LOCAL_IP;
 		my $vars = { 
-		    COMPONENT_ROOT        => $COMPONENT_ROOT, 
-		    ZABBIX_ADMIN_PASSWORD => $ZABBIX_ADMIN_PASSWD,
-		    ZABBIX_SERVER_IP      => $zabbix_server_ip,
+		    COMPONENT_ROOT          => $COMPONENT_ROOT, 
+		    ZABBIX_ADMIN_PASSWORD   => $ZABBIX_ADMIN_PASSWD,
+		    ZABBIX_SERVER_IP        => $zabbix_server_ip,
+			 ZABBIX_SERVER_ACTIVE_IP => $zabbix_server_ip,
 		};
 		patch_config('getperf_zabbix.json', $vars) || return;
 	}

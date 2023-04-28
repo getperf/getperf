@@ -32,5 +32,4 @@ docs/ja/docs/_build/
 /t/rrd/storage/
 /module/getperf-ws/.gradle/
 /var/update/
-*/.deps/
 **/_*/

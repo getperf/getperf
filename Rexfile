@@ -469,119 +469,119 @@ desc "Need to run sudo. Install Zabbix";
 task "prepare_zabbix", sub {
   my $config = config('base');
   my $zabbix_config = config('zabbix');
+print Dumper $zabbix_config;
+  # sudo {
+  #   command => sub {
+  #     if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
+  #       my $url     = $zabbix_config->{ZABBIX_REPOSITORY_URL};
+  #       my $url_dir = $url;
+  #       $url_dir =~s/zabbix-release.*//g;
+  #       _install_yum_repository(
+  #         'zabbix',
+  #         $url,    # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/x86_64/zabbix-release-2.2-1.el6.noarch.rpm',
+  #         'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX',
+  #         $url_dir # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/$basearch/'
+  #       );
+  #     }
 
-  sudo {
-    command => sub {
-      if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
-        my $url     = $zabbix_config->{ZABBIX_REPOSITORY_URL};
-        my $url_dir = $url;
-        $url_dir =~s/zabbix-release.*//g;
-        _install_yum_repository(
-          'zabbix',
-          $url,    # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/x86_64/zabbix-release-2.2-1.el6.noarch.rpm',
-          'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX',
-          $url_dir # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/$basearch/'
-        );
-      }
+  #     my $base_package = case operating_system, {
+  #       Ubuntu  => [ qw/
+  #         language-pack-ja php5-mysql zabbix-server-mysql
+  #         zabbix-frontend-php zabbix-agent fonts-vlgothic
+  #       /],
+  #       default => [ qw/
+  #         zabbix-server zabbix-web
+  #         zabbix-server-mysql zabbix-web-mysql zabbix-web-japanese
+  #         zabbix-get zabbix-sender
+  #       /],
+  #     };
+  #     if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
+  #       _sudo "yum -y install --enablerepo=zabbix,epel,remi @{$base_package}"
+  #     } else {
+  #       say install package => $base_package;
+  #     }
 
-      my $base_package = case operating_system, {
-        Ubuntu  => [ qw/
-          language-pack-ja php5-mysql zabbix-server-mysql
-          zabbix-frontend-php zabbix-agent fonts-vlgothic
-        /],
-        default => [ qw/
-          zabbix-server zabbix-web
-          zabbix-server-mysql zabbix-web-mysql zabbix-web-japanese
-          zabbix-get zabbix-sender
-        /],
-      };
-      if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
-        _sudo "yum -y install --enablerepo=zabbix,epel,remi @{$base_package}"
-      } else {
-        say install package => $base_package;
-      }
+  #     _sudo $config->{home} . '/script/deploy-zabbix.pl';
 
-      _sudo $config->{home} . '/script/deploy-zabbix.pl';
+  #     if (-f '/etc/yum.repos.d/zabbix.repo') {
+  #       _sudo 'sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/zabbix.repo';
+  #     }
 
-      if (-f '/etc/yum.repos.d/zabbix.repo') {
-        _sudo 'sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/zabbix.repo';
-      }
+  #     my $mysql_passwd =     $config->{mysql_passwd};
+  #     if (-f '/etc/zabbix/zabbix_server.conf') {
+  #       _sudo 'sed -i -e "s/^.*DBPassword=.*$/DBPassword=' . $mysql_passwd . '/g" /etc/zabbix/zabbix_server.conf';
+  #     }
 
-      my $mysql_passwd =     $config->{mysql_passwd};
-      if (-f '/etc/zabbix/zabbix_server.conf') {
-        _sudo 'sed -i -e "s/^.*DBPassword=.*$/DBPassword=' . $mysql_passwd . '/g" /etc/zabbix/zabbix_server.conf';
-      }
+  #     if (operating_system eq 'Ubuntu') {
+  #       # _sudo 'service zabbix-server restart';
+  #       # _sudo 'chkconfig zabbix-server on';
+  #       _sudo 'sed -i -e "s/^START=no$/START=yes/g" /etc/default/zabbix-server';
+  #       _sudo 'sudo service zabbix-server restart';
+  #       file "/etc/apache2/conf-available/zabbix.conf",
+  #         content => template("script/template/zabbix.conf.apache2.tpl");
+  #       _sudo 'a2enconf zabbix';
+  #       _sudo 'service apache2 restart';
+  #       file "/etc/zabbix/zabbix.conf.php",
+  #         content   => template("script/template/zabbix.conf.php.tpl",
+  #           mysql_admin_password => $config->{mysql_passwd});
+  #     } else {
+  #       _sudo 'service zabbix-server restart';
+  #       _sudo 'chkconfig zabbix-server on';
+  #       _sudo 'service httpd restart';
+  #       file "/etc/zabbix/web/zabbix.conf.php",
+  #         content   => template("script/template/zabbix.conf.php.tpl",
+  #           mysql_admin_password => $config->{mysql_passwd});
+  #     }
 
-      if (operating_system eq 'Ubuntu') {
-        # _sudo 'service zabbix-server restart';
-        # _sudo 'chkconfig zabbix-server on';
-        _sudo 'sed -i -e "s/^START=no$/START=yes/g" /etc/default/zabbix-server';
-        _sudo 'sudo service zabbix-server restart';
-        file "/etc/apache2/conf-available/zabbix.conf",
-          content => template("script/template/zabbix.conf.apache2.tpl");
-        _sudo 'a2enconf zabbix';
-        _sudo 'service apache2 restart';
-        file "/etc/zabbix/zabbix.conf.php",
-          content   => template("script/template/zabbix.conf.php.tpl",
-            mysql_admin_password => $config->{mysql_passwd});
-      } else {
-        _sudo 'service zabbix-server restart';
-        _sudo 'chkconfig zabbix-server on';
-        _sudo 'service httpd restart';
-        file "/etc/zabbix/web/zabbix.conf.php",
-          content   => template("script/template/zabbix.conf.php.tpl",
-            mysql_admin_password => $config->{mysql_passwd});
-      }
-
-    },
-    user => 'root'
-  };
+  #   },
+  #   user => 'root'
+  # };
 
   # Download agent binary
-  {
-    my $current_dir      = getcwd;
-    my $agent_module_var = $config->{home} . '/module/getperf-agent/var';
-    my $zabbix_agent_var = $agent_module_var . '/zabbix';
-    my $agent_script_dir = $config->{lib_dir} . '/agent/Zabbix';
-    my $agent_ver        = $zabbix_config->{ZABBIX_AGENT_VERSION};
-    my $base_url         = "http://www.zabbix.com/downloads/${agent_ver}/";
-    my $download_dir     = $zabbix_config->{ZABBIX_AGENT_DOWNLOAD_DIR};
+  # {
+  #   my $current_dir      = getcwd;
+  #   my $agent_module_var = $config->{home} . '/module/getperf-agent/var';
+  #   my $zabbix_agent_var = $agent_module_var . '/zabbix';
+  #   my $agent_script_dir = $config->{lib_dir} . '/agent/Zabbix';
+  #   my $agent_ver        = $zabbix_config->{ZABBIX_AGENT_VERSION};
+  #   my $base_url         = "http://www.zabbix.com/downloads/${agent_ver}/";
+  #   my $download_dir     = $zabbix_config->{ZABBIX_AGENT_DOWNLOAD_DIR};
 
-    for my $target_dir($agent_module_var, $zabbix_agent_var, $download_dir) {
-      if (!-d $target_dir) {
-        _run "mkdir -p ${target_dir}";
-      }
-    }
+  #   for my $target_dir($agent_module_var, $zabbix_agent_var, $download_dir) {
+  #     if (!-d $target_dir) {
+  #       _run "mkdir -p ${target_dir}";
+  #     }
+  #   }
 
-    chdir $download_dir;
-    my @md5sum_outputs = ();
-    for my $arch(@{$zabbix_config->{DOWNLOAD_AGENT_PLATFORMS}}) {
-      # zabbix_agents_2.2.9.linux2_4.i386.tar.gz
-      my $suffix = ($arch eq 'win') ? 'zip' : 'tar.gz';
-      my $base_name = "zabbix_agents_${agent_ver}.${arch}.${suffix}";
-      if (! -f "$download_dir/$base_name" ) {
-        _run "wget --quiet ${base_url}${base_name}";
-      }
-      if (! -f "${zabbix_agent_var}/${base_name}" ) {
-        _run "cp -p ${download_dir}/${base_name} ${zabbix_agent_var}";
-      }
-      my $md5sum_output = `md5sum $download_dir/$base_name`;
-      if ($? != 0) {
-        Rex::Logger::info("md5sum check error '$base_name' : $@", "error");
-      } else {
-        $md5sum_output =~s/ .*(\r|\n)*//g;
-        push (@md5sum_outputs, "$md5sum_output : $base_name");
-      }
-    }
-    if (@md5sum_outputs) {
-      print "\nZabbix Agent module files downloaded. Please check md5 in ";
-      print "'http://www.zabbix.com/download.php'\n\n";
-      print join("\n", @md5sum_outputs) . "\n";
-    }
-    # Copy zabbix script
-    _run "cp -rp ${agent_script_dir}/* ${agent_module_var}";
-    chdir $current_dir;
-  }
+  #   chdir $download_dir;
+  #   my @md5sum_outputs = ();
+  #   for my $arch(@{$zabbix_config->{DOWNLOAD_AGENT_PLATFORMS}}) {
+  #     # zabbix_agents_2.2.9.linux2_4.i386.tar.gz
+  #     my $suffix = ($arch eq 'win') ? 'zip' : 'tar.gz';
+  #     my $base_name = "zabbix_agents_${agent_ver}.${arch}.${suffix}";
+  #     if (! -f "$download_dir/$base_name" ) {
+  #       _run "wget --quiet ${base_url}${base_name}";
+  #     }
+  #     if (! -f "${zabbix_agent_var}/${base_name}" ) {
+  #       _run "cp -p ${download_dir}/${base_name} ${zabbix_agent_var}";
+  #     }
+  #     my $md5sum_output = `md5sum $download_dir/$base_name`;
+  #     if ($? != 0) {
+  #       Rex::Logger::info("md5sum check error '$base_name' : $@", "error");
+  #     } else {
+  #       $md5sum_output =~s/ .*(\r|\n)*//g;
+  #       push (@md5sum_outputs, "$md5sum_output : $base_name");
+  #     }
+  #   }
+  #   if (@md5sum_outputs) {
+  #     print "\nZabbix Agent module files downloaded. Please check md5 in ";
+  #     print "'http://www.zabbix.com/download.php'\n\n";
+  #     print join("\n", @md5sum_outputs) . "\n";
+  #   }
+  #   # Copy zabbix script
+  #   _run "cp -rp ${agent_script_dir}/* ${agent_module_var}";
+  #   chdir $current_dir;
+  # }
 
   # Create recipe file
   {
@@ -591,11 +591,13 @@ task "prepare_zabbix", sub {
     $buf .= '  "ZABBIX_SERVER_VERSION"    => "' . $zabbix_config->{ZABBIX_SERVER_VERSION} . '",' . "\n";
     $buf .= '  "ZABBIX_AGENT_VERSION"     => "' . $zabbix_config->{ZABBIX_AGENT_VERSION} . '",' . "\n";
     $buf .= '  "ZABBIX_SERVER_IP"         => "' . $zabbix_config->{ZABBIX_SERVER_IP} . '",' . "\n";
+    $buf .= '  "ZABBIX_SERVER_ACTIVE_IP"  => "' . $zabbix_config->{ZABBIX_SERVER_ACTIVE_IP} . '",' . "\n";
     $buf .= '  "GETPERF_AGENT_USE_ZABBIX" => ' . $zabbix_config->{GETPERF_AGENT_USE_ZABBIX} . ',' . "\n";
     $buf .= '}' . "\n";
     open(OUT, ">$recipe") || die "$@";
     print OUT $buf;
     close(OUT);
+    print "patch $recipe\n";
   }
 };
 
