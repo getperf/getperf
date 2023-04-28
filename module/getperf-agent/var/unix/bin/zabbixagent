@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# Run-level Startup script for the Zabbix Agent
+#
+# chkconfig: 345 91 19
+# description: Startup/Shutdown Zabbix Agent
+
+LANG=C
+PTUNE_HOME=__PTUNE_HOME__
+GETPERF_USER=__PTUNE_USER__
+
+USAGE="Usage: $0 start|stop|restart|reload"
+ZABBIX_CONF="${PTUNE_HOME}/zabbix_agentd.conf"
+ZABBIX_PROG="${PTUNE_HOME}/sbin/zabbix_agentd -c ${PTUNE_HOME}/zabbix_agentd.conf"
+
+if [ ! -f $ZABBIX_CONF ]; then
+	echo "Zabbig agentd config file not found : $ZABBIX_CONF"
+	exit -1
+fi
+
+PIDFILE=`egrep -e "^PidFile=.*$" $ZABBIX_CONF | cut -d= -f2 | tr -d '\r'`
+if [ "$PIDFILE"="" ]; then
+	PIDFILE="/tmp/zabbix_agentd.pid"
+fi
+
+case "$1" in
+    start)
+		if [ "$USER" = "$GETPERF_USER" ];then
+			$ZABBIX_PROG
+		else
+			su - $GETPERF_USER -c "$ZABBIX_PROG"
+		fi
+        ;;
+    stop)
+		if [ -f $PIDFILE ]; then
+			PID=`cat $PIDFILE`
+			if [ $PID -gt 1 ]; then
+				kill -TERM $PID
+			fi
+		fi
+        ;;
+    reload|restart)
+        $0 stop
+        $0 start
+        ;;
+    *)
+        echo $USAGE
+        exit 1
+esac
+exit 0
+
