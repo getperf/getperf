@@ -4,9 +4,10 @@ ToDo:
 * getperf-agent の依存ライブラリアップデート [x]
 * getperf-agent の Zabbix エージェントセットアップ追加 [x]
 * Zabbix サーバモジュールのインストール手順を廃止 [x]
+* Apache SSL 通信で、 SAN (X509v3 Subject Alternative Name) 設定追加。RFC2818 により
+  CommonName で設定していたドメイン名が非推奨となったため [x]
 * エージェントコンパイル時の Zabbix エージェントパッケージ処理追加 [o]
 * Apatch httpd APR インストール手順追加 [o]
-
 
 Changes for 3.1.0 (2023-4-28)
 --------------------------------------------------------------------------------

@@ -435,6 +435,7 @@ sub create_server_certificate {
 	my $server_key  = "$root/server.key";
 	my $server_csr  = "$root/server.csr";
 	my $server_crt  = "$root/server.crt";
+	my $server_san = file("$root/san.txt");
 	if (!-d $root) {
 		LOG->notice("create dir : $root");
 		if (!dir($root)->mkpath) {
@@ -443,6 +444,7 @@ sub create_server_certificate {
 		}
 	}
 
+	my $server_name = $self->{server_name};
 	# Generate private key
 	{
 		my $command = "genrsa -out $server_key 2048";
@@ -451,17 +453,25 @@ sub create_server_certificate {
 
 	# Create Certificate Signing Request
 	{
-		my $server_name = $self->{server_name};
 		my $subject = "\"/commonName=${server_name}\"";
 	    my $command = "req -new -sha256 -key $server_key -out $server_csr -subj $subject";
+		$command .= " -addext \"subjectAltName = DNS:${server_name}, IP:${server_name}\"";
 	    $self->openssl_command($command) || return;
     }    
 
+	# Create SAN (X509v3 Subject Alternative Name) config file
+	{
+		my $writer = $server_san->openw || die "write error $server_san : $!";
+		$writer->print("subjectAltName = DNS:${server_name}, IP:${server_name}");
+		$writer->close;
+	}
 	# Create self-signed certificate
 	{
 		my $ca_config = $self->{ca_config};
 		my $options = "-config $ca_config -batch";
 		my $command = "ca -in $server_csr -out $server_crt";
+		my $server_name = $self->{server_name};
+		$command .= " -extfile ${server_san}";
 
 	    $self->openssl_command("$command $options") || return;
 	}
