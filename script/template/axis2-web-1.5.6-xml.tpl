@@ -102,4 +102,10 @@
         <error-code>500</error-code>
         <location>/axis2-web/Error/error500.jsp</location>
     </error-page>
+
+    <context-param>
+        <param-name>logbackDisableServletContainerInitializer</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
 </web-app>
