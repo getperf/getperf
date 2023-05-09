@@ -15,7 +15,7 @@
    06_ServiceRegistration
    07_MySQLCactiInstallation
    08_ZabbixInstallation
-   09_InfluxDBInstllation
+   .. 09_InfluxDBInstllation
    10_AgentCompile
    11_BuildDocument
    12_RsyncSetup

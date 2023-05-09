@@ -3,10 +3,11 @@ Changes for 3.1.1 (2023-5-12)
 ToDo:
 * getperf-agent の依存ライブラリアップデート [x]
 * getperf-agent の Zabbix エージェントセットアップ追加 [x]
-* Zabbix サーバモジュールのインストール手順を廃止 [x]
+* ガイド Zabbix サーバインストール手順を廃止 [x]
 * Apache SSL 通信で、 SAN (X509v3 Subject Alternative Name) 設定追加。RFC2818 により
-  CommonName で設定していたドメイン名が非推奨となったため [x]
-* エージェントコンパイル時の Zabbix エージェントパッケージ処理追加 [o]
+  CommonName で設定していたドメイン名が非推奨となった回避策 [x]
+* Cacti1.2でグラフ登録が降順にメニュー登録される処理を昇順に修正 [x]
+* ガイドエージェントコンパイルに、 Zabbix エージェントの登録手順追加 [o]
 * Apatch httpd APR インストール手順追加 [o]
 
 Changes for 3.1.0 (2023-4-28)
@@ -22,25 +23,25 @@ New features:
 
 ToDo: ★ 優先度高
 
-* 環境構築 []
-      * 検証用 PHP7.3環境、Cacti 1.2 インストール手順作成 []
-      * 検証用 MySQL 8 環境 インストール手順作成 []
-* インストール手順修正 []
-      * Alma8 環境設定 []
+* 環境構築 [x]
+      * 検証用 PHP7.3環境、Cacti 1.2 インストール手順作成 [x]
+      * 検証用 MySQL 8 環境 インストール手順作成 [x]
+* インストール手順修正 [x]
+      * Alma8 環境設定 [x]
       * サービス自動起動設定 []
       * パッケージインストール []
         * MySQL []
         * PHP []
       * MySQL, Cacti インストール []
-* Cacti1.2移行 []
-      * サイト初期化スクリプト移行 []
-      * CactiCLI スクリプト移行 []
+* Cacti1.2移行 [x]
+      * サイト初期化スクリプト移行 [o]
+      * CactiCLI スクリプト移行 [o]
       * 各種監視項目結合 []
 * その他 []
       * 新 Oracle AWR 移行 []
       * Java 6.0 サポート []
       * getperf2 プロセス監視不具合対応 [x]  ★ go1.20.2,timeout0.4で解消
-      * getperf2 SOAP モジュール移行 []  ★
+      * getperf2 SOAP モジュール移行 [o]  ★
       * Web サービス Apache2.4 移行 []
       * Web サービスTomcat8  移行 []
 * Webサービス移行 []

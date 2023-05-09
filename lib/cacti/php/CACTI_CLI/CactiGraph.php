@@ -468,8 +468,9 @@ class CactiGraph {
 				# $nodeId could be a Header Node, a Graph Node, or a Host node.
 				$parent_id = api_tree_item_save(0, $cacti_tree_id, $itemType, $parent_id, $path, $graphId, $rra_id, $hostId, $hostGroupStyle, $sortMethod, false);
 
-				// $sql = "select order_key from graph_tree_items where id=$parent_id";
-				// $order_key = db_fetch_cell($sql, "order_key");
+				// 登録の降順にソートされるため、昇順に変えて更新する
+				$sql = "select id, position from graph_tree_items where id=$parent_id";
+				$positions = db_fetch_assoc($sql);
 			}
 
 			// $cond .= substr($order_key, 3 * $lvl, 3);

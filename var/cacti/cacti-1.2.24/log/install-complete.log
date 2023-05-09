@@ -1,0 +1,127 @@
+[2023-03-27 12:01:22] [          global always  ] Spawning background process: /usr/bin/php '/home/psadmin/site/site12/html/cacti-1.2.24/install/background.php' 1679886082.7148
+[2023-03-27 12:01:22] [          global always  ] Setting PHP Option max_execution_time = 0
+[2023-03-27 12:01:22] [          global always  ] Setting PHP Option memory_limit = -1
+[2023-03-27 12:01:23] [          global always  ] Starting UPGRADE Process for v1.2.24
+[2023-03-27 12:01:23] [          global always  ] Found 52 tables to convert
+[2023-03-27 12:01:23] [          global always  ] Converting Table #1 'data_input'
+[2023-03-27 12:01:23] [          global always  ] Converting Table #2 'colors'
+[2023-03-27 12:01:23] [          global always  ] Converting Table #3 'cdef_items'
+[2023-03-27 12:01:23] [          global always  ] Converting Table #4 'cdef'
+[2023-03-27 12:01:23] [          global always  ] Converting Table #5 'data_input_data'
+[2023-03-27 12:01:24] [          global always  ] Converting Table #6 'data_input_fields'
+[2023-03-27 12:01:24] [          global always  ] Converting Table #7 'data_local'
+[2023-03-27 12:01:24] [          global always  ] Converting Table #8 'data_template'
+[2023-03-27 12:01:24] [          global always  ] Converting Table #9 'data_template_data'
+[2023-03-27 12:01:24] [          global always  ] Converting Table #10 'data_template_data_rra'
+[2023-03-27 12:01:24] [          global always  ] Converting Table #11 'data_template_rrd'
+[2023-03-27 12:01:24] [          global always  ] Converting Table #12 'graph_local'
+[2023-03-27 12:01:25] [          global always  ] Converting Table #13 'graph_template_input'
+[2023-03-27 12:01:25] [          global always  ] Converting Table #14 'graph_template_input_defs'
+[2023-03-27 12:01:25] [          global always  ] Converting Table #15 'graph_templates'
+[2023-03-27 12:01:25] [          global always  ] Converting Table #16 'graph_templates_gprint'
+[2023-03-27 12:01:25] [          global always  ] Converting Table #17 'graph_templates_graph'
+[2023-03-27 12:01:25] [          global always  ] Converting Table #18 'graph_templates_item'
+[2023-03-27 12:01:25] [          global always  ] Converting Table #19 'graph_tree'
+[2023-03-27 12:01:26] [          global always  ] Converting Table #20 'graph_tree_items'
+[2023-03-27 12:01:26] [          global always  ] Converting Table #21 'host'
+[2023-03-27 12:01:26] [          global always  ] Converting Table #22 'host_graph'
+[2023-03-27 12:01:26] [          global always  ] Converting Table #23 'host_snmp_cache'
+[2023-03-27 12:01:26] [          global always  ] Converting Table #24 'host_snmp_query'
+[2023-03-27 12:01:26] [          global always  ] Converting Table #25 'host_template'
+[2023-03-27 12:01:26] [          global always  ] Converting Table #26 'host_template_graph'
+[2023-03-27 12:01:27] [          global always  ] Converting Table #27 'host_template_snmp_query'
+[2023-03-27 12:01:27] [          global always  ] Converting Table #28 'plugin_config'
+[2023-03-27 12:01:27] [          global always  ] Converting Table #29 'plugin_db_changes'
+[2023-03-27 12:01:27] [          global always  ] Converting Table #30 'plugin_hooks'
+[2023-03-27 12:01:27] [          global always  ] Converting Table #31 'plugin_realms'
+[2023-03-27 12:01:27] [          global always  ] Converting Table #32 'poller'
+[2023-03-27 12:01:27] [          global always  ] Converting Table #33 'poller_command'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #34 'poller_item'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #35 'poller_output'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #36 'poller_reindex'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #37 'poller_time'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #38 'rra'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #39 'rra_cf'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #40 'settings'
+[2023-03-27 12:01:28] [          global always  ] Converting Table #41 'settings_graphs'
+[2023-03-27 12:01:29] [          global always  ] Converting Table #42 'settings_tree'
+[2023-03-27 12:01:29] [          global always  ] Converting Table #43 'snmp_query'
+[2023-03-27 12:01:29] [          global always  ] Converting Table #44 'snmp_query_graph'
+[2023-03-27 12:01:29] [          global always  ] Converting Table #45 'snmp_query_graph_rrd'
+[2023-03-27 12:01:29] [          global always  ] Converting Table #46 'snmp_query_graph_rrd_sv'
+[2023-03-27 12:01:29] [          global always  ] Converting Table #47 'snmp_query_graph_sv'
+[2023-03-27 12:01:29] [          global always  ] Converting Table #48 'user_auth'
+[2023-03-27 12:01:30] [          global always  ] Converting Table #49 'user_auth_perms'
+[2023-03-27 12:01:30] [          global always  ] Converting Table #50 'user_auth_realm'
+[2023-03-27 12:01:30] [          global always  ] Converting Table #51 'user_log'
+[2023-03-27 12:01:30] [          global always  ] Converting Table #52 'version'
+[2023-03-27 12:01:30] [          global always  ] Switched from  to /tmp/cduklzLQX
+[2023-03-27 12:01:30] [          global always  ] NOTE: Using temporary file for db cache: /tmp/cduklzLQX
+[2023-03-27 12:01:30] [          global always  ] Upgrading from v0.8.8g (DB 1.2.24 (DB: 0.8.8g)) to v1.0.0
+[2023-03-27 12:01:37] [          global always  ] Upgrading from v1.0.0 (DB 1.0.0) to v1.0.4
+[2023-03-27 12:01:37] [          global always  ] Upgrading from v1.0.4 (DB 1.0.4) to v1.0.5
+[2023-03-27 12:01:37] [          global always  ] Finished UPGRADE Process for v1.2.24
+[2023-03-27 12:01:37] [          global always  ] WARNING: One or more upgrades failed to install correctly
+[2023-03-27 12:01:37] [          global always  ] Installation was started at 2023-03-27 03:01:22, completed at 2023-03-27 03:01:37
+[2023-03-27 12:03:40] [          global always  ] Spawning background process: /usr/bin/php '/home/psadmin/site/site12/html/cacti-1.2.24/install/background.php' 1679886220.2753
+[2023-03-27 12:03:40] [          global always  ] Setting PHP Option max_execution_time = 0
+[2023-03-27 12:03:40] [          global always  ] Setting PHP Option memory_limit = -1
+[2023-03-27 12:03:40] [          global always  ] Starting UPGRADE Process for v1.2.24
+[2023-03-27 12:03:40] [          global always  ] No tables where found or selected for conversion
+[2023-03-27 12:03:40] [          global always  ] Switched from  to /tmp/cdusW9QpS
+[2023-03-27 12:03:40] [          global always  ] NOTE: Using temporary file for db cache: /tmp/cdusW9QpS
+[2023-03-27 12:03:40] [          global always  ] Upgrading from v1.0.4 (DB 1.2.24 (DB: 1.0.4)) to v1.0.5
+[2023-03-27 12:03:41] [          global always  ] Finished UPGRADE Process for v1.2.24
+[2023-03-27 12:03:41] [          global always  ] WARNING: One or more upgrades failed to install correctly
+[2023-03-27 12:03:41] [          global always  ] Installation was started at 2023-03-27 03:03:40, completed at 2023-03-27 03:03:41
+[2023-03-27 12:05:25] [          global always  ] Spawning background process: /usr/bin/php '/home/psadmin/site/site12/html/cacti-1.2.24/install/background.php' 1679886325.2547
+[2023-03-27 12:05:25] [          global always  ] Setting PHP Option max_execution_time = 0
+[2023-03-27 12:05:25] [          global always  ] Setting PHP Option memory_limit = -1
+[2023-03-27 12:05:25] [          global always  ] Starting UPGRADE Process for v1.2.24
+[2023-03-27 12:05:25] [          global always  ] No tables where found or selected for conversion
+[2023-03-27 12:05:25] [          global always  ] Switched from  to /tmp/cduUcd9Vz
+[2023-03-27 12:05:25] [          global always  ] NOTE: Using temporary file for db cache: /tmp/cduUcd9Vz
+[2023-03-27 12:05:25] [          global always  ] Upgrading from v1.0.4 (DB 1.2.24 (DB: 1.0.4)) to v1.0.5
+[2023-03-27 12:05:26] [          global always  ] Finished UPGRADE Process for v1.2.24
+[2023-03-27 12:05:26] [          global always  ] WARNING: One or more upgrades failed to install correctly
+[2023-03-27 12:05:26] [          global always  ] Installation was started at 2023-03-27 03:05:25, completed at 2023-03-27 03:05:26
+[2023-03-27 13:07:34] [          global always  ] no parameters passed
+
+[2023-03-27 13:08:05] [          global always  ] Spawning background process: /usr/bin/php '/home/psadmin/site/site12/html/cacti-1.2.24/install/background.php' 1679890085.1927
+[2023-03-27 13:08:05] [          global always  ] Setting PHP Option max_execution_time = 0
+[2023-03-27 13:08:05] [          global always  ] Setting PHP Option memory_limit = -1
+[2023-03-27 13:08:05] [          global always  ] Starting UPGRADE Process for v1.2.24
+[2023-03-27 13:08:05] [          global always  ] No tables where found or selected for conversion
+[2023-03-27 13:08:05] [          global always  ] Switched from  to /tmp/cduzwU5sj
+[2023-03-27 13:08:05] [          global always  ] NOTE: Using temporary file for db cache: /tmp/cduzwU5sj
+[2023-03-27 13:08:05] [          global always  ] Upgrading from v1.0.4 (DB 1.2.24 (DB: 1.0.4)) to v1.0.5
+[2023-03-27 13:08:06] [          global always  ] Finished UPGRADE Process for v1.2.24
+[2023-03-27 13:08:06] [          global always  ] WARNING: One or more upgrades failed to install correctly
+[2023-03-27 13:08:06] [          global always  ] Installation was started at 2023-03-27 04:08:05, completed at 2023-03-27 04:08:06
+[2023-03-27 13:09:21] [          global always  ] Spawning background process: /usr/bin/php '/home/psadmin/site/site12/html/cacti-1.2.24/install/background.php' 1679890161.6365
+[2023-03-27 13:09:21] [          global always  ] Setting PHP Option max_execution_time = 0
+[2023-03-27 13:09:21] [          global always  ] Setting PHP Option memory_limit = -1
+[2023-03-27 13:09:22] [          global always  ] Starting UPGRADE Process for v1.2.24
+[2023-03-27 13:09:22] [          global always  ] No tables where found or selected for conversion
+[2023-03-27 13:09:22] [          global always  ] Switched from  to /tmp/cduXUee78
+[2023-03-27 13:09:22] [          global always  ] NOTE: Using temporary file for db cache: /tmp/cduXUee78
+[2023-03-27 13:09:22] [          global always  ] Upgrading from v1.0.4 (DB 1.2.24 (DB: 1.0.4)) to v1.0.5
+[2023-03-27 13:09:22] [          global always  ] Finished UPGRADE Process for v1.2.24
+[2023-03-27 13:09:22] [          global always  ] WARNING: One or more upgrades failed to install correctly
+[2023-03-27 13:09:22] [          global always  ] Installation was started at 2023-03-27 04:09:21, completed at 2023-03-27 04:09:22
+[2023-03-27 13:20:08] [          global always  ] Spawning background process: /usr/bin/php '/home/psadmin/site/site12/html/cacti-1.2.24/install/background.php' 1679890808.9818
+[2023-03-27 13:20:09] [          global always  ] Setting PHP Option max_execution_time = 0
+[2023-03-27 13:20:09] [          global always  ] Setting PHP Option memory_limit = -1
+[2023-03-27 13:20:09] [          global always  ] Starting INSTALL Process for v1.2.24
+[2023-03-27 13:20:09] [          global always  ] No tables where found or selected for conversion
+[2023-03-27 13:20:09] [          global always  ] No templates were selected for import
+[2023-03-27 13:20:09] [      automation always  ] Setting default data source profile to 5 Minute Collection (1)
+[2023-03-27 13:20:09] [          global always  ] Updating automation network (1), mode "on" => "", subnet "192.168.1.0/24" => 192.168.1.0/24"
+[2023-03-27 13:20:09] [          global always  ] WARNING: Device Template for your Operating System Not Found.  You will need to import Device Templates or Cacti Packages to monitor your Cacti server.
+[2023-03-27 13:20:09] [          global always  ] Repopulating poller cache
+[2023-03-27 13:20:09] [          global always  ] Repopulating SNMP Agent cache
+[2023-03-27 13:20:10] [          global always  ] Generating RSA Key Pair
+[2023-03-27 13:20:10] [          global always  ] Finished INSTALL Process for v1.2.24
+[2023-03-27 13:20:10] [            sync always  ] Found 0 poller(s) to sync
+[2023-03-27 13:20:10] [            sync always  ] No Remote Data Collectors found for full synchronization
+[2023-03-27 13:20:10] [          global always  ] Installation was started at 2023-03-27 04:20:09, completed at 2023-03-27 04:20:10
