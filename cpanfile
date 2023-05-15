@@ -1,6 +1,7 @@
 requires 'Class::Accessor::Fast';
 requires 'Crypt::Blowfish';
 requires 'Crypt::CBC';
+requires 'DateTime';
 requires 'Daemon::Control';
 requires 'DBI';
 requires 'Digest::SHA1';

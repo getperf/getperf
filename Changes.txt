@@ -1,14 +1,78 @@
-Changes for 3.1.1 (2023-5-12)
+Changes for 3.1.2 (2023-6-2)
 --------------------------------------------------------------------------------
 ToDo:
-* getperf-agent の依存ライブラリアップデート [x]
-* getperf-agent の Zabbix エージェントセットアップ追加 [x]
-* ガイド Zabbix サーバインストール手順を廃止 [x]
+
+* getperf2 SOAP 移行 [o]
+    現状調査 [x]
+    コマンド仕様検討 []
+    コード構成検討 [x]
+    基本機能単体 [x]
+        SSH 疎通 [x]
+        リクエストメッセージ生成 [x]
+        レスポンスデータ受信 [x]
+        MIME 生成 [x]
+        MIME 解析 [x]
+    各アクション移行 []
+        admin []
+            添付なし []
+                checkAgent []
+                getLatestBuild []
+                getLatestVersion []
+            添付あり []
+                registAgent []
+                downloadUpdateModule []
+        agent []
+            添付なし []
+                sendMessage []
+                reserveSender []
+            添付あり []
+                downloadCertificate []
+                sendData []
+    結合 []
+        getperf_agent []
+        getperfctl []
+
+Cacti脆弱性対応
+
+* スクリプト共通部分移行 []
+  * PHPパッケージロード []
+  * サイトディレクトリ取得 []
+  * JSON読み込み []
+  * データベースAPI []
+* スクリプトグラフテンプレート管理移行 []
+  * カラースキーマ設定 []
+  * CDEF 関数設定 []
+  * データソース設定テンプレート []
+  * デバイスデータソース設定テンプレート []
+  * グラフ設定テンプレート []
+  * データベースAPI []
+* スクリプトグラフ管理移行 []
+  * グラフ登録 []
+  * グラフ削除 []
+  * デバイスグラフ登録 []
+  * デバイスグラフ削除 []
+  * ツリーメニュー登録 []
+  * ツリーメニュー削除 []
+
+Cacti グラフメニュー更新処理修正、ソート昇順、降順変更
+RFC2818 SAN (X509v3 Subject Alternative Name) サーバ証明書更新
+Apatch httpd APR インストール手順追加
+Cacti グラフテンプレートデバイス機能移行
+
+Changes for 3.1.1 (2023-5-19)
+--------------------------------------------------------------------------------
+New features:
+* getperf-agent の依存ライブラリアップデート
+* getperf-agent の Zabbix エージェントセットアップ追加
+* ガイド Zabbix サーバインストール手順を廃止
 * Apache SSL 通信で、 SAN (X509v3 Subject Alternative Name) 設定追加。RFC2818 により
-  CommonName で設定していたドメイン名が非推奨となった回避策 [x]
-* Cacti1.2でグラフ登録が降順にメニュー登録される処理を昇順に修正 [x]
+  CommonName で設定していたドメイン名が非推奨となった回避策
+* Cacti1.2でグラフ登録が降順にメニュー登録される処理を昇順に修正
 * ガイドエージェントコンパイルに、 Zabbix エージェントの登録手順追加 [o]
 * Apatch httpd APR インストール手順追加 [o]
+
+Bug Fixes:
+* capnfile に DateTime 追加
 
 Changes for 3.1.0 (2023-4-28)
 --------------------------------------------------------------------------------
@@ -40,7 +104,7 @@ ToDo: ★ 優先度高
 * その他 []
       * 新 Oracle AWR 移行 []
       * Java 6.0 サポート []
-      * getperf2 プロセス監視不具合対応 [x]  ★ go1.20.2,timeout0.4で解消
+      * getperf2 プロセス監視不具合対応 [x]  ★ Go1.20.2,timeout0.4で解消
       * getperf2 SOAP モジュール移行 [o]  ★
       * Web サービス Apache2.4 移行 []
       * Web サービスTomcat8  移行 []
