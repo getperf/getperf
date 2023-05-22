@@ -104,26 +104,26 @@ Linux ディストリビューションのヘッダファイルを作成しま�
 
 ソースをコンパイルします。
 
-.. note::
+.. .. note::
 
-   OpenSSL 1.1.x の互換性の問題で configure に失敗するため
-   configure.ac の以下の箇所をコメントアウト
+..   OpenSSL 1.1.x の互換性の問題で configure に失敗するため
+..   configure.ac の以下の箇所をコメントアウト
 
-   ::
+..   ::
 
-      vi configure.ac
+..      vi configure.ac
 
-      #AC_CHECK_LIB([crypto], [SSL_library_init], [],
-      #       [AC_MSG_FAILURE([OpenSSL not found, see http://www.openssl.org/])])
+..      #AC_CHECK_LIB([crypto], [SSL_library_init], [],
+..      #       [AC_MSG_FAILURE([OpenSSL not found, see http://www.openssl.org/])])
 
-   configure を再作成
+..   configure を再作成
 
-   ::
+..   ::
 
-      autoheader 
-      aclocal 
-      automake --add-missing --copy 
-      autoconf 
+..      autoheader 
+..      aclocal 
+..      automake --add-missing --copy 
+..      autoconf 
 
 ::
 
@@ -141,8 +141,14 @@ deploy.pl スクリプトを用いて、コンパイル済みパッケージと�
 ::
 
     ptune                             # エージェントホームディレクトリ
-    getperf-2-Buildx-xxx-xxx.tar.gz   # エージェントホームのアーカイブ
+    getperf-zabbix-Buildx-xxx-xxx.tar.gz   # エージェントホームのアーカイブ
     upload_var_module.zip             # エージェントホーム、アップデートモジュールのアーカイブ
+
+.. note::
+
+   下記の not found エラーが出た場合、ガイド目次:インストール＞Zabbixインストール にて保存したモジュール名を、エラーメッセージの内容に合わせてリネームしてください。 
+
+   not found : '/home/psadmin/work/agent/src/getperf-agent/var/zabbix/zabbix_agents_6.0.17.linux2_6.amd64.tar.gz' at deploy.pl line 338.
 
 upload_var_module.zip　が、ダウンロードサイト用にファイル一式をアーカイブしたファイルとなり、監視サーバにアップロードします。
 

@@ -23,13 +23,89 @@ Webサービスのインストールで、Java ビルドツール Gradle, Apache
 前頁にインストール手順の記載がありますので、事前にインストールしてください。
 
 
+必要なパッケージのインストール
+------------------------------
+
+openssl-devel等のパッケージインストール
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+以下のコマンドで yum インストールします。
+
+::
+
+   sudo -E yum install openssl-devel libcurl-dev redhat-lsb-core expat-devel
+
+apr、apr-utilのインストール
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+apr、apr-util の最新版(例：apr-1.7.4.tar.gz、apr-util-1.6.3.tar.gz)を以下からダウンロードします。
+
+http://apr.apache.org/download.cgi
+
+apr をインストールします。
+
+::
+
+   tar xvfz apr-x.x.x.tar.gz
+   cd apr-x.x.x/
+   ./configure
+   make
+   sudo make install
+
+apr-util をインストールします。
+
+::
+
+   tar xvfz apr-util-x.x.x.tar.gz
+   cd apr-util-x.x.x/
+   ./configure --with-apr=/usr/local/apr --with-expat=/usr/lib64
+   make
+   sudo make install
+
+
+pcre のインストール
+^^^^^^^^^^^^^^^^^^^
+pcre の最新版(例：pcre-8.45.zip)を以下からダウンロードします。
+
+https://ja.osdn.net/projects/sfnet_pcre/releases/
+
+pcre をインストールします。
+
+::
+
+   unzip pcre-x.x
+   cd pcre-x.x/
+   ./configure
+   make
+   sudo make install
+
+
+nghttp2 のインストール
+^^^^^^^^^^^^^^^^^^^^^^
+nghttp2 の最新版(例：nghttp2-1.52.0.tar.gz)を以下からダウンロードします。
+
+https://github.com/nghttp2/nghttp2
+
+nghttp2 をインストールします。
+
+::
+
+   tar xvfz nghttp2-x.x.x
+   cd nghttp2-x.x.x/
+   ./configure
+   make
+   sudo make install
+   echo /usr/local/lib >> /etc/ld.so.conf
+   sudo ldconfig
+
+
 Apacheインストール
 ------------------
 
 Apache HTTP サーバのソースをダウンロードして、/usr/local の下にインストールします。管理用とデータ受信用の2つのインスタンスをインストールし、
 それぞれ、/usr/local/apache-admin　と　/usr/local/apache-data のホームディレクトリにインストールします。
 
-* 管理用の場合、57443 ポートでサーバ証明書を使用します
+* 管理用の場合、57443 ポートでサー
+バ証明書を使用します
 * データ用の場合、 58443 ポートで各監視対象で発行したクライアント証明書を使用します
 
 rex コマンドを用いてインストールします。
@@ -94,6 +170,18 @@ Apache バージョンは、2.4 系の最新をダウンロードサイトから
    cd ~/getperf
    sudo -E rex prepare_apache
 
+インストール直後、Web サービスが上手く起動していない場合があるため、Web サービスを再起動します。
+
+::
+
+    cd ~/getperf
+    # 管理者用Webサービスのデプロイ
+    rex restart_ws_admin
+
+    # データ用Webサービスのデプロイ
+    rex restart_ws_data
+
+
 Apache インストール後の HTTPS 疎通確認(オプション)
 --------------------------------------------------
 
@@ -135,22 +223,15 @@ Apache インストール後の HTTPS 疎通確認(オプション)
 
    # 証明書保存ディレクトリに移動し、サーバ認証接続確認のコマンドを実行します
    cd /etc/getperf/ssl/client/test1/host1/network
-   openssl s_client -connect {監視サーバIPアドレス}:57443 -CAfile ./ca.crt
+   wget --no-proxy https://{監視サーバIPアドレス}:57443/ --ca-certificate=ca.crt
 
 上記はルート証明書を指定して、管理用 Apache に接続します。
-実行後、以下のような Verification: OK がでれば OK です。
+実行後、以下のような 57443... connected がでれば OK です。
+その後に 503 エラーが出ていても無視して OK です。
 
 ::
 
-   SSL handshake has read 2144 bytes and written 403 bytes
-   Verification: OK
-
-
-その後にENTER を押して、以下のような 400 Bad Request と HTML が出力されれば OK です。
-
-::
-
-   HTTP/1.1 400 Bad Request
+   Connecting to 192.168.41.199:57443... connected.
 
 
 データ用 Apache のHTTPS疎通確認
@@ -162,25 +243,17 @@ Apache インストール後の HTTPS 疎通確認(オプション)
 
    # 同様にクライアント認証接続確認のコマンドを実行します
    cd /etc/getperf/ssl/client/test1/host1/network
-   openssl s_client -connect {監視サーバIPアドレス}:58443 \
-   -CAfile ./ca.crt -cert ./client.pem -key ./client.key
-
+   wget --no-proxy https://{監視サーバIPアドレス}:58443/ \
+   --ca-certificate=ca.crt --certificate=client.pem --private-key=client.key
 
 上記はルート証明書、クライアント証明書、クライアント鍵を指定して、
 データ用 Apache に接続します。
-実行後、以下のような Verification: OK がでれば OK です。
+実行後、以下のような 58443... connected がでれば OK です。
+その後に 503 エラーが出ていても無視して OK です。
 
 ::
 
-   SSL handshake has read 2144 bytes and written 403 bytes
-   Verification: OK
-
-
-その後にENTER を押して、以下のような 400 Bad Request と HTML が出力されれば OK です。
-
-::
-
-   HTTP/1.1 400 Bad Request
+   Connecting to 192.168.41.199:58443... connected.
 
 
 Tomcatインストール
@@ -287,7 +360,7 @@ Getperf Web サービスをビルドしてデプロイします。
     rex restart_ws_data
 
 デプロイに成功すると、前述の Axis2 管理画面のメニューからWebサービスの確認ができます。
-管理画面の Services メニューを選択し、GetperfService　を選択します。選択するとWSDL(Webサービスの定義情報)が表示されます。
+管理画面の Services メニューを選択し、GetperfService　を選択します。選択するとWSDL(XML形式のWebサービスの定義情報)が表示されます。
 
 .. .. note::
 
