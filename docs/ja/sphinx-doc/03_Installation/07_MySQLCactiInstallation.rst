@@ -1,131 +1,286 @@
-MySQL, Cacti インストール
+MySQL インストール
 =========================
 
-MySQLとCactiを設定します。はじめに、MySQL　の root
-パスワードの設定を行います。
+.. Cacti の インストール
+.. ---------------------
+
+.. epel-release および cactiをインストールします。バージョン：cacti 1.2.23（2023/05/10時点の最新）
+
+.. ::
+
+..    sudo -E yum install epel-release
+..    sudo -E yum install cacti
+
+
+DBサーバ、phpのインストール
+---------------------------
+
+下記コマンドを実行しインストールします。バージョン：PHP 7.2.24、MariaDB 10.3.35（2023/05/10時点の 最新）
 
 ::
 
-    rex prepare_mysql
+    sudo -E yum install mariadb-server
+    sudo -E yum install php
 
-my.cnfにutf8の設定を追加します。
-
-::
-
-   sudo vi /etc/my.cnf
-
-[mysqld]の箇所
+MariaDB と httpd を起動し、自動起動を有効化します。
 
 ::
 
-   character-set-server=utf8
+    systemctl start mariadb
+    systemctl enable mariadb
+    systemctl start httpd
+    systemctl enable httpd
+
+php の設定を変更します。
+
+::
+
+    vi /etc/php.ini
+    (省略)
+    max_execution_time = 60
+    (省略)
+    memory_limit = 800M
+    (省略)
+    date.timezone = “Asia/Tokyo”
+
+変更後、httpdをリロードします。
+
+::
+
+    systemctl reload httpd
+
+
+Apache の設定
+-------------
+
+httpd のバージョンを確認します。
+
+::
+
+    yum info httpd
+
+バージョン確認後、以下の設定を行います。
+
+::
+
+    vi /etc/httpd/conf.d/cacti.conf
+    # httpd 2.4
+    #Require host localhost
+    Require all granted         #追加
+
+httpd を reload します。
+
+::
+
+    systemctl reload httpd
+
+
+MariaDBの設定
+-------------
+
+アクセス権関連の設定スクリプトを実行します。
+
+::
+
+    mysql_secure_installation
+    Set root password? [Y/n]　※エンター
+    New password:　※パスワードを設定 ⇒ root
+    Remove anonymous users? [Y/n]　※エンター
+    Disallow root login remotely? [Y/n]　※エンター
+    Remove test database and access to it? [Y/n]　※エンター
+    Reload privilege tables now? [Y/n]　※エンター
+
+文字コードを UTF8 に変更します。
+
+::
+
+    sudo vi /etc/my.cnf
+    （中略）
+    [mysqld]
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_unicode_ci
+
+DBを再起動します。
+
+::
+
+    systemctl restart mariadb
+
+データベースとユーザを作成します。
+
+::
+
+    mysql -u root -p
+    Enter password:　※MariaDBのrootパスワードを入力
+    MariaDB [(none)]> create database cacti;
+    MariaDB [(none)]> GRANT ALL PRIVILEGES ON cacti.* TO cactiuser@localhost identified by 'P@ssw0rd';
+    MariaDB [(none)]> exit
+
+作成したユーザ名とパスワードを config.php に設定します。
+
+::
+
+    sudo vi /usr/share/cacti/include/config.php
+
+    $database_username = 'cactiuser';
+    $database_password = 'P@ssw0rd';
+
+文字コードを変更します。
+
+::
+
+    mysql -u root -p
+    MariaDB [(none)]> ALTER DATABASE cacti CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    MariaDB [(none)]> exit
+
+Cacti が提供している SQL 文を読み込み実行します。
+
+::
+
+    mysql -u cactiuser -p cacti < /usr/share/doc/cacti/cacti.sql
+
+
+タイムゾーンの設定
+------------------
+
+MySQL に Timezone テーブルをロードします。
+
+::
+
+    mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u cactiuser -p mysql
+
+設定ファイル(my.cnf)を編集しタイムゾーンを設定します。
+
+::
+
+    sudo vi /etc/my.cnf
+    （中略）
+    [mysqld]
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_unicode_ci
+    default-time-zone='Asia/Tokyo'   #追加
+
+mariadb を再起動します。
+
+::
+
+    systemctl restart mariadb
+
+タイムゾーンの設定が「Asia/Tokyo」になっていることを確認します。
+
+::
+
+    mysql -u root -p
+    MariaDB [(none)]> SELECT @@global.time_zone;
+    +----------+
+    | @@global.time_zone |
+    +----------+
+    | Asia/Tokyo |
+    +----------+
+
+cactiuser が Timezone テーブルにアクセスできるよう権限を付与します。
+
+::
+
+    MariaDB [(none)]> GRANT SELECT ON mysql.time_zone_name TO 'cactiuser'@'localhost' IDENTIFIED BY 'P@ssw0rd';
+
+
+MariaDB の設定
+--------------
+
+MariaDB のパラメータを設定します。
+cacti初回起動時の「Pre-installation Checks」中に示される推奨値に基づいて必要に応じて後で調整します。
+
+::
+
+    sudo vi /etc/my.cnf
+    （中略）
+    default-time-zone=’Asia/Tokyo’
+    max_allowed_packet=16777216
+    max_heap_table_size=248M
+    tmp_table_size=248M
+    join_buffer_size=7M
+    innodb_file_per_table=ON
+    innodb_file_format=Barracuda
+    innodb_large_prefix=1
+    innodb_buffer_pool_size=912M
+    innodb_doublewrite=OFF
+    innodb_flush_log_at_trx_commit=2
+    innodb_flush_log_at_timeout=3
+    innodb_read_io_threads=32
+    innodb_write_io_threads=16
+    innodb_io_capacity=5000
+    innodb_io_capacity_max=10000
+
+mariadb を再起動します。
+
+::
+
+    systemctl restart mariadb
+
+cron設定
+--------
+
+コメントアウトされている部分を解除します。
+
+::
+
+    sudo vi /etc/cron.d/cacti
+    */5 * * * * apache /usr/bin/php /usr/share/cacti/poller.php > /dev/null 2>&1
+
+crond を再起動します。
+
+::
+
+    systemctl reload crond
+
+
+.. 事前準備
+.. --------
+
+.. firewalld と SELinux を停止します。
+
+.. ::
+
+..    systemctl stop firewalld
+..    systemctl disable firewalld
+..    setenforce 0
+
+..    vi /etc/selinux/config
+..    # SELINUX=disabled に変更します。
+
+.. Cacti 初期設定
+.. --------------
+
+.. Cacti サイトにアクセスします。
+.. http://IPアドレス/cacti/ をブラウザで開きます。
+
+.. 初期ユーザ名とパスワードは「admin/admin」です。
+.. 初回アクセス時、パスワードの変更が必要です。
+
+.. * ライセンス同意画面にて、右下の「Accept GPL License Agrement」にチェックを付けて、「Select default theme」を「Japanese」にし、「開始」をクリックします。
+
+.. * インストール開始時の Pre-installation Checks (構成チェック)にて、
+  推奨値に基づき、/etc/my.cnf等のパラメータの設定変更を行います。
+  変更後、httpdのリロード、必要に応じてOS再起動を行います。
+
+.. * Installation Typeの選択画面では「New Primary Server」を選択します。
+
+.. * パスの選択画面ではデフォルトで設定します。
+
+.. * コミュニティ名やポート番号、ポーリングのインターバルの設定画面ではデフォルトで設定します。
+
+.. * Network Range はネットワーク環境に合わせて設定します。
+
+.. * テンプレートはデフォルト(全て選択)で設定します。
+
+.. * Confirm Installation にチェックを付けて、インストールを開始します。
+
+.. インストール完了後、Cacti にアクセスできるようになります。
+
 
 .. note::
 
-   既定のMySQL設定だと、Cacti 周りで多数エラーが発生するため、
-   MySQL の sql_mode を変更します。
+   Cacti 実体のインストールは後述の監視サイト初期化作業で行います。詳細は、 サイト初期化コマンド :doc:`../10_AdminCommand/01_SiteInitialization` を参照してください。
 
-   ::
-
-      mysql -u root -pgetperf
-
-   ::
-
-       SHOW VARIABLES LIKE "%sql_mode%";
-       +---------------+--------------------------------------------+
-       | Variable_name | Value                                      |
-       +---------------+--------------------------------------------+
-       | sql_mode      | STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION |
-       +---------------+--------------------------------------------+
-
-   オンラインでの設定変更。
-
-   ::
-
-       SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
-
-   /etc/my.cnf の sql_mode も変更します。
-
-   ::
-
-       sudo vi /etc/my.cnf
-
-   ::
-
-       # Recommended in standard MySQL setup
-       #sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
-       sql_mode=NO_ENGINE_SUBSTITUTION
-
-
-   DBD::mysql をインストールします。
-
-   ::
-
-       sudo -E cpanm DBD::mysql 
-
-
-PHP ライブラリ構成管理ツール composer を用いて PHP
-ライブラリをインストールします。
-
-.. note::
-
-   RHEL8 の場合、事前に以下パッケージを追加します。
-
-   ::
-
-      sudo dnf install php php-cli php-zip php-json
-
-::
-
-    rex prepare_composer
-
-Cacti モジュールアーカイブをダウンロードします。
-
-::
-
-    rex prepare_cacti
-
-Cacti
-実体のインストールは後述の監視サイト初期化作業で行います。詳細は、 サイト初期化コマンド :doc:`../10_AdminCommand/01_SiteInitialization` を参照してください。
-
-.. note::
-
-   時刻の期間表示の変更ができなくなる問題があるため、Cacti スクリプトを
-   修正します。
-
-   `BUG3798`_ 
-
-   .. _BUG3798: https://github.com/Cacti/cacti/issues/3798
-
-   ::
-
-      cd ~/getperf/var/cacti/
-      tar xvf cacti-0.8.8g.tar.gz
-
-   Cacti スクリプトディレクトリに移動し、変更箇所を確認します。
-
-   ::
-
-      cd cacti-0.8.8g
-      grep 160 *.php
-      graph_image.php:if (!empty($_GET["graph_start"]) && $_GET["graph_start"] < 1600000000) {
-      graph_image.php:if (!empty($_GET["graph_end"]) && $_GET["graph_end"] < 1600000000) {
-      graph_xport.php:if (!empty($_GET["graph_start"]) && is_numeric($_GET["graph_start"]) && $_GET["graph_start"] < 1600000000) {
-      graph_xport.php:if (!empty($_GET["graph_end"]) && is_numeric($_GET["graph_end"]) && $_GET["graph_end"] < 1600000000) {
-
-   上記スクリプトの1600000000を、2600000000に変更します。
-
-   ::
-
-      vi graph_image.php
-      # 1600000000 を検索して、2600000000 に変える
-      vi graph_xport.php
-      # 1600000000 を検索して、2600000000 に変える
-
-   変更したスクリプトを tar 圧縮します。
-
-   ::
-   
-      cd ~/getperf/var/cacti/
-      tar cvf - cacti-0.8.8g | gzip > cacti-0.8.8g.tar.gz
 

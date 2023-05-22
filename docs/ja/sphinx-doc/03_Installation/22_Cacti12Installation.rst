@@ -1,10 +1,10 @@
-~Cacti 1.2 のインストール
-=======================
+Cacti 1.2 のインストール
+========================
 
 Cacti の yum インストール
 --------------------
 
-epel-release および cactiをインストールします。
+epel-release および cactiをインストールします。バージョン：cacti 1.2.23（2023/05/10時点の最新）
 
 ::
 
@@ -15,7 +15,7 @@ epel-release および cactiをインストールします。
 DBサーバ、phpのインストール
 ---------------------------
 
-下記コマンドを実行しインストールします。
+下記コマンドを実行しインストールします。バージョン：PHP 7.2.24、MariaDB 10.3.35（2023/05/10時点の最新）
 
 ::
 
@@ -48,11 +48,6 @@ php の設定を変更します。
 ::
 
     systemctl reload httpd
-
-.. note::
-
-    後述のcactiインストール時の「Pre-installation Checks」では各パラメータの推奨値が表示されますが、
-    変更した場合は、「Pre-installation Checks」中に設定を変更して httpd を reload した後に更新ボタンを押します。
 
 
 Apache の設定
@@ -267,7 +262,7 @@ http://IPアドレス/cacti/ をブラウザで開きます。
 
 * インストール開始時の Pre-installation Checks (構成チェック)にて、
   推奨値に基づき、/etc/my.cnf等のパラメータの設定変更を行います。
-  また、必要に応じてデーモンのリロード、OS再起動を行います。
+  変更後、httpdのリロード、必要に応じてOS再起動を行います。
 
 * Installation Typeの選択画面では「New Primary Server」を選択します。
 

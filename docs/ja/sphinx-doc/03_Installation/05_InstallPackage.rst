@@ -1,113 +1,113 @@
 パッケージインストール
 ======================
 
-エージェント Web サービスのインストールを行います。
-yum を用いて gcc,JDK等の開発環境、Apache、PHP をインストールします。
-また、Javaプログラムのビルドツール Apache Antと、Gradleをインストールします
+.. エージェント Web サービスのインストールを行います。
+.. yum を用いて gcc,JDK等の開発環境、Apache、PHP をインストールします。
+Javaプログラムのビルドツール Apache Antと、Gradleをインストールします
 
-MySQL 5.6 バージョン指定インストール
----------------------------------------
+.. MySQL 5.6 バージョン指定インストール
+.. ---------------------------------------
 
-パッケージインストールの前に、MySQL バージョン5.6 を指定するように
-yum リポジトリを更新 
+.. パッケージインストールの前に、MySQL バージョン5.6 を指定するように
+.. yum リポジトリを更新 
 
 
-::
+.. ::
 
-    # RHEL7 の場合
-    sudo -E yum localinstall http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
-    # RHEL8 の場合
-    sudo -E yum localinstall http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm
+..    # RHEL7 の場合
+..    sudo -E yum localinstall http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+..    # RHEL8 の場合
+..    sudo -E yum localinstall http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm
 
-    sudo -E yum repolist all | grep mysql
+..    sudo -E yum repolist all | grep mysql
 
-    sudo -E yum -y install yum-utils
-    sudo -E yum config-manager --disable mysql57-community
-    sudo -E yum config-manager --enable mysql56-community
+..    sudo -E yum -y install yum-utils
+..    sudo -E yum config-manager --disable mysql57-community
+..    sudo -E yum config-manager --enable mysql56-community
 
-    sudo dnf module disable mysql     
-    sudo yum info mysql-community-server
+..    sudo dnf module disable mysql     
+..    sudo yum info mysql-community-server
 
-MySQL パッケージをインストールする
+.. MySQL パッケージをインストールする
 
-::
+.. ::
 
-    sudo  yum -y install mysql-community-server
-    sudo systemctl enable mysqld
-    sudo systemctl start mysqld
+..    sudo  yum -y install mysql-community-server
+..    sudo systemctl enable mysqld
+..    sudo systemctl start mysqld
 
-以降は、mysql-devel 等の依存パッケージも 5.6 系がインストールされるようになる
+.. 以降は、mysql-devel 等の依存パッケージも 5.6 系がインストールされるようになる
 
-RedHat7,CentOS7の場合
----------------------
+.. RedHat7,CentOS7の場合
+.. ---------------------
 
-EPEL yum リポジトリをインストールします
+.. EPEL yum リポジトリをインストールします
 
-::
+.. ::
 
-   sudo -E yum -y install epel-release
+..   sudo -E yum -y install epel-release
 
-.. note::
+.. .. note::
 
-    RHEL8 の場合、
+..    RHEL8 の場合、
 
-    ::
+..    ::
 
-        sudo -E dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+..        sudo -E dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 
-REMI yum リポジトリをインストールします
+.. REMI yum リポジトリをインストールします
 
-::
+.. ::
 
-   cd /tmp
-   wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-   sudo rpm -Uvh remi-release-7.rpm
+..   cd /tmp
+..   wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+..   sudo rpm -Uvh remi-release-7.rpm
 
-.. note::
+.. .. note::
 
-    RHEL8 の場合、
+..    RHEL8 の場合、
 
-    ::
+..    ::
 
-       cd /tmp
-       wget http://rpms.famillecollet.com/enterprise/remi-release-8.rpm
-       sudo rpm -Uvh remi-release-8.rpm
+..       cd /tmp
+..       wget http://rpms.famillecollet.com/enterprise/remi-release-8.rpm
+..       sudo rpm -Uvh remi-release-8.rpm
 
-基本パッケージをインストールします
+.. 基本パッケージをインストールします
 
-::
+.. ::
 
-   sudo -E yum --enablerepo=epel install \
-         autoconf libtool \
-         gcc gcc-c++ make openssl-devel pcre-devel \
-         httpd php php-mbstring \
-         php-mysql php-pear php-common php-gd php-devel php-cli \
-         openssl-devel expat-devel \
-         java-1.8.0-openjdk java-1.8.0-openjdk-devel \
-         redhat-lsb \
-         cairo-devel libxml2-devel pango-devel pango \
-         libpng-devel freetype freetype-devel libart_lgpl-devel \
-         curl git rrdtool zip unzip \
-         mysql-devel
+..   sudo -E yum --enablerepo=epel install \
+..         autoconf libtool \
+..         gcc gcc-c++ make openssl-devel pcre-devel \
+..         httpd php php-mbstring \
+..         php-mysql php-pear php-common php-gd php-devel php-cli \
+..         openssl-devel expat-devel \
+..         java-1.8.0-openjdk java-1.8.0-openjdk-devel \
+..         redhat-lsb \
+..         cairo-devel libxml2-devel pango-devel pango \
+..         libpng-devel freetype freetype-devel libart_lgpl-devel \
+..         curl git rrdtool zip unzip \
+..         mysql-devel
 
-.. note::
+.. .. note::
 
-    RHEL8 の場合の指定。php-mysqlnd に変更。httpd 2.4, php 7.2, python36 が入る
+..    RHEL8 の場合の指定。php-mysqlnd に変更。httpd 2.4, php 7.2, python36 が入る
 
-    ::
+..    ::
 
-        sudo -E yum --enablerepo=epel install \
-             autoconf libtool \
-             gcc gcc-c++ make openssl-devel pcre-devel \
-             httpd php php-mbstring \
-             php-mysqlnd php-pear php-common php-gd php-devel php-cli \
-             openssl-devel expat-devel \
-             java-1.8.0-openjdk java-1.8.0-openjdk-devel \
-             redhat-lsb \
-             cairo-devel libxml2-devel pango-devel pango \
-             libpng-devel freetype freetype-devel libart_lgpl-devel \
-             curl git rrdtool zip unzip \
-             mysql-devel
+..        sudo -E yum --enablerepo=epel install \
+..             autoconf libtool \
+..             gcc gcc-c++ make openssl-devel pcre-devel \
+..             httpd php php-mbstring \
+..             php-mysqlnd php-pear php-common php-gd php-devel php-cli \
+..             openssl-devel expat-devel \
+..             java-1.8.0-openjdk java-1.8.0-openjdk-devel \
+..             redhat-lsb \
+..             cairo-devel libxml2-devel pango-devel pango \
+..             libpng-devel freetype freetype-devel libart_lgpl-devel \
+..             curl git rrdtool zip unzip \
+..             mysql-devel
 
 Gradle をインストールします
 
