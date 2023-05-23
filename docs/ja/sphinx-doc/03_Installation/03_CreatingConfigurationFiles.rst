@@ -37,7 +37,19 @@ Getperf　ホームディレクトリ、ログ出力設定をします。セキ�
 getperf_cacti.json
 -------------------
 
-グラフモニタリングツール Cacti の配置、バージョンの設定をします。原則、Getperf　モジュールは Cacti　の最新バージョンとの組合せでモジュールを構成します。Cacti　はダウングレードの機能がないため、既定値より下位のバージョンを指定することはできません。既定値より下位バージョンのCactiが必要な場合は `古い Cacti バージョンのインストール <docs/ja/docs/10_Miscellaneous/08_CactiOldVersion.md>`_ を参照してください。
+生成された既定の getperf_cacti.json は、 Cacti-0.8.8 の設定となっており、
+本ファイルを Cacti 1.2.x 版に変更します。以下の設定ファイルをコピーします。
+
+::
+
+   cd ~/getperf/config
+   ls
+   # 上記で確認した、cp getperf_cacti.json_1.2.x のファイルを getperf_cacti.jsonにコピー
+   cp getperf_cacti.json_1.2.24 getperf_cacti.json
+
+グラフモニタリングツール Cacti の配置、バージョンの設定をします。原則、Getperf　モジュールは 
+Cacti　の最新バージョンとの組合せでモジュールを構成します。Cacti　はダウングレードの機能がないため、既定値より下位のバージョンを指定することはできません。
+既定値より下位バージョンのCactiが必要な場合は `古い Cacti バージョンのインストール <docs/ja/docs/10_Miscellaneous/08_CactiOldVersion.md>`_ を参照してください。
 
 getperf_rrd.json
 -----------------
