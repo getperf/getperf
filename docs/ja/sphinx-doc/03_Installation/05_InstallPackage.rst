@@ -1,9 +1,149 @@
 パッケージインストール
 ======================
 
+
+
+MySQL 8.0 インストール
+----------------------
+
+パッケージインストールの前に、バージョン8 を指定して MySQL パッケージをインストールします。
+
+
+
+::
+
+   wget https://dev.mysql.com/get/mysql80-community-release-el8-4.noarch.rpm
+
+   sudo -E yum localinstall mysql80-community-release-el8-4.noarch.rpm
+
+
+::
+
+   sudo -E yum repolist all | grep mysql
+
+   sudo yum -y install yum-utils
+   sudo yum-config-manager --disable mysql57-community
+   sudo yum-config-manager --enable mysql80-community
+
+::
+
+   yum info mysql80-community
+
+   sudo yum module disable mysql
+
+::
+
+   sudo yum -y install mysql-community-server
+
+   sudo  yum -y install mysql-community
+   sudo systemctl enable mysqld
+   sudo systemctl start mysqld
+
+PHP
+---
+
+PHP
+
+dnf module list php
+
+Name        Stream         Profiles                          Summary
+php         7.2 [d]        common [d], devel, minimal        PHP scripting language
+php         7.3            common [d], devel, minimal        PHP scripting language
+php         7.4            common [d], devel, minimal        PHP scripting language
+php         8.0            common [d], devel, minimal        PHP scripting language
+
+sudo dnf module enable php:7.3
+
+
+ sudo dnf install php php-cli php-common
+sudo systemctl restart httpd
+
+sudo yum install php-mysqlnd
+
+
+ sudo vim /var/www/html/info.php
+
+http://192.168.0.59/info.php
+
+つながった
+
+Gradle
+-------
+
+Java パッケージマネージャ SDKMAN! をインストールします
+
+::
+
+    curl -s "https://get.sdkman.io" | bash 
+
+.bash_profile に SDKMAN 初期化スクリプトを追加します
+
+::
+
+    vi ~/.bash_profile
+    (最終行に追加)
+    source "$PATH/.sdkman/bin/sdkman-init.sh"
+
+.bash_profile を再読み込みします
+
+::
+
+    source ~/.bash_profile
+
+インストールできるGradleのバージョン一覧を表示し、6 系の最新バージョンを確認します
+
+::
+ 
+    sdk list gradle
+
+確認したバージョンを指定して Gradle をインストールします
+
+::
+
+    sdk install gradle 6.7.1
+
+
 .. エージェント Web サービスのインストールを行います。
 .. yum を用いて gcc,JDK等の開発環境、Apache、PHP をインストールします。
 Javaプログラムのビルドツール Apache Antと、Gradleをインストールします
+
+
+    sdk list ant
+
+確認したバージョンを指定して Gradle をインストールします
+
+::
+
+    sdk install ant 1.9.15
+
+
+そのた
+------
+
+sudo -E yum  install \
+   pcre-devel \
+   php php-mbstring \
+   php-mysqlnd php-pear php-common php-gd php-devel php-cli \
+   cairo-devel libxml2-devel pango-devel pango \
+   libpng-devel freetype freetype-devel  \
+   curl git rrdtool zip unzip \
+   mysql-devel
+
+
+       .. sudo -E yum --enablerepo=epel install \
+       ..      autoconf libtool \
+       ..      gcc gcc-c++ make openssl-devel pcre-devel \
+       ..      httpd php php-mbstring \
+       ..      php-mysqlnd php-pear php-common php-gd php-devel php-cli \
+       ..      openssl-devel expat-devel \
+       ..      java-1.8.0-openjdk java-1.8.0-openjdk-devel \
+       ..      redhat-lsb \
+       ..      cairo-devel libxml2-devel pango-devel pango \
+       ..      libpng-devel freetype freetype-devel libart_lgpl-devel \
+       ..      curl git rrdtool zip unzip \
+       ..      mysql-devel
+
+
 
 .. MySQL 5.6 バージョン指定インストール
 .. ---------------------------------------

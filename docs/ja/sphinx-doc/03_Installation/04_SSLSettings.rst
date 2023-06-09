@@ -46,7 +46,7 @@ SSL証明書の作成
 
     rex server_cert
 
-.. note::
+.. note:: RH6系の証明書更新の注意点
 
    `CentOS6.9リリースノート`_ には、"Support for insecure cryptographic protocols
    and algorithms has been dropped. This affects usage of MD5, SHA0, RC4 and DH

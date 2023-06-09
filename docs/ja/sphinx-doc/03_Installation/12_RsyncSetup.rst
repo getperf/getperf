@@ -11,13 +11,13 @@ rsync のインストール
 
 ::
 
-    sudo -E yum -y install rsync xinetd
+    sudo -E yum -y install rsync xinetd  rsync-daemon
 
-.. note::
+.. .. note::
 
-    RHEL8 の場合、
+..     RHEL8 の場合、
 
-        sudo -E yum -y install rsync-daemon
+..         sudo -E yum -y install rsync-daemon
 
 サイト作成
 ~~~~~~~~~~
@@ -181,4 +181,14 @@ cronで定期起動
    0,5,10,15,20,25,30,35,40,45,50,55 * * * * (cd /home/psadmin/site/site1; /home/psadmin/getperf/script/sitesync rsync://localhost/archive_site1 > /dev/null 2>&1) &
 
 この後の作業は、グラフ設定となります。
+
+cacti-cli -f -g lib/graph/Linux/diskutil.json
+cacti-cli -f -g lib/graph/Linux/iostat.json
+cacti-cli -f -g lib/graph/Linux/loadavg.json
+cacti-cli -f -g lib/graph/Linux/memfree.json
+cacti-cli -f -g lib/graph/Linux/netDev.json
+cacti-cli -f -g lib/graph/Linux/vmstat.json
+
+
+cacti-cli -f node/Linux/alma82/
 

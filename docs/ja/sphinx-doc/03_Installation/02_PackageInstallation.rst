@@ -27,8 +27,8 @@
 
     sudo -E yum -y groupinstall "Development Tools"
     sudo -E yum -y install kernel-devel kernel-headers
-    sudo -E yum -y install libssh2-devel expat expat-devel libxml2-devel
-    sudo -E yum -y install perl-XML-Parser perl-XML-Simple perl-Crypt-SSLeay perl-Net-SSH2
+    sudo -E yum -y install expat expat-devel libxml2-devel
+    sudo -E yum -y install perl-XML-Parser perl-XML-Simple
     sudo -E yum -y update
 
 Getperf モジュールのダウンロードと解凍

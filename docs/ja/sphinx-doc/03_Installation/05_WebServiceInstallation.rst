@@ -32,70 +32,70 @@ openssl-devel等のパッケージインストール
 
 ::
 
-   sudo -E yum install openssl-devel libcurl-dev redhat-lsb-core expat-devel
+   sudo -E yum install openssl-devel redhat-lsb-core expat-devel
 
-apr、apr-utilのインストール
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. apr、apr-utilのインストール
+.. ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-apr、apr-util の最新版(例：apr-1.7.4.tar.gz、apr-util-1.6.3.tar.gz)を以下からダウンロードします。
+.. apr、apr-util の最新版(例：apr-1.7.4.tar.gz、apr-util-1.6.3.tar.gz)を以下からダウンロードします。
 
-http://apr.apache.org/download.cgi
+.. http://apr.apache.org/download.cgi
 
-apr をインストールします。
+.. apr をインストールします。
 
-::
+.. ::
 
-   tar xvfz apr-x.x.x.tar.gz
-   cd apr-x.x.x/
-   ./configure
-   make
-   sudo make install
+..    tar xvfz apr-x.x.x.tar.gz
+..    cd apr-x.x.x/
+..    ./configure
+..    make
+..    sudo make install
 
-apr-util をインストールします。
+.. apr-util をインストールします。
 
-::
+.. ::
 
-   tar xvfz apr-util-x.x.x.tar.gz
-   cd apr-util-x.x.x/
-   ./configure --with-apr=/usr/local/apr --with-expat=/usr/lib64
-   make
-   sudo make install
-
-
-pcre のインストール
-^^^^^^^^^^^^^^^^^^^
-pcre の最新版(例：pcre-8.45.zip)を以下からダウンロードします。
-
-https://ja.osdn.net/projects/sfnet_pcre/releases/
-
-pcre をインストールします。
-
-::
-
-   unzip pcre-x.x
-   cd pcre-x.x/
-   ./configure
-   make
-   sudo make install
+..    tar xvfz apr-util-x.x.x.tar.gz
+..    cd apr-util-x.x.x/
+..    ./configure --with-apr=/usr/local/apr --with-expat=/usr/lib64
+..    make
+..    sudo make install
 
 
-nghttp2 のインストール
-^^^^^^^^^^^^^^^^^^^^^^
-nghttp2 の最新版(例：nghttp2-1.52.0.tar.gz)を以下からダウンロードします。
+.. pcre のインストール
+.. ^^^^^^^^^^^^^^^^^^^
+.. pcre の最新版(例：pcre-8.45.zip)を以下からダウンロードします。
 
-https://github.com/nghttp2/nghttp2
+.. https://ja.osdn.net/projects/sfnet_pcre/releases/
 
-nghttp2 をインストールします。
+.. pcre をインストールします。
 
-::
+.. ::
 
-   tar xvfz nghttp2-x.x.x
-   cd nghttp2-x.x.x/
-   ./configure
-   make
-   sudo make install
-   echo /usr/local/lib >> /etc/ld.so.conf
-   sudo ldconfig
+..    unzip pcre-x.x
+..    cd pcre-x.x/
+..    ./configure
+..    make
+..    sudo make install
+
+
+.. nghttp2 のインストール
+.. ^^^^^^^^^^^^^^^^^^^^^^
+.. nghttp2 の最新版(例：nghttp2-1.52.0.tar.gz)を以下からダウンロードします。
+
+.. https://github.com/nghttp2/nghttp2
+
+.. nghttp2 をインストールします。
+
+.. ::
+
+..    tar xvfz nghttp2-x.x.x
+..    cd nghttp2-x.x.x/
+..    ./configure
+..    make
+..    sudo make install
+..    echo /usr/local/lib >> /etc/ld.so.conf
+   .. sudo ldconfig
 
 
 Apacheインストール
@@ -164,22 +164,27 @@ Apache バージョンは、2.4 系の最新をダウンロードサイトから
    
 ..       --with-ssl=/usr/local/ssl
 
+
+error: Bundled APR requested but not found at 
+./srclib/. Download and unpack the corresponding apr and apr-util packages to ./srclib/.
+
+
+
+sudo -E yum -y install apr-devel apr-util  apr-util-devel
+
 ::
 
    # Getperfホームディレクトリに移動し、Apache インストールコマンドを実行します。
    cd ~/getperf
    sudo -E rex prepare_apache
 
-インストール直後、Web サービスが上手く起動していない場合があるため、Web サービスを再起動します。
+Apache サービスを再起動します。
 
 ::
 
-    cd ~/getperf
-    # 管理者用Webサービスのデプロイ
-    rex restart_ws_admin
+   sudo /usr/local/apache-admin/bin/apachectl restart
+   sudo /usr/local/apache-data/bin/apachectl restart
 
-    # データ用Webサービスのデプロイ
-    rex restart_ws_data
 
 
 Apache インストール後の HTTPS 疎通確認(オプション)
@@ -237,7 +242,7 @@ Apache インストール後の HTTPS 疎通確認(オプション)
 データ用 Apache のHTTPS疎通確認
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-先ほど確認した証明書保存ディレクトリ下で以下のコマンドを実行します。
+同様にクライアント認証接続確認のコマンドを実行します。
 
 ::
 
@@ -333,26 +338,26 @@ Axis2 設定ファイルを更新します。
 ::
 
     # 管理者用Webサービスの設定
-    sudo -E perl ~/getperf/script/deploy-ws.pl config_axis2 --suffix=admin
+    sudo -E perl $GETPERF_HOME/script/deploy-ws.pl config_axis2 --suffix=admin
 
     # データ用Webサービスの設定
-    sudo -E perl ~/getperf/script/deploy-ws.pl config_axis2 --suffix=data
+    sudo -E perl $GETPERF_HOME/script/deploy-ws.pl config_axis2 --suffix=data
 
 Getperf Web サービスをビルドしてデプロイします。
 
 ::
 
     # 管理者用Webサービスのデプロイ
-    sh ~/getperf/script/axis2-install-ws.sh /usr/local/tomcat-admin
+    sh $GETPERF_HOME/script/axis2-install-ws.sh /usr/local/tomcat-admin
 
     # データ用Webサービスのデプロイ
-    sh ~/getperf/script/axis2-install-ws.sh /usr/local/tomcat-data
+    sh $GETPERF_HOME/script/axis2-install-ws.sh /usr/local/tomcat-data
 
 設定を反映させるため、Web サービスを再起動します。
 
 ::
 
-    cd ~/getperf
+    cd $GETPERF_HOME
     # 管理者用Webサービスのデプロイ
     rex restart_ws_admin
 

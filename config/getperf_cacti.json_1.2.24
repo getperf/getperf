@@ -1,5 +1,5 @@
 {
-    "GETPERF_CACTI_HTML":             "/var/www/phpdir/php73/",
+    "GETPERF_CACTI_HTML":             "/var/www/html/",
     "GETPERF_CACTI_ARCHIVE_DIR":      "/home/psadmin/getperf/var/cacti",
     "GETPERF_CACTI_ARCHIVE":          "cacti-1.2.24.tar.gz",
     "GETPERF_CACTI_HOME":             "/home/psadmin/getperf/lib/cacti",

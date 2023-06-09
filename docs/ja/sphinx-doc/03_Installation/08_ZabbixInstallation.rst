@@ -170,6 +170,30 @@ Zabbix エージェントは以下の URL からダウンロードします。
    wget https://cdn.zabbix.com/zabbix/binaries/stable/5.0/5.0.34/zabbix_agent-5.0.34-windows-amd64.zip
 
 
+ssh-copy-id ${USER}@${target_host}
+
+ssh-copy-id psadmin@192.168.0.59
+${USER}@${target_host}
+
+パスワード利かれる
+
+chmod go-w ~/
+
+
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+
+sudo -E cpanm DBD::mysql
+
+
+sudo chmod a+wrx /var/www/html/
+
+
+ln: failed to create symbolic link '/var/www/phpdir/php73/test1': No such file or directory
+2023/05/25 05:33:26 [CRITICAL] ln -s /home/psadmin/site/test1/html/cacti /var/www/phpdir/php73/test1
+
+
 この後の作業について
 --------------------
 
@@ -178,3 +202,5 @@ Zabbix エージェントは以下の URL からダウンロードします。
 エージェントのコンパイルをします。
 
 * エージェントのコンパイル
+
+

@@ -287,6 +287,15 @@ c:を作業ディレクトリとして作成し、その下でコンパイルを
 
 コンパイル済みパッケージとしてパッケージングします。
 
+ vi var/zabbix/Recipe.pl
+
+/home/psadmin/work/agent/getperf-agent/var/zabbix/zabbix_agents_5.0.34.linux2_6.amd64.tar.gz
+
+cp /home/psadmin/work/agent/getperf-agent/var/zabbix/zabbix_agent-5.0.34-linux-2.6-amd64.tar.gz \
+/home/psadmin/work/agent/getperf-agent/var/zabbix/zabbix_agents_5.0.34.linux2_6.amd64.tar.gz
+
+ cp var/zabbix/zabbix_agent-5.0.34-linux-2.6-amd64-static.tar.gz var/zabbix/zabbix_agent-5.0.34-linux-2.6-amd64.tar.gz
+
 ::
 
     c:\work\getperf> perl deploy.pl

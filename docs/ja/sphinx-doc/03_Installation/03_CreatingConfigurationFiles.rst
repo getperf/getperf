@@ -14,10 +14,11 @@ $GETPERF_HOME/conf の下に設定ファイルを生成します。詳細は `�
 2. getperf_cacti.json : 監視ソフト Cacti の設定ファイル
 3. getperf_rrd.json : 時系列データベース RRDtool の設定ファイル
 4. getperf_zabbix.json : 監視ソフト Zabbix の設定ファイル
-5. getperf_influx.json : 時系列データベース InfluxDB の設定ファイル
 
-5　は問題分析用ツールでデフォルトは無効となっています。必要な場合は設定ファイルの値を有効にしてください。
-有効にすると、既定の RRDtool に加え、 InfluxDB にもデータ蓄積を行います。
+.. 5. getperf_influx.json : 時系列データベース InfluxDB の設定ファイル
+
+.. 5　は問題分析用ツールでデフォルトは無効となっています。必要な場合は設定ファイルの値を有効にしてください。
+.. 有効にすると、既定の RRDtool に加え、 InfluxDB にもデータ蓄積を行います。
 
 getperf_site.json
 ------------------
@@ -28,7 +29,8 @@ Getperf　のベース設定と、各種インストールソフトウェアの�
 
     vi config/getperf_site.json
 
-Getperf　ホームディレクトリ、ログ出力設定をします。セキュリティの観点から、"GETPERF_CACTI_MYSQL_ROOT_PASSWD"　の　MySQL　のルートパスワードを変更してください。
+Getperf　ホームディレクトリ、ログ出力設定をします。
+"GETPERF_CACTI_MYSQL_ROOT_PASSWD"　の　MySQL　のルートパスワードを変更してください。
 
 ::
 
@@ -42,7 +44,7 @@ getperf_cacti.json
 
 ::
 
-   cd ~/getperf/config
+   cd $GETPERF_HOME/config
    ls
    # 上記で確認した、cp getperf_cacti.json_1.2.x のファイルを getperf_cacti.jsonにコピー
    cp getperf_cacti.json_1.2.24 getperf_cacti.json
@@ -69,17 +71,26 @@ getperf_zabbix.json
 
 ::
 
-    vi config/getperf_zabbix.json
+    cd $GETPERF_HOME/config
+    vi getperf_zabbix.json
 
 本ソフトのインストールはオプションで、デフォルトは有効となります。
-無効にする場合は、以下パラメータを 0　にしてください。
+以下パラメータを 0　にしてください。
+
+
+zabbix_sender を有効にする場合のみ1を設定
 
 ::
 
       "GETPERF_USE_ZABBIX_SEND": 0,
+
+エージェントモジュールに Zabbix エージェントを追加する場合のみ1を設定
+
+::
+
       "GETPERF_AGENT_USE_ZABBIX": 0
 
-また、有効にする場合はセキュリティの観点から、 Zabbix　Web コンソールの管理者ユーザ admin のパスワード　"ZABBIX_ADMIN_PASSWORD" を変更してください。
+また、有効にする場合は Zabbix　Web コンソールの管理者ユーザ admin のパスワード　"ZABBIX_ADMIN_PASSWORD" を変更してください。
 
 ::
 
@@ -87,17 +98,17 @@ getperf_zabbix.json
 
 既定値の場合は、admin/getperf でログインします。
 
-getperf_influx.json
--------------------
+.. getperf_influx.json
+.. -------------------
 
-時系列データベース InfluxDB　の設定をします。
+.. 時系列データベース InfluxDB　の設定をします。
 
-::
+.. ::
 
-    vi config/getperf_influx.json
+..     vi config/getperf_influx.json
 
-本ソフトのインストールはオプションで、デフォルトは無効となります。有効にする場合は、"GETPERF_USE_INFLUXDB"　を 1　にしてください。InfluxDB は α リリースの状態となります。
+.. 本ソフトのインストールはオプションで、デフォルトは無効となります。有効にする場合は、"GETPERF_USE_INFLUXDB"　を 1　にしてください。InfluxDB は α リリースの状態となります。
 
-::
+.. ::
 
-	"GETPERF_USE_INFLUXDB": 1
+.. 	"GETPERF_USE_INFLUXDB": 1
