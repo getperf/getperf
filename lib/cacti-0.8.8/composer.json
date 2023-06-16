@@ -1,0 +1,7 @@
+{
+  "require": {
+    "wp-cli/php-cli-tools": "*",
+    "nategood/commando": "*"
+  }
+}
+
