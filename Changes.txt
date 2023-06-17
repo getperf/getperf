@@ -1,51 +1,30 @@
 Changes for 3.1.3 (2023-6-19)
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 New features:
+* Cacti-0.8 と Cacti-1.2 を結合。CentOS8 ,Cacti-1.2 を標準として、
+  設定変更で、CentOS7, Cacti-0.8 環境のセットアップ手順を追加
 
-* Cacti-0.8 と Cacti-1.2 を結合
-
-Changes for 3.1.2 (2023-6-2)
---------------------------------------------------------------------------------
-New features:
-
-* Apatch httpd-2.4 APR インストール手順追加
-* Cacti グラフテンプレートデバイス機能移行
-* Cacti1.24 用の getperf_cacti.json 設定ファイルテンプレート追加
-
-Bug Fixes:
-
-* capnfile に DateTime 追加
 
 ToDo:
+
+* Cacti0.8,Cacti1.2結合 []
+    OracleLinux8.7での検証 []
+        Getperf3.1.3使用 []
+        自動起動が利かない問題調査 []
+    CentOS7環境での検証、設定変更手順まとめ []
+        ガイド作成 []
+    Cacti1.2の設定不足 []
+        HWメニューの配置 Network が先頭になる []
+        サムネイル表示から 1Column , Thumbnails なし、にしたい []
 
 * getperf2 SOAP 移行 [o]
     現状調査 [x]
     コマンド仕様検討 []
     コード構成検討 [x]
     基本機能単体 [x]
-        SSH 疎通 [x]
-        リクエストメッセージ生成 [x]
-        レスポンスデータ受信 [x]
-        MIME 生成 [x]
-        MIME 解析 [x]
-    各アクション移行 []
-        admin []
-            添付なし []
-                checkAgent []
-                getLatestBuild []
-                getLatestVersion []
-            添付あり []
-                registAgent []
-                downloadUpdateModule []
-        agent []
-            添付なし []
-                sendMessage []
-                reserveSender []
-            添付あり []
-                downloadCertificate []
-                sendData []
+    各アクション移行 [x]
     結合 []
-        getperf_agent []
+        getperf_soap [x]
         getperfctl []
 
 Cacti脆弱性対応
@@ -70,10 +49,17 @@ Cacti脆弱性対応
   * ツリーメニュー登録 []
   * ツリーメニュー削除 []
 
-Cacti グラフメニュー更新処理修正、ソート昇順、降順変更
-RFC2818 SAN (X509v3 Subject Alternative Name) サーバ証明書更新
-Apatch httpd APR インストール手順追加
-Cacti グラフテンプレートデバイス機能移行
+Changes for 3.1.2 (2023-6-2)
+----------------------------------------------------------------------------
+New features:
+
+* Apatch httpd-2.4 APR インストール手順追加
+* Cacti グラフテンプレートデバイス機能移行
+* Cacti1.24 用の getperf_cacti.json 設定ファイルテンプレート追加
+
+Bug Fixes:
+
+* capnfile に DateTime 追加
 
 Changes for 3.1.1 (2023-5-19)
 --------------------------------------------------------------------------------

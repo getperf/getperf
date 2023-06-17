@@ -379,9 +379,14 @@ task "prepare_apache", sub {
       _run './configure --prefix=' . $apache_home .
         ' -enable-modules=all --enable-mpm=event' .
         ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl';
+
+      # CentOS7.x 環境の場合、個別に/usr/local にコンパイルインストール
+      # したOpenSSL のホームを指定する。OpenSSL 1.1.1k 以上が必要。
       # _run './configure --prefix=' . $apache_home .
-      #   ' -enable-modules=all --with-included-apr --enable-mpm=event' .
-      #   ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl --with-ssl=/usr/local/ssl';
+      #   ' -enable-modules=all --enable-mpm=event' .
+      #   ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl' .
+      #   ' --with-ssl=/usr/local/openssl-1.1.1k/';
+
       _run 'make';
       _sudo 'make install';
     }
