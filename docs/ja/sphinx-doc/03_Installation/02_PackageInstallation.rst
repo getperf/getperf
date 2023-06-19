@@ -28,7 +28,7 @@
     sudo -E yum -y groupinstall "Development Tools"
     sudo -E yum -y install kernel-devel kernel-headers
     sudo -E yum -y install expat expat-devel libxml2-devel
-    sudo -E yum -y install perl-XML-Parser perl-XML-Simple
+    sudo -E yum -y install perl-XML-Parser perl-XML-Simple perl-Crypt-SSLeay perl-Net-SSH2
     sudo -E yum -y update
 
 Getperf モジュールのダウンロードと解凍
@@ -69,7 +69,7 @@ cpanm と、Perl ライブラリをインストールします
     そのため、インストールコマンドは、全てsudo 権限で実行するか、--sudo　オプションをつけて実行してください。
 
 .. note:: cpanm コマンド実行時に 「Installing the dependencies failed:」のライブラリの依存エラーが出た場合は、
-    前述のyumのパッケージインストールでPerlライブラリを手動でインストールしてください。
+    yum のパッケージインストールでPerlライブラリを手動でインストールしてください。
     試行錯誤的な作業が必要となる場合がありますが、cpanm で以下のメッセージが出力されれば完了となります。
 
     ::

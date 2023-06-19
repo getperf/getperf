@@ -5,8 +5,9 @@
 
 ::
 
-    sudo -E rex svc_auto
-    rex svc_start
+   cd $GETPERF_HOME
+   sudo -E rex svc_auto
+   rex svc_start
 
 svc_auto が OS起動時の自動起動設定で、svc_start
 が各サービスの起動コマンドです。他に以下のコマンドが有り、用途に合わせて利用してください。
@@ -20,3 +21,12 @@ svc_auto が OS起動時の自動起動設定で、svc_start
 管理用Webサービスの再起動       rex restart_ws_admin
 データ受信用Webサービスの再起動 rex restart_ws_data
 =============================== ==========================
+
+.. note::
+
+   MySQL,Apache(httpd)の再起動で /etc/init.d/httpd: No such file or directory のエラー
+   が発生する場合がありますが。systemctl で起動スクリプトの設定してあるので、
+   無視して構いません。
+
+
+

@@ -1,28 +1,38 @@
 ドキュメント作成
 ================
 
-ドキュメント作成ツール Sphinx を用いてHTMLドキュメントを作成します。
+.. note::
 
+   オンラインドキュメントを利用する場合は、本手順でドキュメントを作成ます。
+   不要な場合は本ページはスキップしてください。
+
+Python のドキュメント作成ツール Sphinx を用いてHTMLドキュメントを作成します。
 
 Miniconda インストール
 ----------------------
 
 Python ディストリビューション Miniconda をインストールします。
+以下のダウンロードサイトから最新のインストールモジュールをダウンロード
+して $HOME/miniconda3 下にインストールします。
 
-cd /tmp
-wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash Miniconda3-latest-Linux-x86_64.sh
+::
+
+   cd /tmp
+   wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+   bash Miniconda3-latest-Linux-x86_64.sh
 
 「accept the license terms?」 の入力を yes に、「conda init?」 の 入力を yes に変更します。それ以外の入力は既定値のままにして、 インストールを実行します。
 
 設定を反映させるために、~/.bashrc を再読み込みします。
 
-source ~/.bashrc
+::
 
-
+   source ~/.bashrc
 
 Sphinx のインストール
 ---------------------
+
+以下 pip コマンドを使用して Sphinx をインストールします。
 
 ::
 
@@ -64,11 +74,19 @@ HTMLドキュメントの生成
    cd $GETPERF_HOME/docs/ja/sphinx-doc
    make html
 
+該当ディレクトリの下の、_build/html を /var/www/html の下にリンクします。
+絶対パスでの指定が必要なため、カレントディレクトリを確認して、ln -s コマンド
+に指定します。
 
+::
+
+   # カレントディレクトリ確認
    pwd
    /home/psadmin/getperf/docs/ja/sphinx-doc
 
-   ln -s /home/psadmin/getperf/docs/ja/sphinx-doc/_build/html/ /var/www/html/getperf
+   # 絶対パス指定で、/var/www/html/getperfにリンク作成 
+   ln -s /home/psadmin/getperf/docs/ja/sphinx-doc/_build/html/ \
+   /var/www/html/getperf
 
 
 ビルドしたHTMLをブラウザから確認します。

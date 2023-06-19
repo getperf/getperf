@@ -157,50 +157,31 @@ Zabbix エージェントは以下の URL からダウンロードします。
 
 使用する Zabbix バージョン、エージェントをインストールする対象 OS 、アーキテクチャに合せてダウンロードしてください。
 
-例として、 Zabbix 5.0.34 で、 Linux, Windows の 64ビット版をダウンロードする場合は以下のコマンドを実行します。
+例として、 Zabbix 6.0.17 で、 Linux, Windows の 64ビット版をダウンロードする場合は以下のコマンドを実行します。
 
 ::
 
    # ダウンロードディレクトリに移動
    cd ~/getperf/module/getperf-agent/var/zabbix/
    # Zabbix ダウンロードサイトから確認した、アーカイブ保存URLを指定して、各プラットフォームの Zabbix エージェントをダウンロード
-   #  Zabbix 5.0.34 で、 Linux, Windows の 64ビット版をダウンロードする場合は以下のコマンドを実行
-   wget https://cdn.zabbix.com/zabbix/binaries/stable/5.0/5.0.34/zabbix_agent-5.0.34-linux-2.6-amd64-static.tar.gz
-   wget https://cdn.zabbix.com/zabbix/binaries/stable/5.0/5.0.34/zabbix_agent-5.0.34-linux-3.0-amd64-static.tar.gz
-   wget https://cdn.zabbix.com/zabbix/binaries/stable/5.0/5.0.34/zabbix_agent-5.0.34-windows-amd64.zip
-
-
-ssh-copy-id ${USER}@${target_host}
-
-ssh-copy-id psadmin@192.168.0.59
-${USER}@${target_host}
-
-パスワード利かれる
-
-chmod go-w ~/
-
-
-chmod 700 ~/.ssh
-chmod 600 ~/.ssh/authorized_keys
-
-
-sudo -E cpanm DBD::mysql
-
-
-sudo chmod a+wrx /var/www/html/
-
-
-ln: failed to create symbolic link '/var/www/phpdir/php73/test1': No such file or directory
-2023/05/25 05:33:26 [CRITICAL] ln -s /home/psadmin/site/test1/html/cacti /var/www/phpdir/php73/test1
+   #  Zabbix 6.0.17 で、 Linux, Windows の 64ビット版をダウンロードする場合は以下のコマンドを実行
+   wget https://cdn.zabbix.com/zabbix/binaries/stable/6.0/6.0.17/zabbix_agent-6.0.17-linux-2.6-amd64-static.tar.gz
+   wget https://cdn.zabbix.com/zabbix/binaries/stable/6.0/6.0.17/zabbix_agent-6.0.17-linux-3.0-amd64-static.tar.gz
+   wget https://cdn.zabbix.com/zabbix/binaries/stable/6.0/6.0.17/zabbix_agent-6.0.17-windows-amd64.zip
 
 
 この後の作業について
 --------------------
 
 以上でベースとなる監視サーバのインストール作業は完了です。
-この後の作業は監視対象となるエージェント側のインストールの事前作業となり、監視対象と同じ OS プラットフォーム上で、
-エージェントのコンパイルをします。
+次のエージェントコンパイルでは監視対象となるエージェント側のインストール
+作業となり、監視対象と同じ OS プラットフォーム上で、エージェントの
+コンパイルをします。
+
+また、以下の手順で、セットアップした監視サーバ自身の監視設定を行います。
 
 * エージェントのコンパイル
+* ドキュメント作成
+* RSync セットアップ
 
 

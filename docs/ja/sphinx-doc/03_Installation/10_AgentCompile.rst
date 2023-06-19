@@ -130,7 +130,37 @@ Linux ディストリビューションのヘッダファイルを作成しま�
     ./configure
     make
 
+コンパイル済みバイナリをパッケージングします。
+
+Zabbix エージェントをバンドルする場合、以下の設定ファイルを編集してください。
+
+::
+
+   vi var/zabbix/Recipe.pl
+
+以下の、ZABBIX_AGENT_VERSIONを設定します。
+
+::
+
+     "ZABBIX_AGENT_VERSION"     => "6.0.17",
+
+var/zabbix ディレクトリ下にある、エージェントダウンロードファイルを同じ
+バージョンに設定してください。
+
+::
+
+   ls var/zabbix/
+   zabbix_agent-6.0.17-linux-2.6-amd64-static.tar.gz
+
+Zabbix エージェントをバンドルさせない場合は、以下 GETPERF_AGENT_USE_ZABBIX 
+を 0 に設定します。
+
+::
+
+   "GETPERF_AGENT_USE_ZABBIX" => 0,
+
 deploy.pl スクリプトを用いて、コンパイル済みパッケージとしてパッケージングします。
+
 
 ::
 
@@ -144,11 +174,11 @@ deploy.pl スクリプトを用いて、コンパイル済みパッケージと�
     getperf-zabbix-Buildx-xxx-xxx.tar.gz   # エージェントホームのアーカイブ
     upload_var_module.zip             # エージェントホーム、アップデートモジュールのアーカイブ
 
-.. note::
+.. .. note::
 
-   下記の not found エラーが出た場合、ガイド目次:インストール＞Zabbixインストール にて保存したモジュール名を、エラーメッセージの内容に合わせてリネームしてください。 
+..    下記の not found エラーが出た場合、ガイド目次:インストール＞Zabbixインストール にて保存したモジュール名を、エラーメッセージの内容に合わせてリネームしてください。 
 
-   not found : '/home/psadmin/work/agent/src/getperf-agent/var/zabbix/zabbix_agents_6.0.17.linux2_6.amd64.tar.gz' at deploy.pl line 338.
+..    not found : '/home/psadmin/work/agent/src/getperf-agent/var/zabbix/zabbix_agents_6.0.17.linux2_6.amd64.tar.gz' at deploy.pl line 338.
 
 upload_var_module.zip　が、ダウンロードサイト用にファイル一式をアーカイブしたファイルとなり、監視サーバにアップロードします。
 
@@ -285,16 +315,14 @@ c:を作業ディレクトリとして作成し、その下でコンパイルを
     c:\work>cd getperf-agent
     c:\work\getperf-agent> nmake /f Makefile.win
 
+Zabbix エージェントをバンドルする場合は、前節の Linux のコンパイル
+の説明の通り 以下設定ファイルを編集します。
+
+::
+
+    c:\work\getperf> notepad var/zabbix/Recipe.pl
+
 コンパイル済みパッケージとしてパッケージングします。
-
- vi var/zabbix/Recipe.pl
-
-/home/psadmin/work/agent/getperf-agent/var/zabbix/zabbix_agents_5.0.34.linux2_6.amd64.tar.gz
-
-cp /home/psadmin/work/agent/getperf-agent/var/zabbix/zabbix_agent-5.0.34-linux-2.6-amd64.tar.gz \
-/home/psadmin/work/agent/getperf-agent/var/zabbix/zabbix_agents_5.0.34.linux2_6.amd64.tar.gz
-
- cp var/zabbix/zabbix_agent-5.0.34-linux-2.6-amd64-static.tar.gz var/zabbix/zabbix_agent-5.0.34-linux-2.6-amd64.tar.gz
 
 ::
 

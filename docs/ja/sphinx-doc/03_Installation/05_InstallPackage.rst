@@ -1,253 +1,207 @@
 パッケージインストール
 ======================
 
-
+各種パッケージをインストールします。
 
 MySQL 8.0 インストール
 ----------------------
 
 パッケージインストールの前に、バージョン8 を指定して MySQL パッケージをインストールします。
 
+RH8系の OS の場合、以下のコマンドで OS 標準の AppStream から mysql:8.0 を指定し、
+MySQLサーバ(mysql-server) をインストールします。
 
+::
+
+   sudo -E dnf module enable mysql:8.0
+   sudo -E yum install mysql-server
+
+RH7系のOS の場合、以下、MySQLドキュメントのMySQL Yum リポジトリを使用して MySQL 
+を Linux にインストールするを参考にして、MySQL 8.0 をインストールします。
+
+::
+
+   https://dev.mysql.com/doc/refman/8.0/ja/linux-installation-yum-repo.html
+
+MySQL Yum リポジトリをインストールします。パッケージ名は上記 URL の
+ダウンロードページから適切なパッケージ名を確認して入力してください。
 
 ::
 
    wget https://dev.mysql.com/get/mysql80-community-release-el8-4.noarch.rpm
-
    sudo -E yum localinstall mysql80-community-release-el8-4.noarch.rpm
 
+インストールするMySQLバージョンのリポジトリを確認します。
 
 ::
 
+   sudo -E yum -y install yum-utils
    sudo -E yum repolist all | grep mysql
 
-   sudo yum -y install yum-utils
-   sudo yum-config-manager --disable mysql57-community
-   sudo yum-config-manager --enable mysql80-community
+上記リストで MySQL 8.0 より古いリポジトリが有効化されていた場合は、
+以下のコマンドで無効化します。
 
 ::
 
-   yum info mysql80-community
+   sudo -E yum-config-manager --disable mysql57-community
 
-   sudo yum module disable mysql
+また、OS 標準の MySQL モジュールのリポジトリを無効化します。
 
 ::
 
-   sudo yum -y install mysql-community-server
+   sudo -E yum module disable mysql
 
-   sudo  yum -y install mysql-community
+上記リストのMySQL 8のリポジトリを有効化します。
+
+::
+
+   sudo -E yum-config-manager --enable mysql80-community
+
+MySQL サーバをインストールします
+
+::
+
+   sudo -E yum -y install mysql-community
+
+MySQL の設定を変更します。
+
+::
+
+   sudo vi /etc/my.cnf
+
+[mysqld]の後に以下の行を追加します。
+
+.. note::
+
+   最後の、default-time-zone は後述のタイムゾーン設定後にコメントアウトを外します。
+
+::
+
+   [mysqld]
+   default_authentication_plugin=mysql_native_password
+   # MySQL Yum リポジトリからインストールした場合は、以下のパスワード設定のコメントアウトを外してください
+   #validate_password.length=4
+   #validate_password.mixed_case_count=0
+   #validate_password.number_count=0
+   #validate_password.special_char_count=0
+   #validate_password.policy=LOW
+   character-set-server=utf8mb4
+   collation-server=utf8mb4_unicode_ci
+   #default-time-zone='Asia/Tokyo'
+
+
+MySQL を起動します
+
+::
+
    sudo systemctl enable mysqld
    sudo systemctl start mysqld
 
-PHP
----
-
-PHP
-
-dnf module list php
-
-Name        Stream         Profiles                          Summary
-php         7.2 [d]        common [d], devel, minimal        PHP scripting language
-php         7.3            common [d], devel, minimal        PHP scripting language
-php         7.4            common [d], devel, minimal        PHP scripting language
-php         8.0            common [d], devel, minimal        PHP scripting language
-
-sudo dnf module enable php:7.3
-
-
- sudo dnf install php php-cli php-common
-sudo systemctl restart httpd
-
-sudo yum install php-mysqlnd
-
-
- sudo vim /var/www/html/info.php
-
-http://192.168.0.59/info.php
-
-つながった
-
-Gradle
--------
-
-Java パッケージマネージャ SDKMAN! をインストールします
+MySQL の root パスワードを設定します。仮パスワードを確認します。
 
 ::
 
-    curl -s "https://get.sdkman.io" | bash 
-
-.bash_profile に SDKMAN 初期化スクリプトを追加します
+   sudo cat /var/log/mysqld.log | grep 'temporary password'
 
 ::
 
-    vi ~/.bash_profile
-    (最終行に追加)
-    source "$PATH/.sdkman/bin/sdkman-init.sh"
+   mysql -u root -p
 
-.bash_profile を再読み込みします
+上記仮パスワードを入力してログインします。
+上記で仮パスワードがない場合は ENTER を押してください。
 
-::
-
-    source ~/.bash_profile
-
-インストールできるGradleのバージョン一覧を表示し、6 系の最新バージョンを確認します
-
-::
- 
-    sdk list gradle
-
-確認したバージョンを指定して Gradle をインストールします
+config/getperf_site.json の GETPERF_CACTI_MYSQL_ROOT_PASSWD に記載した、
+パスワードを設定します。
 
 ::
 
-    sdk install gradle 6.7.1
+   USE mysql;
+   ALTER USER 'root'@'localhost' identified BY '{パスワード}';
 
+.. note:: 既定のパスワードは、 getperf です。
 
-.. エージェント Web サービスのインストールを行います。
-.. yum を用いて gcc,JDK等の開発環境、Apache、PHP をインストールします。
-Javaプログラムのビルドツール Apache Antと、Gradleをインストールします
-
-
-    sdk list ant
-
-確認したバージョンを指定して Gradle をインストールします
+MySQL に Timezone テーブルをロードします。
 
 ::
 
-    sdk install ant 1.9.15
+    mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
+
+設定ファイル(my.cnf)を編集しタイムゾーンを設定します。
+
+::
+
+   sudo vi /etc/my.cnf.d/mysql-server.cnf
+
+default-time-zone を設定します。
+
+::
+
+    （中略）
+    [mysqld]
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_unicode_ci
+    default-time-zone='Asia/Tokyo'   #追加
+
+MySQL を再起動します。
+
+::
+
+   sudo systemctl restart mysqld
 
 
-そのた
-------
+PHP 7.3 インストール
+---------------------
 
-sudo -E yum  install \
-   pcre-devel \
-   php php-mbstring \
-   php-mysqlnd php-pear php-common php-gd php-devel php-cli \
-   cairo-devel libxml2-devel pango-devel pango \
-   libpng-devel freetype freetype-devel  \
-   curl git rrdtool zip unzip \
-   mysql-devel
+PHP 7.3 のバージョンを選択して、PHP パッケージをインストールします。
+
+PHPモジュールリストを確認します。
+
+::
+
+   sudo -E dnf module list php
+
+::
+
+   Name        Stream         Profiles                          Summary
+   php         7.2 [d]        common [d], devel, minimal        PHP scripting language
+   php         7.3            common [d], devel, minimal        PHP scripting language
+   php         7.4            common [d], devel, minimal        PHP scripting language
+   php         8.0            common [d], devel, minimal        PHP scripting language
+
+上記リストから php:7.3 を選択します。
+
+::
+
+   sudo -E dnf module enable php:7.3
+
+PHP パッケージをインストールします。
+
+::
+
+   sudo -E yum -y install php php-cli php-common
+
+また、関連する PHP パッケージをインストールします。
+
+::
+
+   sudo -E yum  install \
+      pcre-devel \
+      php php-mbstring \
+      php-mysqlnd php-pear php-common php-gd php-devel php-cli \
+      cairo-devel libxml2-devel pango-devel pango \
+      libpng-devel freetype freetype-devel  \
+      curl git rrdtool zip unzip \
+      mysql-devel
+
+httpd サービスを再起動します。
+
+::
+
+   sudo systemctl restart httpd
 
 
-       .. sudo -E yum --enablerepo=epel install \
-       ..      autoconf libtool \
-       ..      gcc gcc-c++ make openssl-devel pcre-devel \
-       ..      httpd php php-mbstring \
-       ..      php-mysqlnd php-pear php-common php-gd php-devel php-cli \
-       ..      openssl-devel expat-devel \
-       ..      java-1.8.0-openjdk java-1.8.0-openjdk-devel \
-       ..      redhat-lsb \
-       ..      cairo-devel libxml2-devel pango-devel pango \
-       ..      libpng-devel freetype freetype-devel libart_lgpl-devel \
-       ..      curl git rrdtool zip unzip \
-       ..      mysql-devel
-
-
-
-.. MySQL 5.6 バージョン指定インストール
-.. ---------------------------------------
-
-.. パッケージインストールの前に、MySQL バージョン5.6 を指定するように
-.. yum リポジトリを更新 
-
-
-.. ::
-
-..    # RHEL7 の場合
-..    sudo -E yum localinstall http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
-..    # RHEL8 の場合
-..    sudo -E yum localinstall http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm
-
-..    sudo -E yum repolist all | grep mysql
-
-..    sudo -E yum -y install yum-utils
-..    sudo -E yum config-manager --disable mysql57-community
-..    sudo -E yum config-manager --enable mysql56-community
-
-..    sudo dnf module disable mysql     
-..    sudo yum info mysql-community-server
-
-.. MySQL パッケージをインストールする
-
-.. ::
-
-..    sudo  yum -y install mysql-community-server
-..    sudo systemctl enable mysqld
-..    sudo systemctl start mysqld
-
-.. 以降は、mysql-devel 等の依存パッケージも 5.6 系がインストールされるようになる
-
-.. RedHat7,CentOS7の場合
-.. ---------------------
-
-.. EPEL yum リポジトリをインストールします
-
-.. ::
-
-..   sudo -E yum -y install epel-release
-
-.. .. note::
-
-..    RHEL8 の場合、
-
-..    ::
-
-..        sudo -E dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-
-.. REMI yum リポジトリをインストールします
-
-.. ::
-
-..   cd /tmp
-..   wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-..   sudo rpm -Uvh remi-release-7.rpm
-
-.. .. note::
-
-..    RHEL8 の場合、
-
-..    ::
-
-..       cd /tmp
-..       wget http://rpms.famillecollet.com/enterprise/remi-release-8.rpm
-..       sudo rpm -Uvh remi-release-8.rpm
-
-.. 基本パッケージをインストールします
-
-.. ::
-
-..   sudo -E yum --enablerepo=epel install \
-..         autoconf libtool \
-..         gcc gcc-c++ make openssl-devel pcre-devel \
-..         httpd php php-mbstring \
-..         php-mysql php-pear php-common php-gd php-devel php-cli \
-..         openssl-devel expat-devel \
-..         java-1.8.0-openjdk java-1.8.0-openjdk-devel \
-..         redhat-lsb \
-..         cairo-devel libxml2-devel pango-devel pango \
-..         libpng-devel freetype freetype-devel libart_lgpl-devel \
-..         curl git rrdtool zip unzip \
-..         mysql-devel
-
-.. .. note::
-
-..    RHEL8 の場合の指定。php-mysqlnd に変更。httpd 2.4, php 7.2, python36 が入る
-
-..    ::
-
-..        sudo -E yum --enablerepo=epel install \
-..             autoconf libtool \
-..             gcc gcc-c++ make openssl-devel pcre-devel \
-..             httpd php php-mbstring \
-..             php-mysqlnd php-pear php-common php-gd php-devel php-cli \
-..             openssl-devel expat-devel \
-..             java-1.8.0-openjdk java-1.8.0-openjdk-devel \
-..             redhat-lsb \
-..             cairo-devel libxml2-devel pango-devel pango \
-..             libpng-devel freetype freetype-devel libart_lgpl-devel \
-..             curl git rrdtool zip unzip \
-..             mysql-devel
+Gradle, Ant インストール
+------------------------
 
 Gradle をインストールします
 
@@ -282,8 +236,18 @@ Apache Ant をインストールします
 
    sudo -E yum -y install ant
 
-PHP設定ファイル /etc/php.ini を変更します
+その他
+------
+
+Apache HTML ホームページのアクセス権限を変更します。
 
 ::
 
-   sudo -E perl ./script/config-pkg.pl php
+   sudo chmod a+wrx /var/www/html
+
+PHP設定ファイル /etc/php.ini を変更します。
+
+::
+
+   cd $GETPERF_HOME
+   sudo perl ./script/config-pkg.pl php

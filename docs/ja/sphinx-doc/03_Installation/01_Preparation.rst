@@ -115,10 +115,11 @@ Cron の sudo 実行許可設定をするため、以下の行をコメントア
     (最終行に追加)
     psadmin        ALL=(ALL)       NOPASSWD: ALL
 
-インストールするApacheプロセスがホームディレクトリ下をアクセスできるよう、ホームディレクトリのアクセス権限を変更します
+インストールするApacheプロセスがホームディレクトリ下を参照できるよう、ホームディレクトリのアクセス権限を変更します
 
 ::
 
     su - psadmin
     chmod a+rx $HOME
+    chmod go-w $HOME
 

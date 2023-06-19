@@ -474,7 +474,6 @@ desc "Need to run sudo. Install Zabbix";
 task "prepare_zabbix", sub {
   my $config = config('base');
   my $zabbix_config = config('zabbix');
-print Dumper $zabbix_config;
   # sudo {
   #   command => sub {
   #     if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {

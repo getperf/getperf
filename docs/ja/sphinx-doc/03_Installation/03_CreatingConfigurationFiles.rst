@@ -78,13 +78,13 @@ getperf_zabbix.json
 以下パラメータを 0　にしてください。
 
 
-zabbix_sender を有効にする場合のみ1を設定
+オプションの zabbix_sender を有効にする場合のみ 1 を設定
 
 ::
 
       "GETPERF_USE_ZABBIX_SEND": 0,
 
-エージェントモジュールに Zabbix エージェントを追加する場合のみ1を設定
+エージェントモジュールに Zabbix エージェントを追加する場合のみ 1 を設定
 
 ::
 
@@ -98,17 +98,3 @@ zabbix_sender を有効にする場合のみ1を設定
 
 既定値の場合は、admin/getperf でログインします。
 
-.. getperf_influx.json
-.. -------------------
-
-.. 時系列データベース InfluxDB　の設定をします。
-
-.. ::
-
-..     vi config/getperf_influx.json
-
-.. 本ソフトのインストールはオプションで、デフォルトは無効となります。有効にする場合は、"GETPERF_USE_INFLUXDB"　を 1　にしてください。InfluxDB は α リリースの状態となります。
-
-.. ::
-
-.. 	"GETPERF_USE_INFLUXDB": 1
