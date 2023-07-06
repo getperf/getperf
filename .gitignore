@@ -17,6 +17,7 @@ cpanfile.*
 /var/agent/*
 /var/docs/*
 /var/site/*
+/var/cacti/*
 /var/template/*
 /module/getperf-ws/build/
 /module/getperf-ws/lib/

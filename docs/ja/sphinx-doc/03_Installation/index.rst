@@ -20,6 +20,7 @@
    11_BuildDocument
    12_RsyncSetup
    13_AgentInstall
+   23_DowngradeCacti12to08
    .. 20_CentOS7Installation
    .. 21_RHEL8Installation
    .. 22_Cacti12Installation

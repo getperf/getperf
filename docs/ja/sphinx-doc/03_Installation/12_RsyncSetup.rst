@@ -18,12 +18,18 @@ RSync の関連パッケージをインストールします。
     sudo -E yum -y install rsync xinetd  rsync-daemon
 
 以下のコマンドを実行して git の環境設定をします。
+メールアドレス、ユーザ名は環境に合わせて設定してください。
 
 ::
 
+   # デフォルトブランチを main にします
    git config --global init.defaultBranch main
+
+   # メールアドレスを設定します
    # git config --global user.email "you@example.com"
    git config --global user.email "管理者のメールアドレス"
+
+   # ユーザ名を設定します
    # git config --global user.name "Your Name"
    git config --global user.name "管理者名"
 
@@ -63,7 +69,7 @@ RSync の関連パッケージをインストールします。
 
 ::
 
-   cd ptune/bin/
+   cd $HOME/ptune/bin/
    ./getperfctl setup
 
 前節の監視サイト作成で実行したコンソールに表示された、サイトキー、
@@ -97,13 +103,10 @@ rsyncd.conf ファイルを以下例の様に編集します。
     [archive_site1]
     # 転送データの保存ディレクトリ
     path =  /home/psadmin/getperf/t/staging_data/site1/
-    # 転送先許可IPアドレス(新サーバから疎通できるようにする)
     hosts allow = *
     hosts deny = *
     list = true
-    # 転送データのオーナー
     uid = psadmin
-    # 転送データのオーナーグループ
     gid = psadmin
     read only = false 
     dont compress = *.gz *.tgz *.zip *.pdf *.sit *.sitx *.lzh *.bz2 *.jpg *.gif *.png
@@ -119,7 +122,7 @@ rsyncd.conf ファイルを以下例の様に編集します。
     path =  /home/psadmin/getperf/t/staging_data/{サイトキー}/
 
 
-rsync 設定後、xinetd を再起動して、rsync デーモンを起動します。
+rsync 設定後、 rsync デーモンを起動します。
 
 ::
 
@@ -185,13 +188,13 @@ cronで定期起動
 
 ::
 
-   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (cd {サイトディレクトリ}; {GETPERFホームディレクトリ}/script/sitesync rsync://{監視サーバアドレス}/archive_{サイトキー} > /dev/null 2>&1) &
+   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (cd {サイトディレクトリ}; {GETPERFホームディレクトリ}/script/sitesync rsync://{監視サーバアドレス}/archive_{サイトキー} -i 300 -t 1 -p > /dev/null 2>&1) &
 
 例で作成した監視サイト site1 の場合、以下を実行します。
 
 ::
 
-   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (cd /home/psadmin/site/site1; /home/psadmin/getperf/script/sitesync rsync://localhost/archive_site1 > /dev/null 2>&1) &
+   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (cd /home/psadmin/site/site1; /home/psadmin/getperf/script/sitesync rsync://localhost/archive_site1 -i 300 -t 1 -p > /dev/null 2>&1) &
 
 Cacti 監視グラフ登録
 --------------------

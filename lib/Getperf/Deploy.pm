@@ -79,6 +79,8 @@ sub run {
 		return $self->config_axis2;
 	} elsif ($command eq 'php') {
 		return $self->config_php;
+	} elsif ($command=~/^cacti/) {
+		return $self->config_cacti($command);
 	} elsif ($command eq 'epel_repo') {
 		return $self->config_epel_repo;
 	} elsif ($command eq 'epel_repo') {
@@ -151,13 +153,92 @@ sub parse_command_option_package {
 	}
 	$self->{command} = shift(@ARGV);
 
- 	if ($self->{command}!~/(php|epel_repo)/) {
+ 	if ($self->{command}!~/(php|epel_repo|cacti)/) {
 		print "invalid command\n" . $usage;
 		return;
 	}
 
 	return 1;
 }
+
+sub config_cacti {
+	my ($self, $command) = @_;
+	print ("Config Cacti source : $command\n");
+	if ($command eq 'cacti12') {
+		$self->config_cacti12;
+	} elsif ($command eq 'cacti08') {
+		$self->config_cacti08;
+	} else {
+		print "unkown cacti patch $command\n";
+		return;
+	}
+	return 1;
+}
+
+sub config_cacti12 {
+	my $self = shift;
+	my $patch = 'lib/api_tree.php';
+	if (!-f $patch) {
+		die "cacti patch file not found $patch\n";
+	}
+	eval {
+		my $config_file = file($patch);
+		LOG->notice("patch $config_file");
+		my @lines = $config_file->slurp or die $!;
+		my @out;
+		for my $line(@lines) {
+			chomp($line);
+			if ($line=~/order_by = 'ORDER BY position'/) {
+				$line=~s/'ORDER BY position'/'ORDER BY position IS NULL ASC, position'/g;
+				push @out, $line;
+			} else {
+				push @out, $line;
+			}
+		}
+		my $writer = $config_file->open('w') or die $!;
+		$writer->print(join("\n", @out));
+		$writer->close;
+	};
+	if ($@) {
+		LOG->error($@);
+		return;
+	}
+	return 1;
+}
+
+sub config_cacti08 {
+	my $self = shift;
+	my @config_files = qw|graph_image.php graph_xport.php|;
+	for my $config_file(@config_files) {
+		next if (!-f $config_file);
+		LOG->notice("patch $config_file");
+	 	eval {
+			$config_file = file($config_file);
+	     	my @lines = $config_file->slurp or die $!;
+	     	my @out;
+	 		for my $line(@lines) {
+	 			chomp($line);
+	 			if ($line=~/1600000000/) {
+	 				$line=~s/1600000000/2600000000/g;
+	 				push @out, $line;
+	 			} else {
+	 				push @out, $line;
+	 			}
+	 		}
+
+	 		my $writer = $config_file->open('w') or die $!;
+	 		$writer->print(join("\n", @out));
+	 		$writer->close;
+	 	};
+	 	if ($@) {
+	 		LOG->error($@);
+	 		return;
+	 	}
+	}
+
+	return 1;
+}
+
 
 sub config_php {
 	my $self = shift;

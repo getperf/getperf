@@ -702,18 +702,27 @@ task "prepare_agent_download_site", sub {
 desc "Download Cacti source";
 task "prepare_cacti", sub {
   my $cacti_config = config('cacti');
-  my $archive = $cacti_config->{GETPERF_CACTI_ARCHIVE};
-
-  my $version  = '0.8.8e';
+  my $version  = '0.8.8g';
+  my $archive  = $cacti_config->{GETPERF_CACTI_ARCHIVE} || 
+    "cacti-${version}.tar.gz";
   $version = $1 if ($archive=~/cacti-(.+?)\.tar\.gz/);
-  my $download = 'http://www.cacti.net/downloads';
-  my $archive  = "cacti-${version}.tar.gz";
+
   my $config = config('base');
   my $cacti_dir = $config->{home} . '/var/cacti' || die;
   my $archive_path = "$cacti_dir/$archive";
-  print $archive_path . "\n";
+
   if (!-f $archive_path) {
-    download "$download/${archive}", $archive_path;
+    my $download = $cacti_config->{GETPERF_CACTI_DOWNLOAD_SITE} || 
+      'http://www.cacti.net/downloads';
+    _run "wget --no-check-certificate $download/${archive} -P ${cacti_dir}";
+  }
+  _run "cd ${cacti_dir}; tar xf ${archive}";
+
+  {
+    my $deploy = $config->{home} . '/script/config-pkg.pl';
+    my $command = ($version=~/^1\.2/) ? 'cacti12' : 'cacti08';
+    my $module = "cacti-${version}";
+    _run "cd ${cacti_dir}/${module}; perl $deploy $command; cd ..; tar cf - ${module} | gzip > ${archive}";
   }
 };
 
