@@ -199,6 +199,49 @@ httpd サービスを再起動します。
 
    sudo systemctl restart httpd
 
+Cactiモジュールダウンロードとパッチ適用
+---------------------------------------
+
+Cacti 開発元からモジュールダウンロードとスクリプトのパッチ適用をします。
+以下の設定ファイルでダウンロードする Cacti バージョンを指定しています。
+
+::
+
+   cd ~/getperf
+   cat config/getperf_cacti.json
+
+::
+
+   {
+        "GETPERF_CACTI_HTML":             "/var/www/html",
+        "GETPERF_CACTI_ARCHIVE_DIR":      "/home/psadmin/getperf/var/cacti",
+        "GETPERF_CACTI_DOWNLOAD_SITE":    "https://files.cacti.net/cacti/linux/",
+        "GETPERF_CACTI_ARCHIVE":          "cacti-1.2.24.tar.gz",
+        "GETPERF_CACTI_HOME":             "/home/psadmin/getperf/lib/cacti",
+        "GETPERF_CACTI_TEMPLATE_DIR":     "template/1.2.24",
+        "GETPERF_CACTI_DUMP":             "template/1.2.24/cacti.dmp",
+        "GETPERF_CACTI_DOMAIN_TEMPLATES": ["Linux","Windows"],
+        "GETPERF_CACTI_CONFIG":           "template/1.2.24/config.php.tpl"
+   }
+
+パッチ適用可能なバージョンは、Cacti-0.8.8g か、 Cacti-1.2.24 となり、
+どちらかのバージョンの指定があることを確認します。
+
+以下のコマンドでダウンロード、パッチ適用をします。
+
+::
+   
+   rex prepare_cacti
+
+実行すると、var/cacti の下に以下のような指定バージョンの Cacti ファイルが生成
+されることを確認します。
+
+::
+
+   ls  -l var/cacti/
+   total 41960
+   drwxrwxr-x 18 psadmin psadmin     4096 Feb 27 22:58 cacti-1.2.24
+   -rw-rw-r--  1 psadmin psadmin 42958488 Jul  6 15:16 cacti-1.2.24.tar.gz
 
 Gradle, Ant インストール
 ------------------------
