@@ -11,6 +11,12 @@ Bug fix:
   SQL を ORDER BY position IS NULL ASC, position  に修正するとソートした結果の
   最後になる。
 
+* Cacti 管理画面からグラフ削除ができない問題対処
+
+[Thu Jul 06 16:01:05.958825 2023] [:error] [pid 107689] [client 192.168.133.1:62507] PHP Warning:  unserialize() expects exactly 1 parameter, 2 given in /home/psadmin/site/integrateddb/html/cacti-1.2.24/lib/functions.php on line 4466, referer: http://alma8.toshiba.co.jp/integrateddb/host.php
+
+sanitize_unserialize_selected_items
+
 ToDo:
 
 * Cacti0.8,Cacti1.2結合 []

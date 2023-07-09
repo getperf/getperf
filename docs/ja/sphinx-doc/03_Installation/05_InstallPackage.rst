@@ -199,6 +199,60 @@ httpd サービスを再起動します。
 
    sudo systemctl restart httpd
 
+PHP 7.3 インストール(RedHat7の場合)
+------------------------------------
+
+CentOS7,OracleLinux7の場合は、以下のRemiリポジトリを利用して
+パッケージインストールします。
+
+既存のPHP パッケージを削除します。
+
+::
+
+   sudo -E yum remove php-*
+
+EPEL 、Remi リポジトリをインストールします。
+
+::
+
+   # EPELをインストール
+   sudo -E yum install epel-release
+   # Remiをインストール
+   sudo -E yum install http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+
+remi-php73 を選択して PHP 7.3 パッケージをインストールします。
+
+::
+
+   sudo -E yum  install  --enablerepo=epel,remi,remi-php73 \
+      pcre-devel \
+      php php-mbstring \
+      php-mysqlnd php-pear php-common php-gd php-devel php-cli \
+      cairo-devel libxml2-devel pango-devel pango \
+      libpng-devel freetype freetype-devel  \
+      curl git rrdtool zip unzip \
+      mysql-devel  php php-cli php-common  php-mysqlnd  php-json
+
+composer を実行して、PHP ライブラリをインストールします。
+
+::
+
+   cd ~/getperf
+   rex prepare_composer
+
+php.ini パッチを適用します。
+
+::
+
+   sudo -E perl $HOME/getperf/script/config-pkg.pl php
+
+httpd サービスを再起動します。
+
+::
+
+   sudo service httpd restart
+
+
 Cactiモジュールダウンロードとパッチ適用
 ---------------------------------------
 
