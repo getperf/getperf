@@ -44,11 +44,20 @@ MySQL のアカウント管理の設定を変更します。
     #validate_password.policy=LOW
     default_authentication_plugin=mysql_native_password
 
+
+また、互換性の維持のため、SQLモードを以下に変更します。
+
+::
+
+    sql_mode=NO_ENGINE_SUBSTITUTION
+
 設定を反映させるため、MySQLを再起動します。
 
 ::
 
     sudo service mysqld restart
+
+
 
 root パスワードとセキュリティ設定
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -129,39 +138,18 @@ mariadb を再起動します。
     | Asia/Tokyo |
     +----------+
 
-.. MySQL チューニングパラメータ設定
-.. ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. 
-.. MySQL チューニングパラメータを設定します。
+また、SQLモードが以下になっていることを確認します。
 
-.. ::
+::
 
-..     sudo vi /etc/my.cnf
+    > show VARIABLES LIKE "%sql_mode%";
+    +---------------+------------------------+
+    | Variable_name | Value                  |
+    +---------------+------------------------+
+    | sql_mode      | NO_ENGINE_SUBSTITUTION |
+    +---------------+------------------------+
+    1 row in set (0.00 sec)
 
-.. [mysqld]の後に、以下のパラメータを追加します。
-
-.. ::
-
-..     [mysqld]
-..     max_allowed_packet=16777216
-..     max_heap_table_size=248M
-..     tmp_table_size=248M
-..     join_buffer_size=7M
-..     innodb_file_per_table=ON
-..     innodb_buffer_pool_size=912M
-..     innodb_doublewrite=OFF
-..     innodb_flush_log_at_trx_commit=2
-..     innodb_flush_log_at_timeout=3
-..     innodb_read_io_threads=32
-..     innodb_write_io_threads=16
-..     innodb_io_capacity=5000
-..     innodb_io_capacity_max=10000
-
-.. パラメータを反映させるため、MySQL を再起動します。
-
-.. ::
-
-..     systemctl restart mysqld
 
 Perl MySQL ライブラリのインストール
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -180,7 +168,9 @@ $GETPERF_HOME/var/cacti の下に Cacti モジュールをバンドルする構�
 Cacti を個別インストールする必要はなく、 Cacti のインストールは後述の監視サイト
 初期化コマンドで行います。
 
-詳細は、 サイト初期化コマンド :doc:`../10_AdminCommand/01_SiteInitialization` 
-を参照してください。
+    .. note:: 
+
+        詳細は、 サイト初期化コマンド :doc:`../10_AdminCommand/01_SiteInitialization` 
+        を参照してください。
 
 

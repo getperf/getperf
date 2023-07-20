@@ -183,18 +183,45 @@ sitesync コマンドの動作確認をします。
 cronで定期起動
 --------------
 
-上記で、sitesyncスクリプトの同作確認ができたら、cron よる定期起動
-の設定をします。
+上記で、sitesyncスクリプトの同作確認ができたら、cron よる定期起動の設定をします。
+cron 定期実行スクリプトのサンプルをサイトにコピーして編集します。
 
 ::
 
-   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (cd {サイトディレクトリ}; {GETPERFホームディレクトリ}/script/sitesync rsync://{監視サーバアドレス}/archive_{サイトキー} -i 300 -t 1 -p > /dev/null 2>&1) &
-
-例で作成した監視サイト site1 の場合、以下を実行します。
+    cd $HOME/site/site1
+    cp ~/getperf/script/cron_sumup.sh.sample script/cron_sumup.sh
+    vi script/cron_sumup.sh
 
 ::
 
-   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (cd /home/psadmin/site/site1; /home/psadmin/getperf/script/sitesync rsync://localhost/archive_site1 -i 300 -t 1 -p > /dev/null 2>&1) &
+    (
+    cd /home/psadmin/site/site1
+    $SYTESYNC rsync://localhost/archive_site1      $OPT 1> /dev/null 2> /dev/null
+    )
+
+上記記述を環境に合わせて修正します。
+
+::
+
+    (
+    cd {作成したサイトディレクトリ}
+    $SYTESYNC rsync://{作成したRSyncURL}      $OPT 1> /dev/null 2> /dev/null
+    )
+
+Cron の設定をします。
+
+::
+
+    EDITOR=vi crontab -e
+
+5分周期で 集計スクリプトを定期実行する設定をします。
+
+
+::
+
+   0,5,10,15,20,25,30,35,40,45,50,55 * * * * ({サイトディレクトリ}/script/cron_sumup.sh > /dev/null 2>&1) &
+   # 上記例の場合
+   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (/home/psadmin/site/site1/script/cron_sumup.sh > /dev/null 2>&1) &
 
 Cacti 監視グラフ登録
 --------------------
@@ -234,3 +261,4 @@ cacti-cli コマンドで Linux 用監視グラフテンプレートを作成し
 
     httpd://{監視サーバIPアドレス}/site1/
 
+ユーザ/パスワードに admin/admin を入力してログインしてください。

@@ -163,6 +163,26 @@ Webサービスエンジンの Apache Axis2 をダウンロードして、Tomcat
 -  Axis2 管理用 http://{監視サーバIPアドレス}:57000/axis2/
 -  Axis2 データ受信用 http://{監視サーバIPアドレス}:58000/axis2/
 
+    .. note::
+
+        IPv6が無効化設定されている場合、Tomcat の再起動でプロトコルエラーが発生します。
+        IPv6 形式の IP アドレスを使用しているためで、以下の設定ファイルを編集して、
+        IPv4 形式の IP に修正してください。
+
+        ::
+
+            # 管理用 Tomcat の設定ファイル編集
+            vi /usr/local/tomcat-admin/conf/server.xml
+            # データ用 Tomcat の設定ファイル編集
+            vi /usr/local/tomcat-data/conf/server.xml
+
+        以下の AJP のアクセスの address を修正します。
+
+        ::
+
+             <Connector protocol="AJP/1.3"
+                   address="127.0.0.1"
+
 
 Axis2 管理画面のアクセスが確認できたら、Getperf Web サービスをデプロイします。
 

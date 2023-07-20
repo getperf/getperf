@@ -32,6 +32,24 @@ Python ディストリビューション Miniconda をインストールしま�
 Sphinx のインストール
 ---------------------
 
+.. note::
+
+   プロキシー環境下での pip コマンド実行時に、 SSL 証明書の認証エラー VERIFY_CERTIFICATE_ERROR
+   が発生する場合があります。その場合は、以下の設定ファイルにサービスホストの設定をしてください。
+
+   ::
+
+      mkdir ~/.pip
+      vi ~/.pip/pip.conf
+
+   ::
+
+      [global]
+      trusted-host = pypi.python.org
+                     pypi.org
+                     files.pythonhosted.org
+
+
 以下 pip コマンドを使用して Sphinx をインストールします。
 
 ::

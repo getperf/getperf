@@ -105,7 +105,11 @@ sub _service_ctl {
       for my $service(@$services) {
         if ($controll=~/^(start|stop|restart)$/) {
           Rex::Logger::info("$controll : $service");
-          _sudo("/etc/init.d/$service $controll");
+          if (-f "/etc/init.d/$service") {
+            _sudo("/etc/init.d/$service $controll");
+          } else {
+            _sudo("service $service $controll");
+          }
         } elsif ($controll eq 'ensure') {
           Rex::Logger::info("Regist : $service");
           service $service => ensure => "started";

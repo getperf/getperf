@@ -1,3 +1,11 @@
+Changes for 3.1.5 (2023-7-21)
+----------------------------------------------------------------------------
+
+Bug fix:
+* mysqld,httpd は systemd で登録しているため、/etc/init.d 下の起動スクリプトではなく、
+  service コマンドでサービス起動/停止する様に変更。
+
+
 Changes for 3.1.4 (2023-7-7)
 ----------------------------------------------------------------------------
 New features:
@@ -10,12 +18,9 @@ Bug fix:
   position パラメータはnull となり、MySQL でソートすると必ず先頭になる。
   SQL を ORDER BY position IS NULL ASC, position  に修正するとソートした結果の
   最後になる。
-
+* Cacti ダンプファイルで admin パスワードがリセットされていた問題対処
 * Cacti 管理画面からグラフ削除ができない問題対処
 
-[Thu Jul 06 16:01:05.958825 2023] [:error] [pid 107689] [client 192.168.133.1:62507] PHP Warning:  unserialize() expects exactly 1 parameter, 2 given in /home/psadmin/site/integrateddb/html/cacti-1.2.24/lib/functions.php on line 4466, referer: http://alma8.toshiba.co.jp/integrateddb/host.php
-
-sanitize_unserialize_selected_items
 
 ToDo:
 
