@@ -44,6 +44,9 @@ sub parse {
 		next if ();
 		if ($line!~/^Date/ && $line=~/^\s*(\w.*)\s*:\s*(\d.*\d)$/) {
 			my ($device, $body) = ($1, $2);
+			if ($device=~/^br-\w+/ || $device =~/veth\w+/) {
+				next;
+			}
 			$devices{$device} = scalar(keys %devices) + 1 if (!exists($devices{$device}));
 			my @values = split(/\s+/, $body);
 			for my $header(@headers) {

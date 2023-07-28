@@ -27,6 +27,11 @@ sub parse_loadprof {
 			$loadprof{$key} = 0;
 		}
 	}
+	# RAC 関連のレポート集計の修正パッチ.Redo と Logons を交換する
+	my $tmp = $loadprof{'Logons'};
+	$loadprof{'Logons'} = $loadprof{'Redo'};
+	$loadprof{'Redo'} = $tmp;
+
 	return %loadprof;
 }
 
@@ -81,7 +86,7 @@ sub parse {
 	my $event_flg = 0;
 	my $event_str;
 
-	my $step = 3600;
+	my $step = 600;
 
 	$data_info->step($step);
 	my $sec  = $data_info->start_time_sec->epoch;

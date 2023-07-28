@@ -233,6 +233,7 @@ sub start_time_sec {
 
 	my $start_timestamp = $self->start_timestamp;
 	return if (!$start_timestamp);
+	$start_timestamp =~s/\..+//g; # 小数点を除く
 	return localtime(Time::Piece->strptime($start_timestamp, '%Y-%m-%dT%H:%M:%S'));
 }
 

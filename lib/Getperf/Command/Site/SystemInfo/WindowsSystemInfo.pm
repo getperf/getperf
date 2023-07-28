@@ -57,6 +57,8 @@ sub parse {
 			$value=~s/\s\s+/ /g;
 			$value=~s/\s+$//g;
 			$value=~s/\s+\\.+$//g;
+			$value=~s/\\.+$//g;
+			# print $value . "\n";
  			$system_infos{$item} = $value;
 		}
 	}
