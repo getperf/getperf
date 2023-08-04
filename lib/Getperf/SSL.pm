@@ -15,7 +15,7 @@ use Time::Seconds;
 use File::Copy;
 use Log::Handler app => "LOG";
 
-__PACKAGE__->mk_accessors(qw/ca_root server_name ca_storage ca_index ca_serial ca_config cli_config inter_config server_cert client_cert command sitekey agent/);
+__PACKAGE__->mk_accessors(qw/ca_root server_name ca_storage ca_index ca_serial ca_config cli_config inter_config server_cert client_cert command sitekey agent server_host server_ip/);
 
 sub new {
 	my ($class, $ca_name, $ca_root) = @_;
@@ -45,6 +45,8 @@ sub new {
 		ca_config      => $ca_root . '/ca.conf',
 		cli_config     => $ca_root . '/client.conf',
 		inter_config   => $ca_root . '/inter.conf',
+		server_host    => undef,
+		server_ip      => undef,
 		sitekey        => undef,
 		agent          => undef,
 		zabbix_host    => ($zabbix->{GETPERF_AGENT_USE_ZABBIX}) ? $zabbix->{ZABBIX_SERVER_IP} : undef,
@@ -61,7 +63,6 @@ sub run {
 
 	my $base = config('base');
 	$base->add_screen_log;
-
 	my $ssl_home = $self->{ssl_home};
 	if ($command eq 'create_ca') {
 		my $root_ca = Getperf::SSL->new($base->{ssl_root_ca}, "$ssl_home/ca");
@@ -84,8 +85,8 @@ sub run {
 
 	} elsif ($command eq 'server_cert') {
 		my $inter_ca = Getperf::SSL->new($base->{ssl_inter_ca}, "$ssl_home/inter");
-		$inter_ca->reset_server_certificate;
-		return $inter_ca->create_server_certificate;
+		$inter_ca->reset_server_certificate($self->{server_ip});
+		return $inter_ca->create_server_certificate($self->{server_host}, $self->{server_ip});
 
 	} elsif ($command eq 'client_cert') {
 		my $inter_ca = Getperf::SSL->new($base->{ssl_inter_ca}, "$ssl_home/inter");
@@ -125,7 +126,7 @@ sub parse_command_option {
 		"\n\tcreate_ca" .
 		"\n\tarchive_ca" .
 		"\n\tcreate_inter_ca" .
-		"\n\tserver_cert" .
+		"\n\tserver_cert [--server={host}] [--ip={ip}]" .
 		"\n\tclient_cert [--sitekey=site] [--agent=host]]|" .
 		"\n\tupdate_client_cert" .
 		"\n\tcross_root_cert\n";
@@ -134,6 +135,8 @@ sub parse_command_option {
 	GetOptions (
 		'--sitekey=s' => \$self->{sitekey},
 		'--agent=s'   => \$self->{agent},
+		'--server=s'  => \$self->{server_host},
+		'--ip=s'      => \$self->{server_ip},
 	);
 	unless (@ARGV) {
 		print "No command\n" . $usage;
@@ -429,10 +432,15 @@ sub create_ca_cross_root {
 
 sub create_server_certificate {
 	my $self = shift;
+	my $serverHost = shift || '';
+	my $serverIP = shift || '';
 	my $disableSAN = shift || 0;
 
 	# Generate Server certificate directory
 	my $root = dir($self->server_cert);
+	if ($serverHost ne '') {
+		$root = dir($self->server_cert, $serverHost);
+	}
 	my $server_key  = "$root/server.key";
 	my $server_csr  = "$root/server.csr";
 	my $server_crt  = "$root/server.crt";
@@ -446,6 +454,9 @@ sub create_server_certificate {
 	}
 
 	my $server_name = $self->{server_name};
+	if ($serverIP ne '') {
+		$server_name = $serverIP;
+	}
 	my $is_ip = ($server_name=~/^([0-9]{1,3}\.){3}[0-9]{1,3}/)?1:0;
 	my $san_text = "subjectAltName = DNS:${server_name}";
 	$san_text .= ", IP:${server_name}" if ($is_ip);
@@ -507,9 +518,9 @@ sub reset_certificate {
 
 
 sub reset_server_certificate {
-	my ($self) = @_;
+	my ($self, $server_host) = @_;
 
-	my $server_name = $self->{server_name};
+	my $server_name = ($server_host) ? $server_host : $self->{server_name};
 	return $self->reset_certificate($server_name);
 }
 
