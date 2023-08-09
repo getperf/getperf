@@ -11,6 +11,7 @@
    05_RRDToolTuning
    06_SSLCertificateInstration
    07_SiteCloning
-   08_IPythonNotebook
-   09_CloneServer
-   10_SetupRaspberryPi
+   .. 08_IPythonNotebook
+   .. 09_CloneServer
+   .. 10_SetupRaspberryPi
+   21_X509v3CetifyAgent
