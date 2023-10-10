@@ -120,6 +120,7 @@ class CactiGraph {
 			foreach ($device_sets as $device_set) {
 				$this->graph_count = $graph_count;
 				$this->device_set  = $device_set;
+// var_dump($device_set);
 				if (! $this->regist_graphs() )
 					return false;
 				if (! $skip_tree ) {
@@ -435,7 +436,7 @@ class CactiGraph {
 			$sql .= "and parent = $parent_id and title = \"$path\"";
 			// print($sql);
 			$tree_field = db_fetch_assoc($sql);
-// var_dump($tree_field);
+
 			$found = 0;
 			if (sizeof($tree_field)) {
 				foreach ($tree_field as $field) {
@@ -452,7 +453,7 @@ class CactiGraph {
 				// 	}
 				// }
 			}
-// print("FOUND : $found");
+
 			// 検索結果が0の場合は、新規にパスを追加する
 			if ($found == 0) {
 				# Blank out the graphId, rra_id, hostID and host_grouping_style  fields
