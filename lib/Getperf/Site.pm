@@ -9,6 +9,7 @@ use Path::Class;
 use Template;
 use DBI;
 use Git::Repository;
+use Getperf::Container;
 use Getperf::Config 'config';
 use parent qw(Class::Accessor::Fast);
 use Data::Dumper;
@@ -53,14 +54,18 @@ sub parse_command_option {
 	my ($self, $args) = @_;
 
 	$self->{usage} = "Usage : initsite {site_dir}\n" .
-	               "\t[--update] [--drop] [--template] [--force] [--disable-git-clone] [--mysql-passwd=s]\n" .
+	               "\t[--update] [--drop] [--template] [--force] " .
+	               "[--init] [--report-rrd] " .
+	               "[--disable-git-clone] [--mysql-passwd=s]\n" .
 	               "\t[--addsite=\"AAA,BBB\"]\n";
 
 	push @ARGV, grep length, split /\s+/, $args if ($args);
-	my ($update_opt, $template_opt, $cacit_templates_opt, $sitekeys_opt, $drop_opt);
+	my ($update_opt, $template_opt, $cacit_templates_opt, $sitekeys_opt, $drop_opt, $report_rrd_opt, $init_opt);
 	GetOptions (
 		'--update'            => \$update_opt,
 		'--drop'              => \$drop_opt,
+		'--init'              => \$init_opt,
+		'--report-rrd'        => \$report_rrd_opt,
 		'--template'          => \$template_opt,
 		'--force'             => \$self->{force},
 		'--disable-git-clone' => \$self->{disable_git_clone},
@@ -75,9 +80,13 @@ sub parse_command_option {
 	$self->parse_sitekeys_options($sitekeys_opt);
 	$self->parse_site_home(shift(@ARGV)) || die $self->{usage};
 
-	$self->{command} = 'init_site';
+	$self->{command} = 'report_rrd';
 	if ($drop_opt) {
 		$self->{command} = 'drop_site';
+	} elsif ($init_opt) {
+		$self->{command} = 'init_site';
+	} elsif ($report_rrd_opt) {
+		$self->{command} = 'report_rrd';
 	} elsif ($update_opt) {
 		$self->{command} = 'update_site';
 	} elsif ($template_opt) {
@@ -131,6 +140,8 @@ sub run {
         return $self->update_site;
 	} elsif ($command eq 'update_template') {
         return $self->update_template;
+	} elsif ($command eq 'report_rrd') {
+        return $self->report_rrd;
 	} else {
 		return;
 	}
@@ -732,5 +743,33 @@ sub add_addtional_sites {
 	}
 	return 1;
 }
+
+sub report_rrd {
+	my ($self, $opts) = @_;
+	my $sitekey = $self->{sitekey};
+	my $rootpass = $self->{mysql_passwd};
+	my $dbh = DBI->connect("dbi:mysql:${sitekey}",'root', $rootpass, {
+        RaiseError        => 1,
+        PrintError        => 1,
+        mysql_enable_utf8 => 1,
+    });
+    my $query_rrds = "select distinct data_source_path from data_template_data";
+    my $rows = $dbh->selectall_arrayref($query_rrds);
+    my $reports;
+    for my $row(@{$rows}) {
+    	my $rrd_file = $row->[0];
+    	next if !($rrd_file=~m|<path_rra>/(.+?)/(.+?)/(.+).rrd|);
+    	my ($platform, $node, $metric) = ($1, $2, $3);
+    	push(@{$reports->{$platform}->{$node}}, $metric);
+    }
+    for my $platform(sort keys %{$reports}) {
+    	for my $node(sort keys %{$reports->{$platform}}) {
+    		print "${platform}/${node}\n";
+    	}
+    }
+
+	return 1;
+}
+
 
 1;
