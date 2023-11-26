@@ -80,7 +80,7 @@ sub parse_command_option {
 	$self->parse_sitekeys_options($sitekeys_opt);
 	$self->parse_site_home(shift(@ARGV)) || die $self->{usage};
 
-	$self->{command} = 'report_rrd';
+	$self->{command} = 'init_site';
 	if ($drop_opt) {
 		$self->{command} = 'drop_site';
 	} elsif ($init_opt) {
