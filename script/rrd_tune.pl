@@ -11,8 +11,8 @@ my $KEYWORD  = '';
 my $RESTORE  = 0;
 my $DEBUG    = 0;
 my $CLEAR    = 0;
-my $IDIR     = "./storage/Db2";
-my $USAGE    = "rrd_tune, version : 0.0.1\n" .
+my $IDIR     = "./storage/";
+my $USAGE    = "rrd_tune, version : 0.0.2\n" .
 	"Usage : rrd_tune.pl [--idir=s] [--keyword=s] [--clear] [--restore] [--debug]\n";
 
 GetOptions('--idir=s' => \$IDIR, '--keyword=s' => \$KEYWORD, 
@@ -33,27 +33,14 @@ sub check_datasource_max {
 	# 最大値をリセットする場合は'U'を指定
 	if ($CLEAR) {
 		return 'U';
-	# SQL ランクグラフ(sql_top)の場合、項目名別に最大値を指定
-	} elsif ($rrdname=~/sql_top/) {
-		if ($datasource eq 'CPU_TIME') {
-			return 100000000000; # M補正あり
-		} elsif ($datasource eq 'EXEC_TIME' or $datasource eq 'ACT_WAIT_TIME') {
-			return 100000000; # K補正あり
-		} elsif ($datasource eq 'ROWS_READ') {
-			return 1000000000000;
-		} elsif ($datasource eq 'ROWS_MODIFIED') {
-			return 100000000000;
-		}
-		return 10000000; # 1000,000,000,000
-	# Db2 CF 統計用 "mon_get_cf" の場合
-	} elsif ($rrdname=~/mon_get_cf/) {
+	} elsif ($rrdname =~/netDev/) {
+		# print "CK:($rrdname, $datasource, $default_value)\n";
+		return 1000000000;
+	} elsif ($rrdname =~/jstat/ && $datasource =~/gc/) {
 		return 100000000000;
-	# Db2 統計用 "mon_get" の場合(mon_get が含まれるRRDファイル名すべて)
-	} elsif ($rrdname =~/mon_get/) {
-		return 100000000;
 	# それ以外のRRDファイルの場合、規定値を指定
-	} else {
-		return $default_value;
+	# } else {
+	# 	return $default_value;
 	}
 }
 
@@ -77,15 +64,20 @@ sub get_rrdtool_ds_info {
 sub get_rrdtool_tune_command {
 	my ($rrdname, $rrdfile, $ref_ds_list, $max_value) = @_;
 	my @cmds;
-	push @cmds, "rrdtool tune ${rrdfile}";
 	for my $ds(@{$ref_ds_list}) {
 		my $max_value2 = check_datasource_max(
 			$rrdname, $ds, $max_value
 		);
-		push @cmds, "--minimum ${ds}:0 --maximum ${ds}:${max_value2}";
+		if ($max_value2 > 0) {
+			push @cmds, "--minimum ${ds}:0 --maximum ${ds}:${max_value2}";
+		}
 	}
-	my $cmd = join(" \\\n", @cmds);
-	return $cmd . "\n";
+	if (scalar(@cmds) > 0) {
+		unshift @cmds, "rrdtool tune ${rrdfile}";
+		my $cmd = join(" \\\n", @cmds);
+		# print("LENGTH: ", scalar(@cmds));
+		return $cmd . "\n";
+	}
 }
 
 # 指定コマンドを実行して終了コードを返します
@@ -131,6 +123,9 @@ sub tune_rrdfile_max {
 	# print Dumper \@ds_list;
 	my $rrd_tune_cmd = get_rrdtool_tune_command(
 		$rrdname, $rrdfile, \@ds_list, $max_value);
+	if ($rrd_tune_cmd eq "") {
+		return;
+	}
 	my $rc = spawn($rrd_tune_cmd);
 	$rc = dump_restore_rrdfile($rrdfile) if ($restore);
 	print "[$rc] ${rrdfile}\n";
@@ -145,7 +140,7 @@ sub main {
 		if ($KEYWORD && $rrdfile!~/$KEYWORD/) {
 			next;
 		}
-		tune_rrdfile_max($rrdfile, 10000000, $RESTORE);
+		tune_rrdfile_max($rrdfile, 10000000000000, $RESTORE);
 	}
 	close($in2);
 }

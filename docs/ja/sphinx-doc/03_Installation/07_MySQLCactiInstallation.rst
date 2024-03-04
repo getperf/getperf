@@ -18,6 +18,26 @@ Rex コマンドで PHP 関連ライブラリをインストールします。
 
     rex prepare_composer
 
+
+
+.. note::
+
+   TODO : cacti-cli サスペンド問題の修正パッチ手順を追加。
+
+   1608 行辺り create_graph_custom_data_compatible()をコメントアウトし、次行に以下を追加。
+
+   ::
+
+      vi ./html/cacti-1.2.24/lib/template.php
+
+         1605      if (cacti_sizeof($previous_data_source)) {
+         1606
+         1607           // サスペンド問題回避
+         1608           // $use_previous_data = create_graph_custom_data_compatible($suggested_vals, $previous_data_source);
+         1609           $use_previous_data = false;
+
+
+
 MySQL セットアップ
 ------------------
 
@@ -36,7 +56,7 @@ MySQL のアカウント管理の設定を変更します。
 
     [mysqld]
     default_password_lifetime=0
-    # MySQL Yum リポジトリからインストールした場合は、以下のパスワード設定のコメントアウトを外してください
+    # MySQL Yum リポジトリからインストールした場合は、以下のパスワード設定のコメントアウトを外してください。Oracle Linux の場合はコメントアウトする
     #validate_password.length=4
     #validate_password.mixed_case_count=0
     #validate_password.number_count=0
@@ -61,6 +81,9 @@ MySQL のアカウント管理の設定を変更します。
 
 root パスワードとセキュリティ設定
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note:: Oracle Linux の場合、既定のパスワードは無しで、以下確認は不要です。
+
 
 MySQL の root パスワード変更します。インストール直後は仮パスワードが設定
 されているため、以下のMySQL ログを参照して仮パスワードを確認します。
