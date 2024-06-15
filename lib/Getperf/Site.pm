@@ -453,11 +453,18 @@ sub create_cacti_repository_db {
 	my $dbh = DBI->connect("dbi:mysql:${sitekey}",'root', $rootpass,
 		                   { PrintError => 0, PrintWarn => 0 });
 	if ($dbh && $self->{force}) {
-		$drh->func('dropdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
+		# $drh->func('dropdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
+		my $cmd = "mysql -uroot -p${rootpass} -e \"drop database ${sitekey};\"";
+		print "CMD: $cmd\n";
+		system($cmd);
 		$dbh = undef;
 	}
 	if (!$dbh) {
-		$drh->func('createdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
+		print "TEST1\n";
+		# $drh->func('createdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
+		my $cmd = "mysql -uroot -p${rootpass} -e \"create database ${sitekey};\"";
+		print "CMD: $cmd\n";
+		system($cmd);
 		$rc  = 1;
 	}
 	$dbh = DBI->connect("dbi:mysql:mysql", 'root', $rootpass);
