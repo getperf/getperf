@@ -26,12 +26,12 @@ RSync の関連パッケージをインストールします。
    git config --global init.defaultBranch main
 
    # メールアドレスを設定します
-   # git config --global user.email "you@example.com"
    git config --global user.email "管理者のメールアドレス"
+   git config --global user.email "you@example.com"
 
    # ユーザ名を設定します
-   # git config --global user.name "Your Name"
    git config --global user.name "管理者名"
+   git config --global user.name "Your Name"
 
 監視サイト作成
 --------------

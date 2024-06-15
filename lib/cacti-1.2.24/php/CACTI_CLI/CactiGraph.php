@@ -120,6 +120,7 @@ class CactiGraph {
 			foreach ($device_sets as $device_set) {
 				$this->graph_count = $graph_count;
 				$this->device_set  = $device_set;
+// var_dump($device_set);
 				if (! $this->regist_graphs() )
 					return false;
 				if (! $skip_tree ) {
@@ -221,6 +222,7 @@ class CactiGraph {
 			push_out_host($hostId, $item);
 			$dataSourceIds[] = $item;
 		}
+		echo "DS : " . join(",", $dataSourceIds) . "\n"; 
 		$this->cacti_datasource_ids = $dataSourceIds;
 
 		// add graph comment
@@ -331,6 +333,7 @@ class CactiGraph {
 				$id = array_shift($cacti_datasource_ids);
 				$device      = $device_list['device'];
 				$device_text = $device_list['device_text'];
+				echo "SET DS : $id, $device\n"; 
 
 				$rrdpath2          = str_replace("<device>", $device, $rrdpath);
 				$rrdpath2          = str_replace("*",        $device, $rrdpath2);
@@ -435,7 +438,7 @@ class CactiGraph {
 			$sql .= "and parent = $parent_id and title = \"$path\"";
 			// print($sql);
 			$tree_field = db_fetch_assoc($sql);
-// var_dump($tree_field);
+
 			$found = 0;
 			if (sizeof($tree_field)) {
 				foreach ($tree_field as $field) {
@@ -452,7 +455,7 @@ class CactiGraph {
 				// 	}
 				// }
 			}
-// print("FOUND : $found");
+
 			// 検索結果が0の場合は、新規にパスを追加する
 			if ($found == 0) {
 				# Blank out the graphId, rra_id, hostID and host_grouping_style  fields

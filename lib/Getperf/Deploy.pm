@@ -177,6 +177,11 @@ sub config_cacti {
 
 sub config_cacti12 {
 	my $self = shift;
+	return $self->config_cacti12_api_tree() && $self->config_cacti12_template();
+}
+
+sub config_cacti12_api_tree {
+	my $self = shift;
 	my $patch = 'lib/api_tree.php';
 	if (!-f $patch) {
 		die "cacti patch file not found $patch\n";
@@ -194,6 +199,36 @@ sub config_cacti12 {
 			} else {
 				push @out, $line;
 			}
+		}
+		my $writer = $config_file->open('w') or die $!;
+		$writer->print(join("\n", @out));
+		$writer->close;
+	};
+	if ($@) {
+		LOG->error($@);
+		return;
+	}
+	return 1;
+}
+
+sub config_cacti12_template {
+	my $self = shift;
+	my $patch = 'lib/template.php';
+	if (!-f $patch) {
+		die "cacti patch file not found $patch\n";
+	}
+	eval {
+		my $config_file = file($patch);
+		LOG->notice("patch $config_file");
+		my @lines = $config_file->slurp or die $!;
+		my @out;
+		for my $line(@lines) {
+			chomp($line);
+			next if ($line=~/Getperf patch/);
+			if ($line=~m|if \(cacti_sizeof\(\$previous_data_source\) && \$use_previous_data\)|) {
+				push @out, "			\$use_previous_data = false;  // Getperf patch : Patch to avoid data source deduplication";
+			}
+			push @out, $line;
 		}
 		my $writer = $config_file->open('w') or die $!;
 		$writer->print(join("\n", @out));
