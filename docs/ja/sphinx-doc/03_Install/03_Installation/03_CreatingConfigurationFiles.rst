@@ -23,40 +23,55 @@ $GETPERF_HOME/conf の下に設定ファイルを生成します。詳細は `�
 getperf_site.json
 ------------------
 
-Getperf　のベース設定と、各種インストールソフトウェアのプロパティを設定します。
+Getperf のベース設定と、各種インストールソフトウェアのプロパティを設定します。
 
 ::
 
-    vi config/getperf_site.json
+    cd $GETPERF_HOME/config
+    vi getperf_site.json
 
-Getperf　ホームディレクトリ、ログ出力設定をします。
-"GETPERF_CACTI_MYSQL_ROOT_PASSWD"　の　MySQL　のルートパスワードを変更してください。
+Getperf ホームディレクトリ、ログ出力設定をします。
+"GETPERF_CACTI_MYSQL_ROOT_PASSWD" の MySQL のルートパスワードを変更してください。
 
 ::
 
     "GETPERF_CACTI_MYSQL_ROOT_PASSWD": "XXX",
 
+また、Webサービスの最大接続数を利用環境に合わせて修正してください。
+監視対象が 100 台以上の環境の場合は、130 以上が適切な値になります。
+
+::
+
+    "GETPERF_WS_MAX_SERVERS": 30,
+
 getperf_cacti.json
 -------------------
 
-生成された既定の getperf_cacti.json は、 Cacti-0.8.8 の設定となっており、
-本ファイルを Cacti 1.2.x 版に変更します。以下の設定ファイルをコピーします。
+生成された既定の getperf_cacti.json は、 Cacti-1.2.24 の設定となっています。
+Cacti 0.8.8g を使用する場合は、以下の設定ファイルをコピーします。
 
 ::
 
    cd $GETPERF_HOME/config
    ls
-   # 上記で確認した、cp getperf_cacti.json_1.2.x のファイルを getperf_cacti.jsonにコピー
-   cp getperf_cacti.json_1.2.24 getperf_cacti.json
+   # 上記で確認した、getperf_cacti.json_0.8.8 のファイルを getperf_cacti.jsonにコピー
+   cp getperf_cacti.json_0.8.8 getperf_cacti.json
 
-グラフモニタリングツール Cacti の配置、バージョンの設定をします。原則、Getperf　モジュールは 
-Cacti　の最新バージョンとの組合せでモジュールを構成します。Cacti　はダウングレードの機能がないため、既定値より下位のバージョンを指定することはできません。
+グラフモニタリングツール Cacti の配置、バージョンの設定をします。
+原則、Getperf モジュールは Cacti の最新バージョンとの組合せでモジュールを構成します。
+Cacti はダウングレードの機能がないため、既定値より下位のバージョンを指定することはできません。
 既定値より下位バージョンのCactiが必要な場合は `古い Cacti バージョンのインストール <docs/ja/docs/10_Miscellaneous/08_CactiOldVersion.md>`_ を参照してください。
 
 getperf_rrd.json
 -----------------
 
-時系列データベース RRDtool　のリ保存期間、集計期間の設定をします。
+時系列データベース RRDtool のリ保存期間、集計期間の設定をします。
+
+::
+
+    cd $GETPERF_HOME/config
+    vi getperf_rrd.json
+
 保存期間はデフォルトで以下となり、変更が必要な場合は編集してください。
 
 -  直近の詳細が2分間隔のサンプリングで1日間保持
@@ -67,15 +82,33 @@ getperf_rrd.json
 getperf_zabbix.json
 --------------------
 
-オープンソースの統合監視ソフト Zabbix　の設定をします。
+オープンソースの統合監視ソフト Zabbix の設定をします。
 
 ::
 
     cd $GETPERF_HOME/config
     vi getperf_zabbix.json
 
+Zabbix サーバの接続情報を設定します
+
+::
+
+        "ZABBIX_SERVER_IP": "{ZabbixサーバIP}",
+        "ZABBIX_ADMIN_PASSWORD": "{Zabbixパスワード}",
+
+.. note::
+
+    この後のCacti監視サイト構築でサイトディレクトリ作成後の以下のコマンドでZabbixとの連携を確認します。
+    監視対象のノード定義ディレクトリを指定すると、Zabbix に接続し、ホスト登録情報が出力されます。
+
+    ::
+
+        cd {サイトディレクトリ}
+        zabbix-cli --info ./node/Linux/{ホスト名}/
+
+
 本ソフトのインストールはオプションで、デフォルトは有効となります。
-以下パラメータを 0　にしてください。
+以下パラメータを 0 にしてください。
 
 
 オプションの zabbix_sender を有効にする場合のみ 1 を設定
@@ -84,17 +117,11 @@ getperf_zabbix.json
 
       "GETPERF_USE_ZABBIX_SEND": 0,
 
-エージェントモジュールに Zabbix エージェントを追加する場合のみ 1 を設定
+旧 Cacti エージェントでエージェントモジュールに Zabbix エージェントを追加する場合のみ 1 を設定
 
 ::
 
       "GETPERF_AGENT_USE_ZABBIX": 0
 
-また、有効にする場合は Zabbix　Web コンソールの管理者ユーザ admin のパスワード　"ZABBIX_ADMIN_PASSWORD" を変更してください。
 
-::
-
-    "ZABBIX_ADMIN_PASSWORD":     "getperf",
-
-既定値の場合は、admin/getperf でログインします。
 

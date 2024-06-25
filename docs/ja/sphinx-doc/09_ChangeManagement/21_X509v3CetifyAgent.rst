@@ -186,7 +186,7 @@ openssl のパスを確認し、環境変数に設定します。
     /tmp/
     # /etc/getperf/ssl/ の下に解凍
     cd /etc/getperf/ssl/
-    tar xvf /tmp/ca_org.tar.gz
+    tar xvf /tmp/ca.tar.gz
 
 中間CA証明書、サーバ証明書発行
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -232,6 +232,21 @@ openssl のパスを確認し、環境変数に設定します。
     server.csr -out /etc/getperf/ssl/server/server.crt -extfile /etc/getperf/ssl/
     server/san.txt -config /etc/getperf/ssl/inter/ca.conf -batch
 
+
+作成した証明書のバックアップを取り、移行対象サーバに転送します。
+
+::
+
+    cd /etc/getperf/
+    tar cvf - ssl | gzip > /tmp/ssl_new.tar.gz
+
+::
+
+    scp /tmp/ssl_new.tar.gz psadmin@{移行対象Cact IP}:/tmp/ssl_new.tar.gz
+    # 実行例
+    scp /tmp/ssl_new.tar.gz psadmin@192.168.41.169:/tmp/ssl_new.tar.gz
+
+
 作成した証明書の適用
 --------------------
 
@@ -244,11 +259,11 @@ openssl のパスを確認し、環境変数に設定します。
     cd /etc/getperf/
     tar cvf - ssl | gzip > /tmp/ssl_org.tar.gz
 
-作業用サーバから、新規証明書をコピーします。
+作業用サーバから転送した新規証明書を展開します。
 
 ::
 
-    scp -r psadmin@{作業用サーバIP}:/etc/getperf/ssl/ /etc/getperf/
+    tar xvf /tmp/ssl_new.tar.gz
 
 設定を反映させるため、Web サービスを再起動します。
 

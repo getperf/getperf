@@ -71,104 +71,26 @@ getperf\_zabbix.json 設定ファイルの編集
 
    Zabbix Sender を用いて、Cacti 集計データを Zabbix に転送する場合は 1 にしてください。
 
-
-.. Zabbix インストール
-.. -------------------
-
-.. Zabbix サーバ一式のインストールと、エージェント一式のダウンロードをします。Zabbix サーバは開発元が提供するyumリポジトリからインストールをします。
-
-.. .. note::
-
-..    スクリプトの実行で以下の依存パッケージの解決エラーが発生した場合、
-..    以下のZabbixサイトから手動インストールをしてください。
-
-..    zabbix-server-mysql-1.8.22-1.el6.x86_64 (epel) 要求: libiksemel.so.3()(64bit)
-
-..    ::
-
-..       mkdir -p work/zabbix
-..       cd work/zabbix/
-..       wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-1.4-2.el6.x86_64.rpm
-..       wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-devel-1.4-2.el6.x86_64.rpm
-..       wget https://repo.zabbix.com/non-supported/rhel/6/x86_64/iksemel-utils-1.4-2.el6.x86_64.rpm
-..       sudo -E yum localinstall *.rpm
-
-
-
-.. ::
-
-..     sudo -E rex prepare_zabbix
-
-.. エージェントは、設定ファイルに指定したプラットフォームのバイナリを{GETPERF_HOME}/module/getperf-agent/var/zabbix
-.. の下にダウンロードします。各ダウンロードファイルのMD5　チェックサム結果がインストールメッセージに出力されるので、上述の開発元ダウンロードサイトのURL の MD5 記述と同じであることを確認してください。
-
-.. .. note::
-
-..   -  MySQL データベース作成エラーについて
-
-..      yum でインストールされた、Zabbix サーバと、getperf_zabbix.json で記載したバージョンが異なる場合に MySQL
-..      データベースの作成に失敗する場合が有ります。その場合は以下のインストールディレクトリからバージョンの確認をします。
-
-..      ::
-
-..          ls /usr/share/doc/| grep zabbix
-..          zabbix-2.2.10
-..          zabbix-server-mysql-2.2.10
-
-..      getperf_zabbix.json の ZABBIX_SERVER_VERSION　に正しいバージョンを指定してください。以下例では2.2.10を指定します。     設定後、以下のコマンドを手動で作成中のデータベース (zabbix)を削除し、インストールスクリプトを再実行することで、データベースの再作成を行います。
-
-..      ::
-
-..          mysqladmin -u root -p drop zabbix
-..          sudo script/deploy-zabbix.pl
-
-..      mysql　の root パスワードは config/getperf_site.json の GETPERF_CACTI_MYSQL_ROOT_PASSWD となります。
-
-.. Zabbix の動作確認
-.. -----------------
-
-.. インストールが成功すると、 Zabbix サーバプロセスが自動起動されます。以下の確認をします。
-
-.. -  'ps -ef | grep zabbix_server' を実行してプロセスの起動を確認します
-.. -  'tail -f /var/log/zabbix/zabbix_server.log' を実行してログを確認します
-.. -  Webブラウザから 'http://{監視サーバアドレス}/zabbix/' を開いて管理コンソールログイン画面を確認します
-.. -  管理コンソールログイン画面から、ユーザ admin、パスワードは ZABBIX_ADMIN_PASSWORD　を入力してログインします
-
-.. これで Zabbix のインストール作業は完了です。この後の Zabbix の監視設定は、管理コマンド zabbix-cli
-.. を用いて行います。zabbix-cli については後述します。
-
-Zabbix エージェントモジュールのダウンロード
--------------------------------------------
-
-以下のパスに Zabbix エージェントモジュールのダウンロードファイルを保存します。
-本パスに保存することで、この後のエージェントのコンパイル作業で、各 OS 環境にて
-エージェントセットアップを行った差異に対象 OS の Zabbix エージェントをバンドルして、
-パッケージングしたモジュールを作成します。
+Zabbix サーバとの連携設定
+---------------------
 
 ::
 
-   {Getperfホーム}/module/getperf-agent/var/zabbix/
-
-Zabbix エージェントは以下の URL からダウンロードします。
-
-::
-
-   https://www.zabbix.com/jp/download_agents
-
-使用する Zabbix バージョン、エージェントをインストールする対象 OS 、アーキテクチャに合せてダウンロードしてください。
-
-例として、 Zabbix 6.0.17 で、 Linux, Windows の 64ビット版をダウンロードする場合は以下のコマンドを実行します。
+   cd $GETPERF_HOME/config
+   vi getperf_zabbix.json
 
 ::
 
-   # ダウンロードディレクトリに移動
-   cd ~/getperf/module/getperf-agent/var/zabbix/
-   # Zabbix ダウンロードサイトから確認した、アーカイブ保存URLを指定して、各プラットフォームの Zabbix エージェントをダウンロード
-   #  Zabbix 6.0.17 で、 Linux, Windows の 64ビット版をダウンロードする場合は以下のコマンドを実行
-   wget https://cdn.zabbix.com/zabbix/binaries/stable/6.0/6.0.17/zabbix_agent-6.0.17-linux-2.6-amd64-static.tar.gz
-   wget https://cdn.zabbix.com/zabbix/binaries/stable/6.0/6.0.17/zabbix_agent-6.0.17-linux-3.0-amd64-static.tar.gz
-   wget https://cdn.zabbix.com/zabbix/binaries/stable/6.0/6.0.17/zabbix_agent-6.0.17-windows-amd64.zip
+        "ZABBIX_SERVER_IP": "{ZabbixサーバIP}",
+        "ZABBIX_ADMIN_PASSWORD": "{Zabbixパスワード}",
 
+この後のCacti監視サイト構築後の以下のコマンドでZabbixとの連携を確認
+Zabbixのホスト登録情報が出力される
+
+::
+
+   cd ~/site/site1
+   zabbix-cli --info ./node/Linux/{ホスト名}/
 
 この後の作業について
 --------------------
