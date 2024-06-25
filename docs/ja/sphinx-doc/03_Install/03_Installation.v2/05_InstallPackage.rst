@@ -8,13 +8,16 @@ MySQL 8.0 インストール
 
 パッケージインストールの前に、バージョン8 を指定して MySQL パッケージをインストールします。
 
-RH8系の OS の場合、以下のコマンドで OS 標準の AppStream から mysql:8.0 を指定し、
+以下のコマンドで OS 標準の AppStream から mysql:8.0 を指定し、
 MySQLサーバ(mysql-server) をインストールします。
 
 ::
 
    sudo -E dnf module enable mysql:8.0
    sudo -E yum install mysql-server
+
+CentOS7の場合の MySQL インストール
+----------------------------------
 
 RH7系のOS の場合、以下、MySQLドキュメントのMySQL Yum リポジトリを使用して MySQL 
 を Linux にインストールするを参考にして、MySQL 8.0 をインストールします。
@@ -63,10 +66,16 @@ MySQL サーバをインストールします
 
    sudo -E yum -y install mysql-community
 
-MySQL の設定を変更します。
+MySQL 設定
+----------
+
+MySQL の設定をします。
 
 ::
 
+   # OracleLInux8の場合
+   sudo vi /etc/my.cnf.d/mysql-server.cnf
+   # CentOS7の場合
    sudo vi /etc/my.cnf
 
 [mysqld]の後に以下の行を追加します。
@@ -97,7 +106,10 @@ MySQL を起動します
    sudo systemctl enable mysqld
    sudo systemctl start mysqld
 
-MySQL の root パスワードを設定します。仮パスワードを確認します。
+MySQL の root パスワードを確認します。
+
+Oracle Linux の場合はパスワードは無しです。
+MySQL Yum リポジトリからインストールした場合は、以下で仮パスワードを確認します。
 
 ::
 
@@ -199,7 +211,7 @@ httpd サービスを再起動します。
 
    sudo systemctl restart httpd
 
-PHP 7.3 インストール(RedHat7の場合)
+PHP 7.3 インストール(CentOS7の場合)
 ------------------------------------
 
 CentOS7,OracleLinux7の場合は、以下のRemiリポジトリを利用して
