@@ -11,13 +11,19 @@ Rsync セットアップ
 事前準備
 --------
 
+RSync のインストール
+^^^^^^^^^^^^^^^^^
+
 RSync の関連パッケージをインストールします。
 
 ::
 
     sudo -E yum -y install rsync xinetd  rsync-daemon
 
-以下のコマンドを実行して git の環境設定をします。
+Git 環境設定
+^^^^^^^^^^
+
+以下のコマンドを実行して Git の環境設定をします。
 メールアドレス、ユーザ名は環境に合わせて設定してください。
 
 ::
@@ -27,14 +33,55 @@ RSync の関連パッケージをインストールします。
 
    # メールアドレスを設定します
    git config --global user.email "管理者のメールアドレス"
+   # 指定が不要な場合は以下を設定してください
    git config --global user.email "you@example.com"
 
    # ユーザ名を設定します
    git config --global user.name "管理者名"
+   # 指定が不要な場合は以下を設定してください
    git config --global user.name "Your Name"
 
-監視サイト作成
---------------
+Perl 5.16.3 環境構築
+^^^^^^^^^^^^^^^^^^
+
+集計モジュールと互換性を維持するため、 Perl 環境管理ツール plenv を使用して、 
+Perl 5.16.3 を $HOME/.plenv 下にインストールします。
+
+Perl 管理ツール plenv インストール
+
+::
+
+    git clone https://github.com/tokuhirom/plenv.git ~/.plenv
+    git clone https://github.com/tokuhirom/Perl-Build.git ~/.plenv/plugins/perl-build/
+    echo 'export PATH="$HOME/.plenv/bin:$PATH"' >> ~/.bash_profile
+    echo 'eval "$(plenv init -)"' >> ~/.bash_profile
+    exec $SHELL -l
+
+Perl v5.16.3のインストールと有効化
+
+::
+
+    plenv install 5.16.3
+    plenv global 5.16.3
+    plenv local 5.16.3
+
+cpanm と、Perl ライブラリをインストールします
+
+::
+
+    PLENV_INSTALL_CPANM="-v" plenv install-cpanm
+    cd $GETPERF_HOME
+    cpanm --installdeps --notest .
+
+MySQL Perl ライブラリをインストールします
+
+::
+
+    cpanm DBD::mysql
+
+
+Cacti 監視サイト作成
+-----------------
 
 以下のスクリプトで監視用サイトを作成します。
 
@@ -42,7 +89,7 @@ RSync の関連パッケージをインストールします。
 
    initsite -f {サイトディレクトリ}
 
-ここでは例として、~/site/の下に、 site1 という監視サイトを作成します。
+ここでは ~/site/の下に、 site1 という監視サイトを作成します。
 
 ::
 
@@ -51,29 +98,56 @@ RSync の関連パッケージをインストールします。
 
    initsite -f site1
 
+以下のメッセージを確認し、 Web ブラウザから、記述の URL で Cacti にアクセスできるか確認します。
+ユーザ admin, パスワード admin でログインします。
+
+::
+
+    URL for Cacti monitoring will be following .
+
+    http://{サーバIPアドレス}/site1
+
+また、以下メッセージの site key と access key は後のエージェントセットアップで使用しますので、メモしてください。
+
+::
+
+    The site key is "site1" .
+    The access key is "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" .
+
 エージェントセットアップ
 ------------------------
 
-
 エージェントのセットアップを行い、作成した監視サイトと連携します。
+
+エージェントモジュールは、以下の getperf2 版を使用します。
+
+::
+
+    getperf2-linux-2.18.0.tar.gz 
 
 エージェントコンパイルで作成したモジュールを $HOME の下に解凍します。
 
 ::
 
-   # 事前に /tmp の下に getperf-zabbix-BuildXX-XXXX-x86_64.tar.gz を保存
+   # 事前に /tmp の下に getperf2-linux-2.18.0.tar.gz を保存
    cd $HOME
-   tar xvf /tmp/getperf-zabbix-BuildXX-XXXX-x86_64.tar.gz
+   tar xvf /tmp/getperf2-linux-2.18.0.tar.gz
+
+別環境の Cacti サイトから エージェントモジュールをダウンロードした場合、ルート証明書が異なる場合があります。
+その場合、以下のパスのルート証明書に上書きします。
+
+::
+
+    cp /etc/getperf/ssl/ca/ca.crt ~/ptune/network/ca.crt
 
 エージェントのセットアップコマンドを実行します。
 
 ::
 
    cd $HOME/ptune/bin/
-   ./getperfctl setup
+   ./getperfctl setup --url https://{監視サーバIP}:57443/
 
-前節の監視サイト作成で実行したコンソールに表示された、サイトキー、
-アクセスキーを入力して、セットアップを完了させます。
+前節の監視サイト作成で実行したコンソールに表示された、サイトキー、アクセスキーを入力して、セットアップを完了させます。
 
 エージェントを起動します。
 
@@ -95,7 +169,10 @@ rsyncd.conf ファイルを以下例の様に編集します。
 
 ::
 
-   sudo vi /etc/rsyncd.conf
+    # 既存のサンプル設定ファイルを移動
+    sudo mv /etc/rsyncd.conf /etc/rsyncd.conf_org
+    # 新規に設定ファイルを開く
+    sudo vi /etc/rsyncd.conf
 
 ::
 
@@ -137,15 +214,13 @@ rsync 設定後、 rsync デーモンを起動します。
    rsync://{旧監視サーバアドレス}/archive_{サイトキー} \
    ./tmp
 
-site1 での確認する場合、以下を実行します。
+site1 の場合、以下を実行します。
 
 ::
 
    mkdir -p $HOME/work/rsynctest
    cd $HOME/work/rsynctest
-   rsync -av --delete \
-   rsync://localhost/archive_site1 \
-   ./tmp
+   rsync -av --delete rsync://localhost/archive_site1 ./tmp
 
 
 サイト同期スクリプト(sitesync)動作確認
@@ -168,8 +243,7 @@ sitesync コマンドの動作確認をします。
     cd $HOME/site/site1
     sitesync rsync://localhost/archive_site1
 
-正しく実行すると、analysis 下に旧サイトの収集ファイルが保存されます。
-この後のデータ集計以降の処理は従来と同じです。
+実行すると、analysis 下に旧サイトの収集ファイルが保存されます。
 
 ::
 
@@ -177,8 +251,7 @@ sitesync コマンドの動作確認をします。
 
 .. note:: 
 
-    sitesync コマンドはサイトホームディレクトリに移動してから実行
-    してください。
+    sitesync コマンドはサイトホームディレクトリに移動してから実行してください。
 
 cronで定期起動
 --------------
@@ -216,12 +289,19 @@ Cron の設定をします。
 
 5分周期で 集計スクリプトを定期実行する設定をします。
 
+.. note::
+
+    Perl5.16.3環境での cron 設定
+
+    cron の設定で、インストールパスを有効にするため、コマンド先頭行に以下の設定を追加します。
+    各cron の実行コマンドの先頭に、「source /home/psadmin/.bash_profile && 」を追加します。
+
 
 ::
 
-   0,5,10,15,20,25,30,35,40,45,50,55 * * * * ({サイトディレクトリ}/script/cron_sumup.sh > /dev/null 2>&1) &
+   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (source /home/psadmin/.bash_profile && {サイトディレクトリ}/script/cron_sumup.sh > /dev/null 2>&1) &
    # 上記例の場合
-   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (/home/psadmin/site/site1/script/cron_sumup.sh > /dev/null 2>&1) &
+   0,5,10,15,20,25,30,35,40,45,50,55 * * * * (source /home/psadmin/.bash_profile && /home/psadmin/site/site1/script/cron_sumup.sh > /dev/null 2>&1) &
 
 Cacti 監視グラフ登録
 --------------------

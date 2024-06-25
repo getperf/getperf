@@ -6,9 +6,6 @@ Webサービスインストール
 事前準備
 --------
 
-Webサービスのインストールで、Java ビルドツール Gradle, Apache Ant を使用します。
-前頁にインストール手順の記載がありますので、事前にインストールしてください。
-
 以下のコマンドで OpenSSL 関連パッケージをインストールします。
 
 ::
@@ -26,7 +23,7 @@ Apacheインストール
 
 Apache HTTP サーバをソースからコンパイルして、/usr/local の下にインストールします。
 管理用とデータ受信用の2つのインスタンスをインストールします。
-それぞれ、/usr/local/apache-admin　と　/usr/local/apache-data のホームディレクトリにインストールします。
+それぞれ、/usr/local/apache-admin と /usr/local/apache-data のホームディレクトリにインストールします。
 
 * 管理用の場合
 
@@ -45,7 +42,7 @@ Apache バージョンは、2.4 系の最新をダウンロードサイトから
 ::
 
    # Getperfホームディレクトリに移動し、Apache インストールコマンドを実行します。
-   cd ~/getperf
+   cd $GETPERF_HOME
    sudo -E rex prepare_apache
 
 Apache サービスを再起動します。
@@ -139,7 +136,7 @@ Apache と同様に、管理用とデータ受信用で、それぞれ、/usr/lo
 ::
 
    # Getperfホームディレクトリに移動し、Tomcat インストールコマンドを実行します。
-   cd ~/getperf
+   cd $GETPERF_HOME
    sudo -E rex prepare_tomcat
 
 Tomcat バージョンは 8.5 系の最新をダウンロードサイトから検出してインストールします
@@ -152,7 +149,8 @@ Webサービスエンジンの Apache Axis2 をダウンロードして、Tomcat
 
 ::
 
-    rex prepare_tomcat_lib
+   cd $GETPERF_HOME
+   rex prepare_tomcat_lib
 
 デプロイ処理は最後に、Apache, Tomcat プロセスの再起動を行います。
 サービス再起動時のサービス停止エラーが発生する場合がありますが、本エラーは無視して
@@ -163,25 +161,25 @@ Webサービスエンジンの Apache Axis2 をダウンロードして、Tomcat
 -  Axis2 管理用 http://{監視サーバIPアドレス}:57000/axis2/
 -  Axis2 データ受信用 http://{監視サーバIPアドレス}:58000/axis2/
 
-    .. note::
+.. note::
 
-        IPv6が無効化設定されている場合、Tomcat の再起動でプロトコルエラーが発生します。
-        IPv6 形式の IP アドレスを使用しているためで、以下の設定ファイルを編集して、
-        IPv4 形式の IP に修正してください。
+   IPv6が無効化設定されている場合、Tomcat の再起動でプロトコルエラーが発生します。
+   IPv6 形式の IP アドレスを使用しているためで、以下の設定ファイルを編集して、
+   IPv4 形式の IP に修正してください。
 
-        ::
+   ::
 
-            # 管理用 Tomcat の設定ファイル編集
-            vi /usr/local/tomcat-admin/conf/server.xml
-            # データ用 Tomcat の設定ファイル編集
-            vi /usr/local/tomcat-data/conf/server.xml
+      # 管理用 Tomcat の設定ファイル編集
+      vi /usr/local/tomcat-admin/conf/server.xml
+      # データ用 Tomcat の設定ファイル編集
+      vi /usr/local/tomcat-data/conf/server.xml
 
-        以下の AJP のアクセスの address を修正します。
+   以下の AJP のアクセスの address を修正します。
 
-        ::
+   ::
 
-             <Connector protocol="AJP/1.3"
-                   address="127.0.0.1"
+         <Connector protocol="AJP/1.3"
+               address="127.0.0.1"
 
 
 Axis2 管理画面のアクセスが確認できたら、Getperf Web サービスをデプロイします。
@@ -218,26 +216,5 @@ Getperf Web サービスをビルドしてデプロイします。
     rex restart_ws_data
 
 デプロイに成功すると、前述の Axis2 管理画面のメニューからWebサービスの確認ができます。
-管理画面の Services メニューを選択し、GetperfService　を選択します。選択するとWSDL(XML形式のWebサービスの定義情報)が表示されます。
+管理画面の Services メニューを選択し、GetperfService を選択します。選択するとWSDL(XML形式のWebサービスの定義情報)が表示されます。
 
-.. .. note::
-
-..    2020/12 に以下の課題を解消しました。
-
-..    現在、デプロイした getperf-ws-1.0.0.jar は、Axis2 のサービス登録で
-..    エラーが発生します。
-..    別サイトから jarファイルをアップロードしてtomcatを再起動します。
-
-..    ::
-
-..       # 旧サイトから、getperf-ws-1.0.0.jar ファイルを/tmpにコピー
-..       cp /tmp/getperf-ws-1.0.0.jar \
-..       /usr/local/tomcat-data/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
-..       cp /tmp/getperf-ws-1.0.0.jar \
-..       /usr/local/tomcat-admin/webapps/axis2/WEB-INF/services/getperf-ws-1.0.0.jar
-
-..    ::
-
-..       cd $HOME/getperf
-..       sudo rex restart_ws_admin
-..       sudo rex restart_ws_data
