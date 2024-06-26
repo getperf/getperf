@@ -222,7 +222,7 @@ class CactiGraph {
 			push_out_host($hostId, $item);
 			$dataSourceIds[] = $item;
 		}
-		echo "DS : " . join(",", $dataSourceIds) . "\n"; 
+		// echo "DS : " . join(",", $dataSourceIds) . "\n"; 
 		$this->cacti_datasource_ids = $dataSourceIds;
 
 		// add graph comment
@@ -333,7 +333,7 @@ class CactiGraph {
 				$id = array_shift($cacti_datasource_ids);
 				$device      = $device_list['device'];
 				$device_text = $device_list['device_text'];
-				echo "SET DS : $id, $device\n"; 
+				// echo "SET DS : $id, $device\n"; 
 
 				$rrdpath2          = str_replace("<device>", $device, $rrdpath);
 				$rrdpath2          = str_replace("*",        $device, $rrdpath2);

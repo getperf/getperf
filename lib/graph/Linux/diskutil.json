@@ -1,20 +1,18 @@
 {
   "host_template": "Linux",
-  "host_title": "Linux - <node>",
+  "host_title": "HW - <node>",
   "priority": 5,
   "graphs": [
     {
-      "graph_template": "Linux - Disk Util% - <devn> cols",
-      "graph_title": "Linux - <node> - Disk Util%",
+      "graph_template": "HW - Disk Util% - <devn> cols",
       "graph_type": "multi",
       "legend_max": 15,
       "graph_items": ["usage"],
+      "disable_auto_scale": true,
       "chart_style": "line2",
-      "vertical_label": "Disk util %",
-      "upper_limit": 100,
-      "unit_exponent_value": 1,
       "graph_tree": "/HW/<node_path>/DiskUtil/",
-      "datasource_title": "Linux - <node> - Disk Util% - <device>"
+      "graph_title": "HW - <node> - Disk Util%",
+      "datasource_title": "HW - <node> - Disk Util% - <device>"
     }
   ]
 }
