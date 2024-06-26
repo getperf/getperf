@@ -22,11 +22,4 @@ svc_auto が OS起動時の自動起動設定で、svc_start
 データ受信用Webサービスの再起動 rex restart_ws_data
 =============================== ==========================
 
-.. note::
-
-   MySQL,Apache(httpd)の再起動で /etc/init.d/httpd: No such file or directory のエラー
-   が発生する場合がありますが。systemctl で起動スクリプトの設定してあるので、
-   無視して構いません。
-
-
 
