@@ -9,6 +9,7 @@ use Path::Class;
 use JSON::XS;
 use Template;
 use Time::Moment;
+use File::Copy  qw/copy/;
 use Filesys::Notify::Simple;
 use Log::Handler app => "LOG";
 use Getperf::Config 'config';
@@ -60,6 +61,10 @@ sub new {
     	tar_file        => undef,
     	export_domain   => undef,
     	import_domain   => undef,
+    	test_date_path  => Time::Moment->now->strftime("%Y%m%d/%H0000"),
+    	test_input      => undef,
+    	test_host       => undef,
+    	test_device     => undef,
 	}, $class;
 }
 
@@ -82,6 +87,7 @@ sub parse_command_option {
 		"\n\t[[--export={domain}|--import={domain} [--force,-f]] [--archive={file.tar.gz}]]" .
 		"\n\t[--daemon,-d] [--recover,-r|--fastrecover,-f]" .
 		"\n\t[--info|--auto|--manual]" .
+		"\n\t[--test={input file} --host={host} --device={device}]" .
 		"\n\t[start|stop|restart|status]\n\n" .
 		"'--daemon' options run the zip directory monitoring in the foreground.\n" .
 		"If you execute as daemon process, Run 'start' command.\n";
@@ -102,6 +108,9 @@ sub parse_command_option {
 		'--export=s'        => \$self->{export_domain},
 		'--import=s'        => \$self->{import_domain},
 		'--archive=s'       => \$self->{tar_file},
+		'--test=s'          => \$self->{test_input},
+		'--host=s'          => \$self->{test_host},
+		'--device=s'        => \$self->{test_device},
 	);
 
 	for my $input_path(@ARGV) {
@@ -132,6 +141,9 @@ sub parse_command_option {
 
 	} elsif (my $input_path = $self->{time_shift_file}) {
 		return $self->run_test($input_path);
+
+	} elsif (my $test_input = $self->{test_input}) {
+		return $self->create_test_data($test_input);
 
 	} elsif (my $sumup_last_path = $self->{sumup_last_path}) {
 		return $self->run_last_data($sumup_last_path);
@@ -223,6 +235,50 @@ sub run_test {
 	}
 	my $elapse_command = Time::HiRes::tv_interval($start);
 	LOG->info("sumup test : elapse = $elapse_command");
+	return 1;
+}
+
+sub create_test_data {
+	my ($self, $input_path) = @_;
+
+	$self->switch_screen_log;
+	LOG->info("check input test data : ${input_path}");
+	if (-d $input_path) {
+		my @input_files = dir($input_path)->children;
+		for my $input_file ( @input_files ) {
+			$self->create_test_data_file($input_file);
+		}
+	} else {
+		return $self->create_test_data_file($input_path);
+	}
+	return 1;
+}
+
+sub create_test_data_file {
+	my ($self, $input_file) = @_;
+
+	#  parse input. eg. ./lib/test/Oracle/Default/ora_ses_ela__URA0.txt
+	if ($input_file !~m|lib/test/(.+?)/(.+?)/(.+)$| || ! -f $input_file) {
+		return;
+	}
+	my ($domain, $test_label, $metric_file) = ($1, $2, $3);
+	my $host = $self->{test_host} || $test_label;
+	if ($metric_file =~/^(.+?)__(.+?)$/ && $self->{test_device}) {
+		my ($metric, $device, $new_device) = ($1, $2, $self->{test_device});
+		$metric_file = "${metric}__${new_device}.txt";
+	}
+
+	# create output eg. analysis/y3pidb02b/Oracle/20240617/100100/ora_ses_ela__URA0.txt
+	my $date_path = $self->{test_date_path};
+	my $output = file("analysis/${host}/${domain}/${date_path}/${metric_file}");
+	LOG->info("test data create: ${output}");
+	my $target_dir = $output->parent;
+	if (!-d $target_dir) {
+		$target_dir->mkpath || die "Can't create $target_dir : $!";
+	}
+	if (copy(file($input_file), $output) == 0) {
+		die "Can't copy ${input_file} ${output} : $!";
+	}
 	return 1;
 }
 
