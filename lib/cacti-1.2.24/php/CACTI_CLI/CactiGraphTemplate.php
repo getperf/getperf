@@ -39,6 +39,8 @@ class CactiGraphTemplate {
 	public $color_list;
 	public $graph_item_count;
 	public $vertical_label;
+	public $disable_auto_scale;
+	public $rigid_auto_scale;
 	public $cdef_id;
 
 	function __construct($name, $graph_options, $data_sources, $options) {
@@ -58,6 +60,8 @@ class CactiGraphTemplate {
 		$this->graph_item_cols  = array_key_exists('graph_item_cols',  $graph_options) ?  $graph_options['graph_item_cols']  : NULL;
 		$this->graph_item_texts = array_key_exists('graph_item_texts', $graph_options) ?  $graph_options['graph_item_texts']  : NULL;
 		$this->total_data_source = array_key_exists('total_data_source', $graph_options) ?  $graph_options['total_data_source']  : NULL;
+		$this->disable_auto_scale = array_key_exists('disable_auto_scale', $graph_options) ?  $graph_options['disable_auto_scale']  : false;
+		$this->rigid_auto_scale = array_key_exists('rigid_auto_scale', $graph_options) ?  $graph_options['rigid_auto_scale']  : false;
 
 		$this->color_style      = 'gradation';
 		if (!is_null($options['color_style'])) {
@@ -420,6 +424,12 @@ class CactiGraphTemplate {
 		}
 		if ($base_value) {
 			$set_statements[] = "base_value = $base_value";
+		}
+		if ($disable_auto_scale) {
+			$set_statements[] = "auto_scale = ''";
+		}
+		if ($rigid_auto_scale) {
+			$set_statements[] = "auto_scale_rigid = 'on'";
 		}
 		if (count($set_statements) > 0) {
 			$set_statement = join(',', $set_statements);

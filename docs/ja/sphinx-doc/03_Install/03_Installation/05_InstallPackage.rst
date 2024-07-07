@@ -16,56 +16,6 @@ MySQLサーバ(mysql-server) をインストールします。
    sudo -E dnf module enable mysql:8.0
    sudo -E yum install mysql-server
 
-CentOS7の場合の MySQL インストール
-----------------------------------
-
-RH7系のOS の場合、以下、MySQLドキュメントのMySQL Yum リポジトリを使用して MySQL 
-を Linux にインストールするを参考にして、MySQL 8.0 をインストールします。
-
-::
-
-   https://dev.mysql.com/doc/refman/8.0/ja/linux-installation-yum-repo.html
-
-MySQL Yum リポジトリをインストールします。パッケージ名は上記 URL の
-ダウンロードページから適切なパッケージ名を確認して入力してください。
-
-::
-
-   wget https://dev.mysql.com/get/mysql80-community-release-el8-4.noarch.rpm
-   sudo -E yum localinstall mysql80-community-release-el8-4.noarch.rpm
-
-インストールするMySQLバージョンのリポジトリを確認します。
-
-::
-
-   sudo -E yum -y install yum-utils
-   sudo -E yum repolist all | grep mysql
-
-上記リストで MySQL 8.0 より古いリポジトリが有効化されていた場合は、
-以下のコマンドで無効化します。
-
-::
-
-   sudo -E yum-config-manager --disable mysql57-community
-
-また、OS 標準の MySQL モジュールのリポジトリを無効化します。
-
-::
-
-   sudo -E yum module disable mysql
-
-上記リストのMySQL 8のリポジトリを有効化します。
-
-::
-
-   sudo -E yum-config-manager --enable mysql80-community
-
-MySQL サーバをインストールします
-
-::
-
-   sudo -E yum -y install mysql-community
-
 MySQL 設定
 ----------
 
@@ -73,10 +23,7 @@ MySQL の設定をします。
 
 ::
 
-   # OracleLInux8の場合
    sudo vi /etc/my.cnf.d/mysql-server.cnf
-   # CentOS7の場合
-   sudo vi /etc/my.cnf
 
 [mysqld]の後に以下の行を追加します。
 
@@ -87,17 +34,12 @@ MySQL の設定をします。
 ::
 
    [mysqld]
+   default_password_lifetime=0
    default_authentication_plugin=mysql_native_password
-   # MySQL Yum リポジトリからインストールした場合は、以下のパスワード設定のコメントアウトを外してください
-   #validate_password.length=4
-   #validate_password.mixed_case_count=0
-   #validate_password.number_count=0
-   #validate_password.special_char_count=0
-   #validate_password.policy=LOW
    character-set-server=utf8mb4
    collation-server=utf8mb4_unicode_ci
+   sql_mode=NO_ENGINE_SUBSTITUTION
    #default-time-zone='Asia/Tokyo'
-
 
 MySQL を起動します
 
@@ -106,29 +48,21 @@ MySQL を起動します
    sudo systemctl enable mysqld
    sudo systemctl start mysqld
 
-MySQL の root パスワードを確認します。
-
-Oracle Linux の場合はパスワードは無しです。
-MySQL Yum リポジトリからインストールした場合は、以下で仮パスワードを確認します。
-
-::
-
-   sudo cat /var/log/mysqld.log | grep 'temporary password'
+MySQL にログインします。
 
 ::
 
    mysql -u root -p
 
-上記仮パスワードを入力してログインします。
-上記で仮パスワードがない場合は ENTER を押してください。
+Oracle Linux の場合はパスワードは無しで ENTER を押してください。
 
-config/getperf_site.json の GETPERF_CACTI_MYSQL_ROOT_PASSWD に記載した、
-パスワードを設定します。
+root パスワードを設定します。
 
 ::
 
    USE mysql;
    ALTER USER 'root'@'localhost' identified BY '{パスワード}';
+   exit;
 
 .. note:: 既定のパスワードは、 getperf です。
 
@@ -144,7 +78,7 @@ MySQL に Timezone テーブルをロードします。
 
    sudo vi /etc/my.cnf.d/mysql-server.cnf
 
-default-time-zone を設定します。
+default-time-zone のコメントアウトを除きます。
 
 ::
 
@@ -152,13 +86,53 @@ default-time-zone を設定します。
     [mysqld]
     character-set-server=utf8mb4
     collation-server=utf8mb4_unicode_ci
-    default-time-zone='Asia/Tokyo'   #追加
+    default-time-zone='Asia/Tokyo'
 
 MySQL を再起動します。
 
 ::
 
    sudo systemctl restart mysqld
+
+MySQLのセキュリティ設定スクリプトを実行します。
+
+::
+
+    mysql_secure_installation
+
+コンソールから、以下を入力してスクリプトを完了します。
+パスワードは getperf_site.json 設定ファイル更新で設定したパスワードを入力します。
+
+::
+
+   mysql_secure_installation
+   Set root password? [Y/n] ※エンター
+   New password: ※パスワードを設定 ⇒ 設定ファイルの作成で編集した MySQLパスワードを指定
+   Remove anonymous users? [Y/n] ※エンター
+   Disallow root login remotely? [Y/n] ※エンター
+   Remove test database and access to it? [Y/n] ※エンター
+   Reload privilege tables now? [Y/n] ※エンター
+
+タイムゾーンの設定が「Asia/Tokyo」になっていることを確認します。
+
+::
+
+   mysql -u root -p
+   # タイムゾーンが Asia/Tokyo になっていることを確認
+   > SELECT @@global.time_zone;
+   # SQLモードが NO_ENGINE_SUBSTITUTION になっていることを確認
+   > show VARIABLES LIKE "%sql_mode%";
+   > exit;
+
+Perl MySQL ライブラリのインストール
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+以下コマンドで Perl MySQL ライブラリをインストールします。
+
+::
+
+    sudo -E cpanm DBD::mysql
+
 
 
 PHP 7.3 インストール
@@ -205,51 +179,12 @@ PHP パッケージをインストールします。
       curl git rrdtool zip unzip \
       mysql-devel
 
-httpd サービスを再起動します。
-
-::
-
-   sudo systemctl restart httpd
-
-PHP 7.3 インストール(CentOS7の場合)
-------------------------------------
-
-CentOS7,OracleLinux7の場合は、以下のRemiリポジトリを利用して
-パッケージインストールします。
-
-既存のPHP パッケージを削除します。
-
-::
-
-   sudo -E yum remove php-*
-
-EPEL 、Remi リポジトリをインストールします。
-
-::
-
-   # EPELをインストール
-   sudo -E yum install epel-release
-   # Remiをインストール
-   sudo -E yum install http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-
-remi-php73 を選択して PHP 7.3 パッケージをインストールします。
-
-::
-
-   sudo -E yum  install  --enablerepo=epel,remi,remi-php73 \
-      pcre-devel \
-      php php-mbstring \
-      php-mysqlnd php-pear php-common php-gd php-devel php-cli \
-      cairo-devel libxml2-devel pango-devel pango \
-      libpng-devel freetype freetype-devel  \
-      curl git rrdtool zip unzip \
-      mysql-devel  php php-cli php-common  php-mysqlnd  php-json
-
 composer を実行して、PHP ライブラリをインストールします。
 
 ::
 
    cd ~/getperf
+   sudo -E yum install php-json
    rex prepare_composer
 
 php.ini パッチを適用します。
@@ -258,13 +193,13 @@ php.ini パッチを適用します。
 
    sudo -E perl $HOME/getperf/script/config-pkg.pl php
 
-httpd サービスを再起動します。
+php-fpm と httpd サービスを再起動します。
 
 ::
 
-   sudo service httpd restart
-
-
+   sudo systemctl restart php-fpm
+   sudo systemctl restart httpd
+ 
 Cactiモジュールダウンロードとパッチ適用
 ---------------------------------------
 
@@ -314,30 +249,11 @@ Gradle, Ant インストール
 
 Gradle をインストールします
 
-インストールスクリプトを編集して、バージョンを最新 6.7.1 に変更
-ダウンロードサイトのURLをhttpからhttpsに変更します
-
-::
-
-   cd $GETPERF_HOME
-   vi ./script/gradle-install.sh
-   #gradle_version=2.3
-   gradle_version=6.7.1
-
-   #wget -N http://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
-   wget -N https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
-
 ::
 
    cd $GETPERF_HOME
    sudo -E ./script/gradle-install.sh
    sudo ln -s /usr/local/gradle/latest/bin/gradle /usr/local/bin/gradle
-
-Apache HTML ホームページのアクセス権限を変更します
-
-::
-
-   sudo chmod a+wrx /var/www/html
 
 Apache Ant をインストールします
 
@@ -354,9 +270,3 @@ Apache HTML ホームページのアクセス権限を変更します。
 
    sudo chmod a+wrx /var/www/html
 
-PHP設定ファイル /etc/php.ini を変更します。
-
-::
-
-   cd $GETPERF_HOME
-   sudo perl ./script/config-pkg.pl php

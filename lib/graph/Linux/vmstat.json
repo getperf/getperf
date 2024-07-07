@@ -10,9 +10,9 @@
       "graph_comment": "<issue> <arch> <model> <cores>/<cpus>",
       "graph_items": ["us", "sy", "wa"],
       "graph_item_texts": ["user", "sys", "waitio"],
-      "total_data_source": "Total All Data Sources",
       "chart_style": "stack",
       "vertical_label": "CPU %",
+      "disable_auto_scale": true,
       "upper_limit": 100,
       "unit_exponent_value": 1,
       "datasource_title": "Linux - <node> - CPU Util%"

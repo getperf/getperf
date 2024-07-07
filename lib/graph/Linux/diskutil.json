@@ -9,6 +9,7 @@
       "graph_type": "multi",
       "legend_max": 15,
       "graph_items": ["usage"],
+      "disable_auto_scale": true,
       "chart_style": "line2",
       "vertical_label": "Disk util %",
       "upper_limit": 100,

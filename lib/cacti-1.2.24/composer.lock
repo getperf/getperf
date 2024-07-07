@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "e745af73066163e07b0bc682813ce5e7",
+    "content-hash": "48c83aabbbbe8d4b28d407e2ef79667b",
     "packages": [
         {
             "name": "kevinlebrun/colors.php",
@@ -50,7 +50,11 @@
                 "console",
                 "shell"
             ],
-            "time": "2012-03-25 18:18:10"
+            "support": {
+                "issues": "https://github.com/kevinlebrun/colors.php/issues",
+                "source": "https://github.com/kevinlebrun/colors.php/tree/0.2.0"
+            },
+            "time": "2012-03-25T18:18:10+00:00"
         },
         {
             "name": "nategood/commando",
@@ -96,7 +100,11 @@
                 "command line interface",
                 "scripting"
             ],
-            "time": "2015-01-05 15:55:41"
+            "support": {
+                "issues": "https://github.com/nategood/commando/issues",
+                "source": "https://github.com/nategood/commando/tree/v0.2.7"
+            },
+            "time": "2015-01-05T15:55:41+00:00"
         },
         {
             "name": "wp-cli/php-cli-tools",
@@ -117,12 +125,12 @@
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "cli": "lib/"
-                },
                 "files": [
                     "lib/cli/cli.php"
-                ]
+                ],
+                "psr-0": {
+                    "cli": "lib/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -146,7 +154,11 @@
                 "cli",
                 "console"
             ],
-            "time": "2015-02-27 22:11:29"
+            "support": {
+                "issues": "https://github.com/wp-cli/php-cli-tools/issues",
+                "source": "https://github.com/wp-cli/php-cli-tools/tree/v0.10.4"
+            },
+            "time": "2015-02-27T22:11:29+00:00"
         }
     ],
     "packages-dev": [],
@@ -156,5 +168,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
 }

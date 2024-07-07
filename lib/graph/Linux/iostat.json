@@ -9,6 +9,7 @@
       "graph_title": "Linux - <node> - Disk Busy%",
       "graph_type": "multi",
       "legend_max": 15,
+      "disable_auto_scale": true,
       "graph_items": ["pct"],
       "vertical_label": "Disk busy %",
       "upper_limit": 100,
