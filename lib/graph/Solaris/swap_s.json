@@ -11,6 +11,7 @@
       "chart_style": "stack",
       "vertical_label": "Byte",
       "cdef": "Multiply by 1024",
+      "base_value": 1024,
       "total_data_source": "Total All Data Sources, Multiply by 1024",
       "graph_comment": "Memory : <total>",
       "graph_borderline": "<total>",

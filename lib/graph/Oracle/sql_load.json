@@ -1,0 +1,107 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRAC - <node>",
+  "priority": 15,
+  "graphs": [
+    {
+      "graph_template": "OracleRAC - SQLLoad Response",
+      "graph_tree": "/Oracle/<node_path>/SQLLoad/<node>",
+      "graph_title": "OracleRAC - SQL <node> - Response  - <device>",
+      "graph_type": "single",
+      "graph_items": ["elapsed_time", "executions"],
+       "cdef_id": 17,
+      "vertical_label": "sec",
+      "datasource_title": "OracleRAC - SQL <node> - Response - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad Executions - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - Executions",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["executions"],
+      "vertical_label": "query/sec",
+      "datasource_title": "OracleRAC - SQL <node> - Executions - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad DiskReads - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - DiskReads",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["disk_reads"],
+      "vertical_label": "io/sec",
+      "datasource_title": "OracleRAC - SQL <node> - DiskReads - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad BlockGets - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - BlockGets",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["buffer_gets"],
+      "vertical_label": "io/sec",
+      "datasource_title": "OracleRAC - SQL <node> - BlockGets - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad RowsProcessed - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - RowsProcessed",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["rows_processed"],
+      "vertical_label": "row/sec",
+      "datasource_title": "OracleRAC - SQL <node> - RowsProcessed - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad CPUTime - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - CPUTime",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["cpu_time"],
+      "vertical_label": "sec",
+      "datasource_title": "OracleRAC - SQL <node> - CPUTime - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad ElapsedTime - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - ElapsedTime",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["elapsed_time"],
+      "vertical_label": "sec",
+      "datasource_title": "OracleRAC - SQL <node> - ElapsedTime - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad IOWait - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - IOWait",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["iowait_delta"],
+      "vertical_label": "sec",
+      "datasource_title": "OracleRAC - SQL <node> - IOWait - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad Bytes - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - Bytes",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["int_bytes"],
+      "vertical_label": "byte",
+      "datasource_title": "OracleRAC - SQL <node> - Bytes - <device>"
+    },
+    {
+      "graph_template": "OracleRAC - SQLLoad OffloadReturned - <devn> cols",
+      "graph_tree": "/OracleRAC/<node_path>/SQLLoad/<node>/Detail",
+      "graph_title": "OracleRAC - SQL <node> - OffloadReturned",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["offload_returned"],
+      "vertical_label": "row/sec",
+      "datasource_title": "OracleRAC - SQL <node> - OffloadReturned - <device>"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 153,
+  "graphs": [
+    {
+      "graph_template": "Oracle - PGA Memory Size - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Memory/PGA/",
+      "graph_title": "Oracle - <node> - PGA Memory Size usage",
+      "graph_type": "multi",
+      "chart_style": "line1",
+      "legend_max": 8,
+      "graph_items": [
+        "byte"
+      ],
+      "vertical_label": "byte",
+      "datasource_title": "Oracle - <node> - PGA Memory Size usage - <device>"
+    }
+  ]
+}

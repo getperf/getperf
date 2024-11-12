@@ -11,6 +11,7 @@
       "legend_max": 15,
       "graph_items": ["pct"],
       "vertical_label": "Disk busy %",
+      "disable_auto_scale": true,
       "upper_limit": 100,
       "unit_exponent_value": 1,
       "datasource_title": "Solaris - <node> - Disk Busy% - <device>"
@@ -34,6 +35,7 @@
       "graph_item_texts": ["read transfers", "write transfers"],
       "vertical_label": "Byte/sec",
       "cdef": "Multiply by 1024",
+      "base_value": 1024,
       "datasource_title": "Solaris - <node> - Disk Byte/s - <device>"
     },
     {

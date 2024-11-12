@@ -1,0 +1,17 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 24,
+  "graphs": [
+    {
+      "graph_template": "Oracle - NA - Statspack Timed Events - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Load/Event/Detail/NA",
+      "graph_title": "Oracle - <node> - NA - Statspack Timed Events",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["elapse"],
+      "vertical_label": "sec",
+      "datasource_title": "Oracle - <node> - NA - Statspack Timed Events - <device>"
+    }
+  ]
+}

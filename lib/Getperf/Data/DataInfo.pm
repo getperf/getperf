@@ -494,6 +494,34 @@ sub cacti_db_dml {
 	container('cacti_db')->do(@params);
 }
 
+sub cacti_site_db_query {
+	my ($self, $sitekey, @params) = @_;
+	my $site_info = Getperf::Data::SiteInfo->instance($sitekey);
+    my $passwd = $site_info->{site_mysql_passwd};
+    print "TEST:cacti_site_db_query\n";
+	# container('cacti_site_db')->selectall_arrayref(@params);
+    my $db = DBI->connect("dbi:mysql:$sitekey", $sitekey, $passwd, {
+        RaiseError        => 1,
+        PrintError        => 0,
+        mysql_enable_utf8 => 1,
+    });
+    $db->selectall_arrayref(@params);
+}
+
+sub cacti_site_db_dml {
+	my ($self, $sitekey, @params) = @_;
+    print "TEST:cacti_site_db_dml\n";
+	my $site_info = Getperf::Data::SiteInfo->instance($sitekey);
+    my $passwd = $site_info->{site_mysql_passwd};
+    # print "SITE_PASS:$sitekey,$passwd\n";
+    my $db = DBI->connect("dbi:mysql:$sitekey", $sitekey, $passwd, {
+        RaiseError        => 1,
+        PrintError        => 0,
+        mysql_enable_utf8 => 1,
+    });
+ 	$db->do(@params);
+}
+
 sub update_node_view {
 	my $self = shift;
 	my $view_dir = $self->site_info->view;

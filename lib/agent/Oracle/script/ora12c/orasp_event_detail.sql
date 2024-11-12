@@ -1,0 +1,104 @@
+COLUMN TODAY NEW_VALUE DATE
+SELECT TO_CHAR(SYSDATE, 'YYYYMMDD') AS TODAY FROM DUAL;
+
+-- set colsep "^"
+-- set trimspool on
+-- set lines 999
+-- set pages 50000
+
+--  Top N Wait Events
+
+col idle     noprint;
+col event    format a41          heading 'Top &&top_n_events Timed Events|~~~~~~~~~~~~~~~~~~|Event' trunc;
+col waits    format 999,999,990  heading 'Waits';
+col time     format 99,999,990   heading 'Time (s)';
+col pctwtt   format 999.9        heading '%Total|Call|Time';
+col avwait   format 99990        heading 'Avg|wait|(ms)';
+
+select /*+ USE_HASH(a b c) NO_MERGE(a) NO_MERGE(b) NO_MERGE(c) */
+ a.INSTANCE_NUMBER,
+ a.START_ID,a.END_ID,
+ a.EVENT event,
+ a.TOTAL_WAITS waits,
+ a.VALUE/1000000  time,
+ decode ( a.TOTAL_WAITS, 0, to_number(NULL),  a.VALUE/1000 / a.TOTAL_WAITS)  avwait,
+ a.VALUE/(b.TIME_WAITED + c.VALUE)*100 pctwtt,a.WAIT_CLASS
+from
+(select INSTANCE_NUMBER,START_ID,END_ID,EVENT,TOTAL_WAITS,VALUE,WAIT_CLASS from 
+(select
+ a.INSTANCE_NUMBER,
+ LAG(a.SNAP_ID, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID) as START_ID,
+ a.SNAP_ID END_ID,
+ a.EVENT,
+CASE WHEN a.TOTAL_WAITS - LAG(a.TOTAL_WAITS, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID)<'0'
+     THEN 0
+     ELSE a.TOTAL_WAITS - LAG(a.TOTAL_WAITS, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID)
+END "TOTAL_WAITS",
+CASE WHEN a.TIME_WAITED_MICRO - LAG(a.TIME_WAITED_MICRO, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID)<'0'
+     THEN 0
+     ELSE a.TIME_WAITED_MICRO - LAG(a.TIME_WAITED_MICRO, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID)
+END "VALUE",
+c.WAIT_CLASS
+ from STATS$SYSTEM_EVENT a, STATS$SNAPSHOT b,v$event_name c
+where a.SNAP_ID = b.SNAP_ID
+  and a.INSTANCE_NUMBER = b.INSTANCE_NUMBER
+  and a.EVENT_ID = c.EVENT_ID
+  and b.SNAP_LEVEL = 0)
+where event not in (select event from stats$idle_event)
+  and VALUE > 0
+union
+select
+a.INSTANCE_NUMBER,
+ LAG(a.SNAP_ID, 1) OVER (partition by a.INSTANCE_NUMBER,a.NAME ORDER BY a.INSTANCE_NUMBER,a.NAME,a.SNAP_ID ) as START_ID,
+ a.SNAP_ID END_ID,
+ 'CPU TIME' "NAME",
+ NULL "total_waits",
+CASE WHEN a.VALUE*10000 - LAG(a.VALUE*10000, 1) OVER (partition by a.INSTANCE_NUMBER,a.NAME ORDER BY a.INSTANCE_NUMBER,a.NAME,a.SNAP_ID)<'0'
+     THEN 0
+     ELSE a.VALUE*10000 - LAG(a.VALUE*10000, 1) OVER (partition by a.INSTANCE_NUMBER,a.NAME ORDER BY a.INSTANCE_NUMBER,a.NAME,a.SNAP_ID)
+END "VALUE",
+'DB CPU'
+from STATS$SYSSTAT a,STATS$SNAPSHOT b
+where a.SNAP_ID = b.SNAP_ID
+  and a.INSTANCE_NUMBER = b.INSTANCE_NUMBER
+  and b.SNAP_LEVEL = 0
+  and a.name = 'CPU used by this session') a,
+(select INSTANCE_NUMBER,START_ID,END_ID,sum(TIME_WAITED_MICRO) TIME_WAITED from(
+select
+a.INSTANCE_NUMBER,
+ LAG(a.SNAP_ID, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID) as START_ID,
+ a.SNAP_ID END_ID,
+ a.EVENT,
+CASE WHEN a.TIME_WAITED_MICRO - LAG(a.TIME_WAITED_MICRO, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID)<'0'
+     THEN 0
+     ELSE a.TIME_WAITED_MICRO - LAG(a.TIME_WAITED_MICRO, 1) OVER (partition by a.INSTANCE_NUMBER,a.EVENT ORDER BY a.INSTANCE_NUMBER,a.EVENT,a.SNAP_ID)
+END "TIME_WAITED_MICRO"
+ from STATS$SYSTEM_EVENT a, STATS$SNAPSHOT b
+where a.SNAP_ID = b.SNAP_ID
+  and a.INSTANCE_NUMBER = b.INSTANCE_NUMBER
+  and b.SNAP_LEVEL = 0)
+where event not in (select event from stats$idle_event)
+  and TIME_WAITED_MICRO > 0
+group by INSTANCE_NUMBER,START_ID,END_ID) b,
+(select
+a.INSTANCE_NUMBER,
+ LAG(a.SNAP_ID, 1) OVER (partition by a.INSTANCE_NUMBER,a.NAME ORDER BY a.INSTANCE_NUMBER,a.NAME,a.SNAP_ID ) as START_ID,
+ a.SNAP_ID END_ID,
+ 'CPU TIME' "NAME",
+CASE WHEN a.VALUE*10000 - LAG(a.VALUE*10000, 1) OVER (partition by a.INSTANCE_NUMBER,a.NAME ORDER BY a.INSTANCE_NUMBER,a.NAME,a.SNAP_ID)<'0'
+     THEN 0
+     ELSE a.VALUE*10000 - LAG(a.VALUE*10000, 1) OVER (partition by a.INSTANCE_NUMBER,a.NAME ORDER BY a.INSTANCE_NUMBER,a.NAME,a.SNAP_ID)
+END "VALUE"
+from STATS$SYSSTAT a,STATS$SNAPSHOT b
+where a.SNAP_ID = b.SNAP_ID
+  and a.INSTANCE_NUMBER = b.INSTANCE_NUMBER
+  and b.SNAP_LEVEL = 0
+  and a.name = 'CPU used by this session') c
+where a.START_ID = b.START_ID
+  and b.START_ID = c.START_ID
+  and a.END_ID = b.END_ID
+  and b.END_ID = c.END_ID
+  and a.INSTANCE_NUMBER = b.INSTANCE_NUMBER
+  and b.INSTANCE_NUMBER = c.INSTANCE_NUMBER  
+  and b.END_ID = (select max(SNAP_ID) from STATS$SNAPSHOT)
+order by a.INSTANCE_NUMBER,a.START_ID,a.END_ID,a.VALUE DESC;

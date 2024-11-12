@@ -25,16 +25,17 @@ register cacti_db => sub {
 
     my $sitekey   = undef;
     my $site_info = undef;
-    if (my $site_home = dir($ENV{'SITEHOME'})) {
-        my @site_dirs = @{$site_home->{dirs}};
+    my $site_home = $ENV{'SITEHOME'};
+    if (my $site_home_dir = dir($site_home)) {
+        my @site_dirs = @{$site_home_dir->{dirs}};
         $sitekey      = $site_dirs[$#site_dirs];
-        $site_info = Getperf::Data::SiteInfo->instance($sitekey, $site_home);
+        $site_info = Getperf::Data::SiteInfo->instance($sitekey, $site_home_dir);
     }
     if (!$site_info) {
         return;
     }
     my $passwd = $site_info->{site_mysql_passwd};
-    print "PASS:$sitekey,$passwd\n";
+    print "PASS:$sitekey,$passwd,$site_home\n";
     DBI->connect("dbi:mysql:$sitekey", $sitekey, $passwd, {
         RaiseError        => 1,
         PrintError        => 0,

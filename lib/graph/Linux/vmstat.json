@@ -10,6 +10,7 @@
       "graph_comment": "<issue> <arch> <model> <cores>/<cpus>",
       "graph_items": ["us", "sy", "wa"],
       "graph_item_texts": ["user", "sys", "waitio"],
+      "total_data_source": "Total All Data Sources",
       "chart_style": "stack",
       "vertical_label": "CPU %",
       "disable_auto_scale": true,
@@ -36,6 +37,7 @@
       "graph_items": ["free"],
       "vertical_label": "Byte",
       "cdef": "Multiply by 1024",
+      "base_value": 1024,
       "chart_style": "stack",
       "datasource_title": "Linux - <node> - Free Memory"
     },

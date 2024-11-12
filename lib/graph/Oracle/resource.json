@@ -1,0 +1,17 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 80,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Resource",
+      "graph_tree": "/Oracle/<node_path>/Resource/<device>",
+      "graph_title": "Oracle - <node> - Resource - <device>",
+      "chart_style": "line2",
+      "graph_items": ["curr_util","limit_value", "max_util"],
+      "graph_item_texts": ["Current", "Limit", "Max"],
+        "vertical_label": "count",
+      "datasource_title": "Oracle - <node> - Resource - <device>"
+    }
+  ]
+}

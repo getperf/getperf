@@ -1,0 +1,20 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 152,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Shared Pool Memory Statistic - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Memory/SGA/SharedPool",
+      "graph_title": "Oracle - <node> - Shared Pool Memory Statistic",
+      "graph_type": "multi",
+      "chart_style": "line1",
+      "legend_max": 16,
+      "graph_items": [
+        "byte"
+      ],
+      "vertical_label": "byte",
+      "datasource_title": "Oracle - <node> - Shared Pool Memory Statistic - <device>"
+    }
+  ]
+}

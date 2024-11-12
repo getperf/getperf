@@ -13,6 +13,7 @@
       "graph_items": ["PercentFree"],
       "vertical_label": "Disk util %",
       "upper_limit": 100,
+      "disable_auto_scale": true,
       "unit_exponent_value": 1,
       "datasource_title": "Windows - <node> - Disk Util% - <device>"
     }

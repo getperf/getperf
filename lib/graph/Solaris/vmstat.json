@@ -14,6 +14,7 @@
       "total_data_source": "Total All Data Sources",
       "vertical_label": "CPU %",
       "upper_limit": 100,
+      "disable_auto_scale": true,
       "unit_exponent_value": 1,
       "datasource_title": "Solaris - <node> - CPU Util%"
     },
@@ -35,8 +36,20 @@
       "graph_items": ["free"],
       "vertical_label": "Byte",
       "cdef": "Multiply by 1024",
+      "base_value": 1024,
       "chart_style": "stack",
       "datasource_title": "Solaris - <node> - Free Memory"
+    },
+    {
+      "graph_template": "Solaris - Memory - swap",
+      "graph_tree": "/HW/<node_path>/Memory/free/swap",
+      "graph_title": "Solaris - <node> - Swap",
+      "graph_items": ["swap"],
+      "vertical_label": "Byte",
+      "cdef": "Multiply by 1024",
+      "base_value": 1024,
+      "chart_style": "stack",
+      "datasource_title": "Solaris - <node> - Swap"
     },
     {
       "graph_template": "Solaris - Memory - scan rate",

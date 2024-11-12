@@ -1,0 +1,46 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 122,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Session count Detail - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Session/Detail/<node>",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["session"],
+      "chart_style": "line2",
+      "vertical_label": "session",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - Session count Detail",
+      "datasource_title": "Oracle - <node> - Session count Detail - <device>"
+    },
+    {
+      "graph_template": "Oracle - Session Transaction Detail - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Session/Detail/<node>",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["transaction"],
+      "chart_style": "line2",
+      "vertical_label": "session",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - Session Transaction Detail",
+      "datasource_title": "Oracle - <node> - Session Transaction Detail - <device>"
+    },
+    {
+      "graph_template": "Oracle - Session Acvites Detail - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Session/Detail/<node>",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["actives"],
+      "chart_style": "line2",
+      "vertical_label": "session",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - Session Acvites Detail",
+      "datasource_title": "Oracle - <node> - Session Acvites Detail - <device>"
+    }
+  ]
+}

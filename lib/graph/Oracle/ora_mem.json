@@ -1,0 +1,18 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 150,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Total Memory Size - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Memory/",
+      "graph_title": "Oracle - <node> - Total Memory Size",
+      "graph_type": "multi",
+      "chart_style": "line2",
+      "legend_max": 10,
+      "graph_items": ["byte"],
+      "vertical_label": "byte",
+      "datasource_title": "Oracle - <node> - Total Memory Size - <device>"
+    }
+  ]
+}

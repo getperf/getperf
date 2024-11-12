@@ -4,6 +4,7 @@ use warnings;
 use Data::Dumper;
 use Time::Piece;
 use Time::Local;
+use Tie::IxHash;
 use base qw(Getperf::Container);
 use Getperf::Command::Site::Oracle::AwrreportHeader;
 
@@ -34,7 +35,9 @@ sub norm {
 sub parse_loadprof {
     my ($str) = @_;
     my %loadprof = ();
-    for my $key(keys %{$headers->{load_profiles}}) {
+    tie %loadprof, 'Tie::IxHash';
+    # for my $key(keys %{$headers->{load_profiles}}) {
+    for my $key(qw/PhysicalRd HardParses Parses Sorts Transactions Redo Logons PhysicalWr Executes LogicalRd BlockChg/) {
         my $keyword = $headers->{load_profiles}{$key};
         if ($str=~/$keyword:(.*)$/ || $str=~/${keyword}\s*\(\S+\):(.*)$/) {
             my @vals = split(' ', $1);
@@ -52,7 +55,9 @@ sub parse_hit {
     my ($str) = @_;
 
     my %hit = ();
-    for my $key(keys %{$headers->{hits}}) {
+    tie %hit, 'Tie::IxHash';
+    # for my $key(keys %{$headers->{hits}}) {
+    for my $key(qw/MemSort NonParseCPU ExecParse ParseCPU RedoNW BufferNW BufHit LibHit SoftParse LatchHit/) {
         my $keyword = $headers->{hits}{$key};
         if ($str=~/$keyword:(.*)$/) {
             my @vals = split(' ', $1);
@@ -68,7 +73,9 @@ sub parse_event {
     my ($str, $bg_event_str) = @_;
 
     my %event = ();
-    for my $key(keys %{$headers->{events}}) {
+    tie %event, 'Tie::IxHash';
+    # for my $key(keys %{$headers->{events}}) {
+    for my $key(qw/SQLNetMsg FreeBufWait SQLNetClient CPUTime LogParaWr ReadByOther DBSeqRd LatchFree DBScattRd DBParaWr LogSync GlobalCacheCr BufferWait Enqueue SQLNetMoreDat/) {
         my $keyword = $headers->{events}{$key};
         if ($str=~/$keyword\s+(\d.*)$/) {
             my $val_str = $1;
@@ -84,7 +91,7 @@ sub parse_event {
             $event{$key} = 0;
         }
     }
-    print Dumper \%event;
+    # print Dumper \%event;
     for my $key(keys %{$headers->{events}}) {
         my $keyword = $headers->{events}{$key};
         if ($bg_event_str=~/($keyword)\s+(\d.*)$/) {
@@ -200,21 +207,21 @@ sub parse {
     my $host = $data_info->file_name;
     $host=~s/^.+_//g;
     {
-        my @header = keys %{$headers->{load_profiles}};
+        my @header = sort keys %{$headers->{load_profiles}};
         my $output  = "Oracle/${host}/ora_load.txt";
         my %data    = ($sec => \%loadprof);
         $data_info->regist_metric($host, 'Oracle', 'ora_load', \@header);
         $data_info->pivot_report($output, \%data, \@header);
     }
     {
-        my @header = keys %{$headers->{hits}};
+        my @header = sort keys %{$headers->{hits}};
         my $output  = "Oracle/${host}/ora_hit.txt";
         my %data    = ($sec => \%hit);
         $data_info->regist_metric($host, 'Oracle', 'ora_hit', \@header);
         $data_info->pivot_report($output, \%data, \@header);
     }
     {
-        my @header = keys %{$headers->{events}};
+        my @header = sort keys %{$headers->{events}};
         my $output  = "Oracle/${host}/ora_event.txt";
         my %data    = ($sec => \%event);
         $data_info->regist_metric($host, 'Oracle', 'ora_event', \@header);

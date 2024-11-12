@@ -1,9 +1,20 @@
-select a.TABLESPACE_NAME,
-	min(a.BYTES)/1024/1024 "total_mb",
-	round(min(a.BYTES)/(1024*1024) - sum(b.BYTES)/ (1024*1024),2) "used_mb",
-    round((min(a.BYTES)/(1024*1024) - sum(b.BYTES)/(1024*1024))/ (min(a.BYTES)/1024/1024)*100,2) "usage",
-    round(sum(b.BYTES)/(1024*1024),2) "available_mb"
-from dba_data_files a, dba_free_space b
-where a.FILE_ID = b.FILE_ID
-group by a.TABLESPACE_NAME
-;
+--ï\óÃàÊóòópèÛãµ
+
+col RTIME format a20
+col NAME format a30
+col "TBS_SIZE(GB)" format 999,990.999
+col "TBS_MAXSIZE(GB)" format 999,990.999
+col "TBS_USEDSIZE(GB)" format 999,990.999
+col USAGE format 990.99
+
+select /*+ USE_HASH(a b) */
+a.RTIME,
+b.NAME,
+(a.TABLESPACE_SIZE * c.BLOCK_SIZE) /1024/1024/1024 AS "TBS_SIZE(GB)",
+(a.TABLESPACE_MAXSIZE * c.BLOCK_SIZE) /1024/1024/1024 AS "TBS_MAXSIZE(GB)",
+(a.TABLESPACE_USEDSIZE * c.BLOCK_SIZE) /1024/1024/1024 AS "TBS_USEDSIZE(GB)",
+a.TABLESPACE_USEDSIZE/a.TABLESPACE_SIZE*100 AS USAGE
+from DBA_HIST_TBSPC_SPACE_USAGE a,V$TABLESPACE b,DBA_TABLESPACES c where a.TABLESPACE_ID = b.TS#
+  and b.NAME = c.TABLESPACE_NAME
+  and a.snap_id = (select max(snap_id) from DBA_HIST_SNAPSHOT)
+order by a.RTIME,b.NAME;

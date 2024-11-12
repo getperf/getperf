@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # This procedure execute Oracle statspack snap and report.
 #
@@ -55,7 +55,6 @@ do
     esac
 done
 shift `expr $OPTIND - 1`
-echo $SID
 
 # Set current Date & Time
 WORK="${CWD}/../_wk"
@@ -92,6 +91,7 @@ fi
 SQLPLUS="${ORACLE_HOME}/bin/sqlplus"
 ORASQL="${CWD}/${SCRIPT}/${FILE}.sql"
 
+echo "EXEC ${SID} ${FILE}"
 if [ ! -x ${SQLPLUS} ]; then
 	echo "File not fount: ${SQLPLUS}"
 	exit 1
@@ -121,7 +121,8 @@ do
     # Exec ps command. 
     /bin/date '+Date:%y/%m/%d %H:%M:%S' >> ${ORAFILE}
 
-    ${SQLPLUS} -s ${USER} << EOF1 >> ${ERR} 2>&1
+    TIMEOUT=60
+    ${SQLPLUS} -s ${USER} << EOF1 >> ${ERR} 2>&1 &
     SET ECHO OFF
     SET PAGESIZE 49999
     SET HEADING ON
@@ -137,6 +138,16 @@ do
     SPOOL OFF
 EOF1
 
+    SQLPLUS_PID=$!
+    {
+        sleep $TIMEOUT
+        if ps -p $SQLPLUS_PID > /dev/null; then
+            echo "sqlplus timeout. kill pid ${SQLPLUS_PID}"
+            kill -9 $SQLPLUS_PID  # -9 オプションで強制終了
+        fi
+    } &
+    wait $SQLPLUS_PID
+
     if [ 0 != $? ]; then
         echo "ERROR[sqlplus] : ${ORASQL}"
         /bin/rm -f ${WORK}/*.$$
@@ -146,7 +157,6 @@ EOF1
     cat ${ORAFILE} ${ORARES} >> chcsv_res.$$
     mv chcsv_res.$$ ${ORAFILE}
 
-    wait
     ORACNT=`expr ${ORACNT} + 1`
 done
 

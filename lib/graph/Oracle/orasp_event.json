@@ -1,0 +1,39 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Statspack Wait Classes",
+      "graph_tree": "/Oracle/<node_path>/Load/Event/Summary",
+      "chart_style": "stack",
+      "graph_items": [
+        "DBCPU",
+        "UserIO",
+        "SysIO",
+        "Other",
+        "Applic",
+        "Commit",
+        "Network",
+        "Concurcy",
+        "Config",
+        "Cluster"
+      ],
+      "graph_item_texts": [
+        "DB CPU (s)",
+        "User I/O(s)",
+        "Sys I/O(s)",
+        "Other(s)",
+        "Applic (s)",
+        "Commit (s)",
+        "Network (s)",
+        "Concurcy (s)",
+        "Config (s)",
+        "Cluster (s)"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "Oracle - <node> - Statspack Wait Classes",
+      "datasource_title": "Oracle - <node> - Statspack Wait Classes"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "host_template": "Windows - Tomcat process",
+  "host_title": "Windows - <node>",
+  "priority": 6,
+  "graphs": [
+    {
+      "graph_template": "WIN - Process - WS Size - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Process/Memory",
+      "graph_title": "Windows - <node> - Process - WS Size",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "chart_style": "stack",
+      "graph_items": ["WorkingSet"],
+      "vertical_label": "Byte",
+      "datasource_title": "Windows - <node> - Process - WS Size - <device>"
+    },
+    {
+      "graph_template": "WIN - Process - CPU% - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Process/CPU",
+      "graph_title": "Windows - <node> - Process - CPU Util%",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "chart_style": "stack",
+      "graph_items": ["ProcessorTime"],
+      "vertical_label": "Percent",
+      "datasource_title": "Windows - <node> - Process - CPU Util% - <device>"
+    },
+    {
+      "graph_template": "WIN - Process - Thread count - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Process/Thread",
+      "graph_title": "Windows - <node> - Process - Thread count",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "chart_style": "line1",
+      "graph_items": ["ThreadCount"],
+      "vertical_label": "Byte",
+      "datasource_title": "Windows - <node> - Process - Thread count - <device>"
+    },
+    {
+      "graph_template": "WIN - Process - Handle count - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Process/Handle",
+      "graph_title": "Windows - <node> - Process - Handle count",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "chart_style": "stack",
+      "graph_items": ["HandleCount"],
+      "vertical_label": "line1",
+      "datasource_title": "Windows - <node> - Process - Handle count - <device>"
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 {
   "host_template": "Oracle",
   "host_title": "Oracle - <node>",
-  "priority": 3,
+  "priority": 2,
   "graphs": [
     {
       "graph_template": "Oracle - Loads",
-      "graph_tree": "/Oracle/<node_path>/Load",
+      "graph_tree": "/Oracle/<node_path>/Load/Block",
       "graph_title": "Oracle - <node> - Block Gets",
       "chart_style": "stack",
       "graph_items": [
@@ -25,7 +25,7 @@
     },
     {
       "graph_template": "Oracle - Redo",
-      "graph_tree": "/Oracle/<node_path>/Redo",
+      "graph_tree": "/Oracle/<node_path>/Load/Redo",
       "graph_title": "Oracle - <node> - Redo size",
       "chart_style": "stack",
       "graph_items": [
@@ -36,7 +36,7 @@
     },
     {
       "graph_template": "Oracle - Transactions",
-      "graph_tree": "/Oracle/<node_path>/Transaction",
+      "graph_tree": "/Oracle/<node_path>/Load/Transaction",
       "graph_title": "Oracle - <node> - Transaction",
       "chart_style": "line2",
       "graph_items": [
@@ -47,7 +47,7 @@
     },
     {
       "graph_template": "Oracle - Executes",
-      "graph_tree": "/Oracle/<node_path>/Execute",
+      "graph_tree": "/Oracle/<node_path>/Load/Execute",
       "graph_title": "Oracle - <node> - Execute",
       "chart_style": "line2",
       "graph_items": [

@@ -1,0 +1,26 @@
+{
+  "host_template": "Solaris",
+  "host_title": "Solaris - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "Solaris - Network Traffic - netstats",
+      "graph_tree": "/HW/<node_path>/Network/",
+      "graph_title": "Solaris - <node> - Network Bytes/sec",
+      "graph_items": ["tcpIn", "tcpOut"],
+      "graph_item_texts": ["inBytes", "outBytes"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "Solaris - <node> - Network Bytes/sec"
+    },
+    {
+      "graph_template": "Solaris - Network Error - netstats",
+      "graph_tree": "/HW/<node_path>/Network/Error",
+      "graph_title": "Solaris - <node> - Network Error",
+      "graph_items": ["tcpDupAck", "tcpRetran"],
+      "chart_style": "line2",
+      "vertical_label": "Errors/sec",
+      "unit_exponent_value": 1,
+      "datasource_title": "Solaris - <node> - Network Error"
+    }
+  ]
+}

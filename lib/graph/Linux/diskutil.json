@@ -13,6 +13,7 @@
       "chart_style": "line2",
       "vertical_label": "Disk util %",
       "upper_limit": 100,
+      "disable_auto_scale": true,
       "unit_exponent_value": 1,
       "graph_tree": "/HW/<node_path>/DiskUtil/",
       "datasource_title": "Linux - <node> - Disk Util% - <device>"

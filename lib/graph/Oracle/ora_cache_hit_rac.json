@@ -1,0 +1,28 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRAC - <node>",
+  "priority": 3,
+  "graphs": [
+    {
+      "graph_template": "OracleRAC - Global Cache Efficiency Percentages",
+      "graph_tree": "/Oracle/<node_path>/Load/Efficiency",
+      "chart_style": "stack",
+      "graph_items": [
+         "Local",
+         "Remote",
+         "Disk"
+      ],
+      "graph_item_texts": [
+         "Local %",
+         "Remote %",
+         "Disk %"
+      ],
+      "disable_auto_scale": true,
+      "upper_limit": 100,
+      "vertical_label": "percent",
+      "unit_exponent_value": 1,
+      "graph_title": "OracleRAC - <node> - Global Cache Efficiency Percentages",
+      "datasource_title": "OracleRAC - <node> - Global Cache Efficiency Percentages"
+    }
+  ]
+}

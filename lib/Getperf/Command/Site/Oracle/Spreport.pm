@@ -110,7 +110,7 @@ sub parse {
 		# ロードプロファイル読込
 		if ($line=~/^Load Profile/) {
 			$loadprof_flg = 1;
-		} elsif ($line=~/^  % Blocks changed per Read:/) {
+		} elsif ($line=~/^\s*% Blocks changed per Read:/) {
 			$loadprof_flg = 0;
 		}
 		if ($loadprof_flg == 1) {
@@ -118,7 +118,7 @@ sub parse {
 		}
 
 		# ヒット率読込
-		if ($line=~/^Instance Efficiency Indicators/) {
+		if ($line=~/^Instance Efficiency/) {
 			$hit_flg = 1;
 		} elsif ($line=~/^Top \d+ Timed Events/) {
 			$hit_flg = 0;
@@ -146,7 +146,6 @@ sub parse {
 			$sec = timelocal($ss, $mm, $hh, $DD, $MM, $YY-1900+2000);
 		}
 	}
-
 	# 各ブロックのレポートをデータに変換
 	my %loadprof = parse_loadprof($loadprof_str);
 	my %hit = parse_hit($hit_str);

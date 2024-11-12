@@ -11,10 +11,12 @@ sub check_process {
 	my ($user, $command) = @_;
 
 	my $category = 'etc';
-	if ($user=~/(git|psadmin|mysql|postgres)/) {
+	if ($user=~/(git|psadmin|mysql|apache|postgres)/) {
 		$category = $1;
 	}
-	if  ($command=~/(perl|tomcat)/) {
+	if ($command=~m|bin/_getperf |) {
+		$category = 'getperf';
+	}elsif  ($command=~/(perl|tomcat)/) {
 		$category .= '_' . $1;
 	}
 	return $category;
@@ -29,7 +31,8 @@ sub parse {
 
 	$data_info->step($step);
 	my $host = $data_info->host;
-	my $sec  = $data_info->start_time_sec;
+	# my $sec  = $data_info->start_time_sec;
+	my $sec  = $data_info->start_time_sec->epoch;
 	if (!$sec) {
 		return;
 	}
@@ -38,7 +41,7 @@ sub parse {
 	while (my $line = <IN>) {
 		if ($line=~/^USER /) {
 			$sec += $step;	# skip header
-			$timestamp = $sec->datetime;
+			# $timestamp = $sec->datetime;
 			next;
 		}
 		$line=~s/(\r|\n)*//g;			# trim return code
@@ -51,7 +54,8 @@ sub parse {
 		my $category = check_process($values{user}, $command);
 		my $output_file = "device/ps__${category}.txt";
 		for my $item (qw/cpu mem vsz rss/) {
-			$results{$output_file}{$timestamp}{$item} += $values{$item};
+			# $results{$output_file}{$timestamp}{$item} += $values{$item};
+			$results{$output_file}{$sec}{$item} += $values{$item};
 			$summary{$item}{"$category\t$command"} += $values{$item};
 		}
 		$data_info->regist_device($host, 'Linux', 'ps', $category, undef, \@headers);

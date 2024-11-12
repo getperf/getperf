@@ -1,0 +1,46 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 121,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Session transaction Elapse Detail - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Session/Elapse/<node>",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["transaction"],
+      "chart_style": "line2",
+      "vertical_label": "transaction",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - transaction Elapse Detail",
+      "datasource_title": "Oracle - <node> - Transaction Elapse Detail - <device>"
+    },
+    {
+      "graph_template": "Oracle - Session Max Elapse Detail - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Session/Elapse/<node>",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["max_time"],
+      "chart_style": "line2",
+      "vertical_label": "session",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - Session Max Elapse Detail",
+      "datasource_title": "Oracle - <node> - Session Max Elapse Detail - <device>"
+    },
+    {
+      "graph_template": "Oracle - Session Average Elapse Detail - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Session/Elapse/<node>",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["avg_time"],
+      "chart_style": "line2",
+      "vertical_label": "session",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - Session Average Elapse Detail",
+      "datasource_title": "Oracle - <node> - Session Average Elapse Detail - <device>"
+    }
+  ]
+}

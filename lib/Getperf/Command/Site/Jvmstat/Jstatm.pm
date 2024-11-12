@@ -66,6 +66,7 @@ sub parse {
 			next;
 		}
 		if ($line=~/^\d/) {
+			$line=~s/null/0/g;
 			my ($dt, $tm, $pid, @csvs) = split(' ', $line);
 			my $n_csvs = scalar(@csvs);
 			push(@csvs, 0) if ($n_csvs == 7); # Add Thread for Java1.4
