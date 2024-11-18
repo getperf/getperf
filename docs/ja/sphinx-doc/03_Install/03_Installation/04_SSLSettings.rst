@@ -8,8 +8,7 @@ SSHキーの作成
 
 Git 通信用に管理者ユーザの $HOME/.ssh ディレクトリ下に SSH キーファイルを作成します。 
 Git を用いて、外部の Getperf サイトを複製する場合は、作成した .ssh/id_rsa.pub 
-ファイルを公開鍵ファイルとして使用します。詳細は、
- :doc:`../09_ChangeManagement/07_SiteCloning` を参照してください。
+ファイルを公開鍵ファイルとして使用します。
 
 ::
 
