@@ -13,6 +13,7 @@
    05_InstallPackage
    05_WebServiceInstallation
    06_ServiceRegistration
+   07_MySQLCactiInstallation
    08_ZabbixInstallation
    10_AgentCompile
    11_BuildDocument

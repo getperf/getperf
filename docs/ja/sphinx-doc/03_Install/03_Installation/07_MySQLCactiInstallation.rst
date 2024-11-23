@@ -10,9 +10,14 @@ $GETPERF_HOME/var/cacti の下に Cacti モジュールをバンドルする構�
 Cacti を個別インストールする必要はなく、 Cacti のインストールは後述の監視サイト
 初期化コマンドで行います。
 
-    .. note:: 
 
-        詳細は、 サイト初期化コマンド :doc:`../10_AdminCommand/01_SiteInitialization` 
-        を参照してください。
+この後の作業は、以下の動作確認作業となります。
 
+* エージェントのデータ採取
+* Cactiサイトへのデータ転送
+* グラフ用データ集計
+* グラフ登録
+
+
+実施する場合は :doc:`/03_Install/03_Installation/12_RsyncSetup` のページから進めてください。
 
