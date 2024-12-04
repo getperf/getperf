@@ -1,7 +1,7 @@
 MySQLパーティショニング
 =======================
 
-Zabbix サーバで MySQL 履歴テーブルをパーティション化する設定を行います。
+Zabbix サーバの MySQL 履歴テーブルをパーティション化する設定を行います。
 
 .. note::
 
@@ -14,10 +14,12 @@ Zabbix サーバで MySQL 履歴テーブルをパーティション化する設
 Perl セットアップ
 -----------------
 
-Zabbix サーバで psadmin 管理者ユーザで、パーティションメンテナンススクリプトを設定します。
+Zabbix サーバにてパーティションメンテナンススクリプトを設定します。
 
-本スクリプトは Perl 言語で書かれており、Perl の実行環境が必要です。
+psadmin 管理者ユーザでの実行となり、本スクリプトは Perl 言語で書かれており、
+Perl の実行環境が必要です。
 
+psadmin ユーザで、
 :doc:`/03_Install/03_Installation/12_RsyncSetup` 記載の、「Perl 5.16.3 環境構築」
 を実行してください。
 
@@ -32,6 +34,7 @@ Zabbix サーバで psadmin 管理者ユーザで、パーティションメン�
    # 作業ディレクトリ作成、移動
    mkdir ~/work
    cd ~/work
+   # モジュールダウンロード
    git clone https://github.com/OpensourceICTSolutions/zabbix-mysql-partitioning-perl
 
 メンテナンススクリプトをコピーして編集します。
