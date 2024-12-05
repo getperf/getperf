@@ -16,3 +16,4 @@
    .. 10_SetupRaspberryPi
    21_X509v3CetifyAgent
    22_Getperf2Poting
+   41_ZabbixProxySetup/index
