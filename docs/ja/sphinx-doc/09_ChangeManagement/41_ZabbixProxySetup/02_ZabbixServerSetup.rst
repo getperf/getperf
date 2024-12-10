@@ -1,5 +1,5 @@
-Zabbixサーバセットアップ
-========================
+2.Zabbixサーバセットアップ
+==========================
 
 Zabbixサーバ VM で以下を実行します。
 
@@ -47,7 +47,7 @@ MySQL初期設定をします。
 
    sudo mysql_secure_installation
 
-コンソールにしたがって以下を設定します。
+コンソールメッセージにしたがって以下を設定します。
 
    * rootパスワードを設定(規定は、 getperf を入力)。
    * 不要なデフォルトユーザーとデータベースを削除。
@@ -159,7 +159,6 @@ Zabbixサーバ設定と起動
    TrendFunctionCacheSize=16M
    ValueCacheSize=256M
    ExternalScripts=/usr/lib/zabbix/externalscripts
-   ProxyConfigFrequency=3600 ※環境に合わせて調整
 
 以下で設定内容を確認します。
 
@@ -167,7 +166,7 @@ Zabbixサーバ設定と起動
 
    egrep -e '^(DB|Start|Cache|Trend|External|Proxy)' /etc/zabbix/zabbix_server.conf
 
-ZabbixサーバおよびApacheを起動します。
+ZabbixサーバおよびApache/PHPを起動します。
 
 ::
 
