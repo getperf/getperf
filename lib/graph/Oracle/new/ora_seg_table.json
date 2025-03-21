@@ -1,0 +1,19 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 51,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Segment Size - Table - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Storage/Segment/",
+      "graph_title": "Oracle - <node> - Segment Size - Table",
+      "graph_type": "multi",
+      "chart_style": "stack",
+      "legend_max": 15,
+      "graph_items": ["mbyte"],
+      "vertical_label": "MByte",
+      "unit_exponent_value": 1,
+      "datasource_title": "Oracle - <node> - Segment Size - Table - <device>"
+    }
+  ]
+}

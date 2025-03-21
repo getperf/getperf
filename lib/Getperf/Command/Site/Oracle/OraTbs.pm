@@ -44,13 +44,13 @@ sub parse {
         my @csv = split(/\s*\|\s*/, $line);
         my $colnum = scalar(@csv);
 
-        # ÅV”Åg—p—¦‚Ì‚İ
+        # æœ€æ–°ç‰ˆä½¿ç”¨ç‡ã®ã¿
 		if ($colnum == 2) {
 			my ($tbs, $usage) = @csv;
 			next if (!defined($tbs) || $tbs eq 'TABLESPACE_NAME' || $tbs eq 'NAME');
 			my @values = (0,0, $usage, 0);
 			$results{$tbs}{$sec} = join(' ', @values);
-        # temp •\—Ìˆæ‚ğŠÜ‚ŞV”ÅSQLŒ‹‰Ê‚Ì‰ğÍ
+        # temp è¡¨é ˜åŸŸã‚’å«ã‚€æ–°ç‰ˆSQLçµæœã®è§£æ
         } elsif ($colnum == 7) {
             my ($tbs, $total_mb, $used_mb, $usage, $available_mb, 
                 $max_total_mb, $ max_usage) = @csv;
@@ -59,7 +59,7 @@ sub parse {
             my $used_gb  = $used_mb / 1024.0;
 			my @values = ($total_gb, $used_gb, $usage, $max_gb);
 			$results{$tbs}{$sec} = join(' ', @values);
-        # ‹Œ”ÅSQLŒ‹‰Ê‚Ì‰ğÍ
+        # æ—§ç‰ˆSQLçµæœã®è§£æ
         } elsif ($colnum == 6) {
             my ($date, $tbs, @values) = @csv;
             next if (!defined($tbs) || $tbs eq 'TABLESPACE_NAME' || $tbs eq 'NAME');

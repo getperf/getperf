@@ -1,0 +1,24 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRACTemp - <node>",
+  "priority": 8,
+  "graphs": [
+    {
+      "graph_template": "OracleRACTemp - Interconnect Client Statistics",
+      "graph_tree": "/OracleRACTemp/<node_path>/InterTraffic",
+      "chart_style": "line1",
+      "graph_items": [
+        "Sent",
+        "Received"
+      ],
+      "graph_item_texts": [
+        "Sent (MB/s)",
+        "Received (MB/s)"
+      ],
+      "vertical_label": "MB/s",
+      "unit_exponent_value": 1,
+      "graph_title": "OracleRACTemp - <node> - Interconnect Client Statistics",
+      "datasource_title": "OracleRACTemp - <node> - Interconnect Client Statistics"
+    }
+  ]
+}

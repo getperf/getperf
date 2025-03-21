@@ -1,0 +1,18 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - SQL - <node>",
+  "priority": 196,
+  "graphs": [
+    {
+      "graph_template": "Oracle - PGA Size Usage Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Memory/PGA/PGAProcess/",
+      "graph_title": "Oracle - <node> - PGA Size Usage Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["pga_alloc_mem"],
+      "chart_style": "line1",
+      "vertical_label": "byte",
+      "datasource_title": "Oracle - <node> - PGA Size Usage Ranking - <device>"
+    }
+  ]
+}

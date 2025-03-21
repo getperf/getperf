@@ -1,0 +1,17 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRACTemp - <node>",
+  "priority": 9,
+  "graphs": [
+    {
+      "graph_template": "OracleRACTemp - Timed Events - <devn> cols",
+      "graph_tree": "/OracleRACTemp/<node_path>/Elapse/TopWait",
+      "graph_title": "OracleRACTemp - <node> - Timed Events",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["elapse"],
+      "vertical_label": "sec",
+      "datasource_title": "OracleRACTemp - <node> - Timed Events - <device>"
+    }
+  ]
+}

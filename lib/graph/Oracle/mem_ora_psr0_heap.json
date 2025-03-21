@@ -6,7 +6,7 @@
     {
       "graph_template": "Oracle - ora_psp0 Heap Memory Usage",
       "graph_tree": "/Oracle/<node_path>/ora_psr0/Heap/",
-      "graph_title": "Oracle - ora_psp0 Heap Memory Usage",
+      "graph_title": "Oracle - ora_psp0 Heap Memory Usage <node>",
       "graph_items": ["kb"],
       "chart_style": "line2",
       "datasource_title": "Oracle - ora_psp0 Heap Memory Usage <node>"

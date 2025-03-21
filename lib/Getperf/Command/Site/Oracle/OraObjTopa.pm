@@ -113,7 +113,7 @@ sub parse {
 		"WHERE gi.local_graph_id = g.local_graph_id " .
 		"    AND gi.task_item_id = dr.id " .
 		"    AND dr.local_data_id = dd.local_data_id " .
-		"    AND gi.graph_type_id in (7, 8) " .
+		"    AND gi.graph_type_id in (4) " .
 		"    AND g.title_cache = '__graph_title__' " .
 		"ORDER BY gi.sequence";
 

@@ -1,0 +1,17 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - Global - <node>",
+  "priority": 40,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Global Session - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Session",
+      "graph_title": "Oracle - <node> - Global Session",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "graph_items": ["count"],
+      "vertical_label": "count",
+      "datasource_title": "Oracle - <node> - Global Session - <device>"
+    }
+  ]
+}

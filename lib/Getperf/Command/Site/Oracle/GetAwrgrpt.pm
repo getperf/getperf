@@ -347,8 +347,8 @@ sub parse {
                     if (defined($months->{$MM})) {
                         $MM = $months->{$MM} - 1;
                     }
-                    # $sec = timelocal(0, $mm, $hh, $DD, $MM, $YY - 1900 + 2000);
-                    print "($DD, $MM, $YY, $hh, $mm):$sec\n";
+                    my $sec2 = timelocal(0, $mm, $hh, $DD, $MM, $YY - 1900 + 2000) + 9 * 3600;
+                    print "Check time: $begin_snap:$sec,$sec2\n";
                 }
             }
         }

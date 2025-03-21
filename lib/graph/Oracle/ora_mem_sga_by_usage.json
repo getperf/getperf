@@ -8,7 +8,6 @@
       "graph_tree": "/Oracle/<node_path>/SGA/<node>",
       "graph_title": "Oracle - <node> - SGA Memory Usage",
       "graph_type": "multi",
-      "legend_max": 10,
       "chart_style": "stack",
       "total_data_source": "Total All Data Sources",
       "legend_max": 10,

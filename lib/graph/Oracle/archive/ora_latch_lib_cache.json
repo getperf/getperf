@@ -1,0 +1,20 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 60,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Library cache latch count",
+      "graph_tree": "/Oracle/<node_path>/Latch",
+      "graph_title": "Oracle - <node> - Library cache latch count",
+      "chart_style": "line1",
+      "upper_limit": 10,
+      "graph_items": [
+        "latch_ccont",
+        "UL_count"
+      ],
+      "vertical_label": "count",
+      "datasource_title": "Oracle - <node> - Library cache latch count"
+    }
+  ]
+}

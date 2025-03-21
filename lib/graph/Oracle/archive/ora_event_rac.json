@@ -1,0 +1,45 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRAC - <node>",
+  "priority": 9,
+  "graphs": [
+    {
+      "graph_template": "OracleRAC - Top Timed Events",
+      "graph_tree": "/OracleRAC/<node_path>/Elapse/TopWait",
+      "chart_style": "stack",
+      "legend_type": "show_average",
+      "graph_item_cols": 2,
+      "graph_items": [
+        "GcCrBlockBusy",
+        "GcCrBlock3way",
+        "DirectRd",
+        "DBCpu",
+        "LatchCache",
+        "GcBufferBusy",
+        "EnqPs",
+        "ReliableMsg",
+        "IPCSync",
+        "PXDeqSlaveSes",
+        "GcCrMultiBlock",
+        "LatchFree"
+      ],
+      "graph_item_texts": [
+        "gc cr block busy",
+        "gc cr block 3-way",
+        "direct path read",
+        "DB CPU",
+        "latch: cache buffers chains",
+        "gc buffer busy acquire",
+        "enq: PS - contention",
+        "reliable message",
+        "IPC send completion sync",
+        "PX Deq: Slave Session Stats",
+        "gc cr multi block request",
+        "latch free"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "OracleRAC - <node> - Top Timed Events",
+      "datasource_title": "OracleRAC - <node> - Top Timed Events"
+    }
+  ]
+}

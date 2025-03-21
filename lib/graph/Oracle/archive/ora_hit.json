@@ -1,0 +1,43 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 3,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Efficiency",
+      "graph_tree": "/Oracle/<node_path>/Load/Efficiency",
+      "graph_title": "Oracle - <node> - Efficiency",
+      "chart_style": "line1",
+      "legend_type": "show_average",
+      "graph_item_cols": 3,
+      "graph_items": [
+        "BufferNW",
+        "RedoNW",
+        "BufHit",
+        "MemSort",
+        "LibHit",
+        "SoftParse",
+        "ExecParse",
+        "LatchHit",
+        "ParseCPU",
+        "NonParseCPU"
+      ],
+      "graph_item_texts": [
+        "Buffer Nowait %",
+        "Redo NoWait %",
+        "Buffer Hit %",
+        "Optimal W/A Exec %",
+        "Library Hit %",
+        "Soft Parse %",
+        "Execute to Parse %",
+        "Latch Hit %",
+        "Parse CPU to Parse %",
+        "% Non-Parse CPU"
+      ],
+      "vertical_label": "hit %",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Oracle - <node> - Efficiency"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 8,
+  "graphs": [
+    {
+      "graph_template": "Oracle - SGA Memory size",
+      "graph_tree": "/Oracle/SGA/<node_path>/<node>",
+      "graph_title": "Oracle - <node> - SGA Memory size",
+      "chart_style": "line2",
+      "graph_items": [
+        "keep_use",
+        "sga_max"
+      ],
+      "vertical_label": "MByte",
+      "unit_exponent_value": 1,
+      "datasource_title": "Oracle - <node> - SGA Memory size"
+    },
+    {
+      "graph_template": "Oracle - SGA Memory usage",
+      "graph_tree": "/Oracle/SGA/<node_path>/<node>",
+      "graph_title": "Oracle - <node> - SGA Memory usage",
+      "chart_style": "stack",
+      "graph_items": [
+        "keep_buffer",
+        "default_buffer",
+        "shared_pool",
+        "large_pool",
+        "java_pool"
+      ],
+      "vertical_label": "MByte",
+      "unit_exponent_value": 1,
+      "datasource_title": "Oracle - <node> - SGA Memory usage"
+    }
+  ]
+}

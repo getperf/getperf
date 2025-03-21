@@ -10,7 +10,7 @@
       "chart_style": "line1",
       "upper_limit": 10,
       "graph_items": [
-        "latch_ccont",
+        "latch_count",
         "UL_count"
       ],
       "vertical_label": "count",

@@ -1,0 +1,71 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRACTemp - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "OracleRACTemp - Time Model",
+      "graph_tree": "/OracleRACTemp/<node_path>/Elapse",
+      "chart_style": "stack",
+      "graph_items": [
+        "DBCPU",
+        "DBEla",
+        "SQLParse",
+        "HardParseEla",
+        "HardParsePLSQL",
+        "HardParseJava",
+        "bgCPU"
+      ],
+      "graph_item_texts": [
+        "DB CPU",
+        "SQL Ela",
+        "SQL Parse Ela",
+        "Hard Parse Ela",
+        "Hard Parse PL/SQL Ela",
+        "Hard Parse Java Ela",
+        "bg CPU"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "OracleRACTemp - <node> - Time Model",
+      "datasource_title": "OracleRACTemp - <node> - Time Model"
+    },
+    {
+      "graph_template": "OracleRACTemp - Time Model - Main",
+      "graph_tree": "/OracleRACTemp/<node_path>/Elapse/Main",
+      "chart_style": "line1",
+      "graph_items": [
+        "DBCPU",
+        "DBEla"
+      ],
+      "graph_item_texts": [
+        "DB CPU",
+        "SQL Ela"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "OracleRACTemp - <node> - Time Model - Main",
+      "datasource_title": "OracleRACTemp - <node> - Time Model - Main"
+    },
+    {
+      "graph_template": "OracleRACTemp - Time Model - Etc",
+      "graph_tree": "/OracleRACTemp/<node_path>/Elapse/Etc",
+      "chart_style": "stack",
+      "graph_items": [
+        "SQLParse",
+        "HardParseEla",
+        "HardParsePLSQL",
+        "HardParseJava",
+        "bgCPU"
+      ],
+      "graph_item_texts": [
+        "SQL Parse Ela",
+        "Hard Parse Ela",
+        "Hard Parse PL/SQL Ela",
+        "Hard Parse Java Ela",
+        "bg CPU"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "OracleRACTemp - <node> - Time Model - Etc",
+      "datasource_title": "OracleRACTemp - <node> - Time Model - Etc"
+    }
+  ]
+}

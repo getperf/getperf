@@ -11,7 +11,6 @@
       "legend_max": 15,
       "graph_items": ["usage"],
       "upper_limit": 100,
-      "disable_auto_scale": true,
       "unit_exponent_value": 1,
       "vertical_label": "percent",
       "datasource_title": "Oracle - <node> - Tablespace util% - <device>"

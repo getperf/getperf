@@ -1,0 +1,19 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - SQL - <node>",
+  "priority": 8,
+  "graphs": [
+    {
+      "graph_template": "Oracle - SQL CPU Time Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLRank/<node>/CPU",
+      "graph_title": "Oracle - <node> - SQL CPU Time Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["cpu_time"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "sec",
+      "datasource_title": "Oracle - <node> - SQL CPU Time Ranking - <device>"
+    }
+  ]
+}

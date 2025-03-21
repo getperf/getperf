@@ -1,0 +1,29 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 50,
+  "graphs": [
+    {
+      "graph_template": "Oracle - ASM Storage util%",
+      "graph_tree": "/Oracle/<node_path>/Storage/ASM Storage/Percent",
+      "graph_title": "Oracle - <node> - ASM Storage util% - <device>",
+      "graph_items": ["usage"],
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "vertical_label": "percent",
+      "datasource_title": "Oracle - <node> - Asm Storage util% - <device>"
+    },
+    {
+      "graph_template": "Oracle - ASM Storage Usage",
+      "graph_tree": "/Oracle/<node_path>/Storage/ASM Storage/Usage",
+      "graph_title": "Oracle - <node> - ASM Storage Usage - <device>",
+      "chart_style": "line2",
+      "graph_items": [
+        "used_gb",
+        "total_gb"
+      ],
+      "vertical_label": "GB",
+      "datasource_title": "Oracle - <node> - ASM Storage Usage - <device>"
+    }
+  ]
+}

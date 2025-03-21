@@ -1,0 +1,69 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 93,
+  "graphs": [
+    {
+      "graph_template": "Oracle - SQL Load - Execution - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLLoad/Exec",
+      "graph_title": "OracleRAC - <node> - SQL Load - Execution",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["EXECUTIONS"],
+      "vertical_label": "exec/s",
+      "datasource_title": "OracleRAC - <node> - SQL Load - Execution - <device>"
+    },
+    {
+      "graph_template": "Oracle - SQL Load - Disk Read - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLLoad/DiskRead",
+      "graph_title": "OracleRAC - <node> - SQL Load - Disk Read",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["DISK_READS"],
+      "vertical_label": "read/s",
+      "datasource_title": "OracleRAC - <node> - SQL Load - Disk Read - <device>"
+    },
+    {
+      "graph_template": "Oracle - SQL Load - Buffer Get - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLLoad/BufferGet",
+      "graph_title": "OracleRAC - <node> - SQL Load - Buffer Get",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["BUFFER_GETS"],
+      "vertical_label": "read/s",
+      "datasource_title": "OracleRAC - <node> - SQL Load - Buffer Get - <device>"
+    },
+    {
+      "graph_template": "Oracle - SQL Load - Rows Processed - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLLoad/Rows",
+      "graph_title": "OracleRAC - <node> - SQL Load - Rows Processed",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["ROWS_PROCESSED"],
+      "vertical_label": "rows/s",
+      "datasource_title": "OracleRAC - <node> - SQL Load - Rows Processed - <device>"
+    },
+    {
+      "graph_template": "Oracle - SQL Load - CPU Time - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLLoad/CPU",
+      "graph_title": "OracleRAC - <node> - SQL Load - CPU Time",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["CPU_TIME"],
+      "upper_limit": 10,
+      "vertical_label": "msec",
+      "datasource_title": "OracleRAC - <node> - SQL Load - CPU Time - <device>"
+    },
+    {
+      "graph_template": "Oracle - SQL Load - Elapsed Time - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLLoad/Elapsed",
+      "graph_title": "OracleRAC - <node> - SQL Load - Elapsed Time",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["ELAPSED_TIME"],
+      "upper_limit": 10,
+      "vertical_label": "msec",
+      "datasource_title": "OracleRAC - <node> - SQL Load - Elapsed Time - <device>"
+    }
+  ]
+}

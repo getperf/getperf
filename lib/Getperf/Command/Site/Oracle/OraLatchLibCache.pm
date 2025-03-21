@@ -20,7 +20,7 @@ sub parse {
 
 	my %results;
 	my $step = 10;
-	my @headers = qw/latch_ccont UL_count session/;
+	my @headers = qw/latch_count UL_count session/;
 
 	$data_info->step($step);
 	$data_info->is_remote(1);

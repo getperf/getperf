@@ -1,0 +1,18 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRACTemp - <node>",
+  "priority": 7,
+  "graphs": [
+    {
+      "graph_template": "OracleRACTemp - Interconnect Ping Latency - <devn> cols",
+      "graph_tree": "/OracleRACTemp/<node_path>/Ping Latency",
+      "graph_title": "OracleRACTemp - <node> - Interconnect Ping Latency",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["500bytes"],
+      "vertical_label": "msec",
+      "unit_exponent_value": 1,
+      "datasource_title": "OracleRACTemp - <node> - Interconnect Ping Latency - <device>"
+    }
+  ]
+}

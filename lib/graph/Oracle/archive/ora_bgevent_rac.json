@@ -1,0 +1,41 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRAC - <node>",
+  "priority": 11,
+  "graphs": [
+    {
+      "graph_template": "OracleRAC - Top Timed Background Events",
+      "graph_tree": "/OracleRAC/<node_path>/Elapse/BackgroundWait",
+      "chart_style": "stack",
+      "legend_type": "show_average",
+      "graph_item_cols": 2,
+      "graph_items": [
+        "CPUTime",
+        "GCGrant2way",
+        "LatchFree",
+        "GCMultBlkRd",
+        "ReliableMsg",
+        "GCGrantCongested",
+        "PXDeq",
+        "EnqFB",
+        "BuffBusyWait",
+        "EnqTx"
+      ],
+      "graph_item_texts": [
+        "background cpu time", 
+        "gc current grant 2-way", 
+        "latch free", 
+        "gc current multi block request", 
+        "reliable message", 
+        "gc current grant congested", 
+        "PX Deq: Slave Join Frag", 
+        "enq: FB - contention", 
+        "buffer busy waits", 
+        "enq: TX - contention"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "OracleRAC - <node> - Top Timed Background Events",
+      "datasource_title": "OracleRAC - <node> - Top Timed Background Events"
+    }
+  ]
+}
