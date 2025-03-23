@@ -1,0 +1,19 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Db2 IRS - Latency - <devn> cols",
+      "graph_tree": "/IRS/<node_path>/",
+      "graph_title": "Db2 IRS - <node> - Latency",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "cdef": "Devide by 1000",
+      "graph_items": ["value"],
+      "vertical_label": "sec",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 IRS - <node> - Latency - <device>"
+    }
+  ]
+}

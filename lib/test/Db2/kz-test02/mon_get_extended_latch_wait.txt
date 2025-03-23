@@ -1,0 +1,199 @@
+Saving all output to "/home/db2inst1/ptune/log/Db2/20230129/070000/mon_get_extended_latch_wait.txt". Enter "record" with no arguments to stop it.
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_NO_IDENTITY
+TOTAL_EXTENDED_LATCH_WAITS      4385000
+TOTAL_EXTENDED_LATCH_WAIT_TIME  2330
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqeLocalDatabase__dblatch
+TOTAL_EXTENDED_LATCH_WAITS      287
+TOTAL_EXTENDED_LATCH_WAIT_TIME  24789
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqeAgentServices__m_agentPoolLatch
+TOTAL_EXTENDED_LATCH_WAITS      10
+TOTAL_EXTENDED_LATCH_WAIT_TIME  21
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqlo_waitpost__cs
+TOTAL_EXTENDED_LATCH_WAITS      19
+TOTAL_EXTENDED_LATCH_WAIT_TIME  21
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SMemSet__MemLatchType__latch
+TOTAL_EXTENDED_LATCH_WAITS      100
+TOTAL_EXTENDED_LATCH_WAIT_TIME  212
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SMemPool__MemLatchType__latch
+TOTAL_EXTENDED_LATCH_WAITS      777
+TOTAL_EXTENDED_LATCH_WAIT_TIME  1251
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLD_CHAIN__fastChainLatch
+TOTAL_EXTENDED_LATCH_WAITS      29
+TOTAL_EXTENDED_LATCH_WAIT_TIME  26
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLB_HASH_BUCKET_GROUP_HEADER__groupLatch
+TOTAL_EXTENDED_LATCH_WAITS      25
+TOTAL_EXTENDED_LATCH_WAIT_TIME  110
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLP_DBCB__transsem
+TOTAL_EXTENDED_LATCH_WAITS      116
+TOTAL_EXTENDED_LATCH_WAIT_TIME  103
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqeAppServices__m_appServLatch
+TOTAL_EXTENDED_LATCH_WAITS      631
+TOTAL_EXTENDED_LATCH_WAIT_TIME  1024
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqeDatabase__m_accessCount
+TOTAL_EXTENDED_LATCH_WAITS      6
+TOTAL_EXTENDED_LATCH_WAIT_TIME  8
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLE_COORDINATOR_CB__coordCBLatch
+TOTAL_EXTENDED_LATCH_WAITS      5
+TOTAL_EXTENDED_LATCH_WAIT_TIME  8
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqeWLScheduler__m_schedUpdateLatch
+TOTAL_EXTENDED_LATCH_WAITS      10
+TOTAL_EXTENDED_LATCH_WAIT_TIME  4
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLE_SERVICE_CLASS__serviceClassLatch
+TOTAL_EXTENDED_LATCH_WAITS      18
+TOTAL_EXTENDED_LATCH_WAIT_TIME  25
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqm_control__mes_latch
+TOTAL_EXTENDED_LATCH_WAITS      1
+TOTAL_EXTENDED_LATCH_WAIT_TIME  1
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqmObjMetricsTable__m_objMetricsLatch
+TOTAL_EXTENDED_LATCH_WAITS      12
+TOTAL_EXTENDED_LATCH_WAIT_TIME  15
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLB_BPD__bpdLatch_SX
+TOTAL_EXTENDED_LATCH_WAITS      8257
+TOTAL_EXTENDED_LATCH_WAIT_TIME  14138
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLB_POOL_CB__extentAnchorTableLatch
+TOTAL_EXTENDED_LATCH_WAITS      2150285
+TOTAL_EXTENDED_LATCH_WAIT_TIME  918509
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLB_pfFreelist__freelistLatch
+TOTAL_EXTENDED_LATCH_WAITS      3
+TOTAL_EXTENDED_LATCH_WAIT_TIME  17
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLB_pfQUEUE__queueLatch
+TOTAL_EXTENDED_LATCH_WAITS      2
+TOTAL_EXTENDED_LATCH_WAIT_TIME  16
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLD_CHAIN__fullChainLatchNS
+TOTAL_EXTENDED_LATCH_WAITS      28
+TOTAL_EXTENDED_LATCH_WAIT_TIME  12
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLD_TCB__loadInProgress
+TOTAL_EXTENDED_LATCH_WAITS      740
+TOTAL_EXTENDED_LATCH_WAIT_TIME  3612
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLE_KRCB__sqleJavaLatch
+TOTAL_EXTENDED_LATCH_WAITS      11
+TOTAL_EXTENDED_LATCH_WAIT_TIME  15
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLP_DBCB__IOTaskSem
+TOTAL_EXTENDED_LATCH_WAITS      364484
+TOTAL_EXTENDED_LATCH_WAIT_TIME  1425
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqlmon_dbcb__bpcb_chain_latch
+TOTAL_EXTENDED_LATCH_WAITS      2
+TOTAL_EXTENDED_LATCH_WAIT_TIME  0
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqlr_db__exclusiveDDLMemoryListLatch
+TOTAL_EXTENDED_LATCH_WAITS      298
+TOTAL_EXTENDED_LATCH_WAIT_TIME  13442
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqlrlc_entry_common__usage_latch
+TOTAL_EXTENDED_LATCH_WAITS      1
+TOTAL_EXTENDED_LATCH_WAIT_TIME  7
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqzSyncDataChain__m_listAccessLatch
+TOTAL_EXTENDED_LATCH_WAITS      3
+TOTAL_EXTENDED_LATCH_WAIT_TIME  24
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_ABPDispatcher
+TOTAL_EXTENDED_LATCH_WAITS      364469
+TOTAL_EXTENDED_LATCH_WAIT_TIME  4259622
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_ABPDistributor
+TOTAL_EXTENDED_LATCH_WAITS      364470
+TOTAL_EXTENDED_LATCH_WAIT_TIME  113224
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLE_KRCB__EDUChainLatch
+TOTAL_EXTENDED_LATCH_WAITS      1087
+TOTAL_EXTENDED_LATCH_WAIT_TIME  3029
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_SQLP_GLFH_VALLOTCH__glfhLotch
+TOTAL_EXTENDED_LATCH_WAITS      4469
+TOTAL_EXTENDED_LATCH_WAIT_TIME  6060
+
+TIMESTAMP                       2023-01-29 07:06:31.768651
+MEMBER                          0
+LATCH_NAME                      SQLO_LT_sqlpPeriodicWorkState__pwsLatch
+TOTAL_EXTENDED_LATCH_WAITS      2275
+TOTAL_EXTENDED_LATCH_WAIT_TIME  844
+

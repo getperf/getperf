@@ -1,0 +1,41 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 7,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Page Reclaims Tx - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/PageReq/",
+      "graph_title": "Db2 - <node> - Page Reclaims Tx",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["pageReclX"],
+      "vertical_label": "tx/sec",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Db2 - <node> - Page Reclaims Tx - <device>"
+    },
+    {
+      "graph_template": "Db2 - Space Mapping Page Reclaims Tx - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/PageReq/",
+      "graph_title": "Db2 - <node> - Space Mapping Page Reclaims Tx",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["pageReclX"],
+      "vertical_label": "tx/sec",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Db2 - <node> - Space Mapping Page Reclaims Tx - <device>"
+    },
+    {
+      "graph_template": "Db2 - Page Reclaims",
+      "graph_tree": "/Db2/<node_path>/PageReq/Detail",
+      "graph_title": "Db2 - <node> - Page Reclaims - <device>",
+      "graph_items": ["pageReclX", "spaceMapPageReclX"],
+      "vertical_label": "tx/sec",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "datasource_title": "Db2 - <node> - Page Reclaims - <device>"
+    }
+  ]
+}

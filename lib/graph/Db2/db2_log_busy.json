@@ -1,0 +1,16 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 2,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Log Busy",
+      "graph_tree": "/Db2/<node_path>/LogBusy/",
+      "graph_title": "Db2 - <node> - Log Busy",
+      "graph_items": ["logWriteTime"],
+      "vertical_label": "sec",
+      "upper_limit": 100,
+      "datasource_title": "Db2 - <node> - Log Busy"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Memory Pool Usage - <devn> cols",
+      "graph_tree": "/Db2/Stat/<node_path>/Memory/Summary/",
+      "graph_title": "Db2 - <node> - Memory Pool Usage",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["MEMORY_POOL_USED"],
+      "vertical_label": "byte",
+      "upper_limit": 100000,
+      "datasource_title": "Db2 - <node> - Memory Pool Usage - <device>"
+    },
+    {
+      "graph_template": "Db2 - Memory Pool Usage Detail",
+      "graph_tree": "/Db2/Stat/<node_path>/Memory/Detail/",
+      "graph_title": "Db2 - <node> - Memory Pool Usage Detail - <device>",
+      "legend_max": 15,
+      "graph_items": ["MEMORY_POOL_USED"],
+      "vertical_label": "byte",
+      "upper_limit": 100000,
+      "datasource_title": "Db2 - <node> - Memory Pool Usage Detail - <device>"
+    }
+  ]
+}

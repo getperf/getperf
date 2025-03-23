@@ -1,0 +1,19 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - SQL - <node>",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - SQL Disk Read Ranking - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/SQLRank/<node>/Disk",
+      "graph_title": "Db2 - <node> - SQL Disk Read Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["disk_reads"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "disk reads",
+      "datasource_title": "Db2 - <node> - SQL Disk Read Ranking - <device>"
+    }
+  ]
+}

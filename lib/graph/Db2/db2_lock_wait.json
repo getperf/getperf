@@ -1,0 +1,16 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Lock Wait",
+      "graph_tree": "/Db2/<node_path>/LockWait",
+      "graph_title": "Db2 - <node> - Lock Wait",
+      "graph_items": ["lockWaitTime"],
+      "vertical_label": "sec",
+      "upper_limit": 100,
+      "datasource_title": "Db2 - <node> - Lock Wait"
+    }
+  ]
+}

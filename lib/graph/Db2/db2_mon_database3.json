@@ -1,0 +1,97 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node> - Database3",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Database - Connection Request",
+      "graph_tree": "/Db2/Stat/<node_path>/Connection/Request",
+      "graph_title": "Db2 - <node> - Database - Connection Request/sec",
+      "graph_items": [
+        "ConnectReq"
+      ],
+      "graph_item_texts": [
+        "requests/sec"
+      ],
+      "vertical_label": "tps",
+      "chart_style": "line2",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Database - Connection Request"
+    },
+    {
+        "graph_template": "Db2 - Database - Connection Wait Time",
+        "graph_tree": "/Db2/Stat/<node_path>/Connection/WaitTime",
+        "graph_title": "Db2 - <node> - Database - Connection Wait Time",
+        "graph_items": [
+          "ConnectAuthProcTime",
+          "ConnectReqProcTime",
+          "ConnectWaitTime"
+        ],
+        "graph_item_texts": [
+          "auth proc time/10 min",
+          "req proc time/10 min",
+          "wait time/10 min"
+        ],
+        "cdef": "Multiply by 600",
+        "total_data_source": "Total All Data Sources",
+        "vertical_label": "msec",
+        "chart_style": "stack",
+        "upper_limit": 0.001,
+        "datasource_title": "Db2 - <node> - Database - Connection Time"
+    },
+    {
+      "graph_template": "Db2 - Database - Connect Auth Response",
+      "graph_tree": "/Db2/Stat/<node_path>/Connection/Response/<node>",
+      "graph_title": "Db2 - <node> - Database - Connect Auth Response",
+      "graph_items": [
+        "ConnectAuthProcTime",
+        "ConnectReq"
+      ],
+      "graph_item_texts": [
+        "connect auth time/req",
+        "request"
+      ],
+      "cdef": "Devide by b",
+      "vertical_label": "msec",
+      "chart_style": "line2",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Database - Connect Auth Response"
+    },
+    {
+      "graph_template": "Db2 - Database - Connect Proc Response",
+      "graph_tree": "/Db2/Stat/<node_path>/Connection/Response/<node>",
+      "graph_title": "Db2 - <node> - Database - Connect Proc Response",
+      "graph_items": [
+        "ConnectReqProcTime",
+        "ConnectReq"
+      ],
+      "graph_item_texts": [
+        "connect proc time/req",
+        "request"
+      ],
+      "cdef": "Devide by b",
+      "vertical_label": "msec",
+      "chart_style": "line2",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Database - Connect Proc Response"
+    },
+    {
+      "graph_template": "Db2 - Database - Connect Wait Response",
+      "graph_tree": "/Db2/Stat/<node_path>/Connection/Response/<node>",
+      "graph_title": "Db2 - <node> - Database - Connect Wait Response",
+      "graph_items": [
+        "ConnectWaitTime",
+        "ConnectReq"
+      ],
+      "graph_item_texts": [
+        "connect wait time/req",
+        "request"
+      ],
+      "cdef": "Devide by b",
+      "vertical_label": "msec",
+      "chart_style": "line2",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Database - Connect Wait Response"
+    }
+  ]
+}

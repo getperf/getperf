@@ -1,0 +1,20 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - SQL - <node>",
+  "priority": 82,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Daily SQL Exec Average Time Ranking - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/SQLRank/<node>/ExecTime/DailyAve",
+      "graph_title": "Db2 - <node> - Daily SQL Exec Average Time Ranking",
+      "cdef": "Devide by 1000",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["EXEC_TIME"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources, Devide by 1000",
+      "vertical_label": "sec",
+      "datasource_title": "Db2 - <node> - Daily SQL Exec Average Time Ranking - <device>"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - DB MonGetDatabase - <node>",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - DB MonGetDatabase - Lock Activity",
+      "graph_tree": "/Db2/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Lock Activity",
+      "legend_max": 10,
+      "upper_limit": 0.0000001,
+      "graph_items": ["LOCK_ESCALS","LOCK_TIMEOUTS","LOCK_WAIT_TM","LOCK_WAITS"],
+      "graph_item_texts": [
+        "lock escals","lock timeouts","lock wait time","lock waits"],
+      "chart_style": "line1",
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - Lock Activity"
+    },
+    {
+      "graph_template": "Db2 - DB MonGetDatabase - Log Activity",
+      "graph_tree": "/Db2/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Log Activity",
+      "legend_max": 10,
+      "upper_limit": 0.0000001,
+      "graph_items": [
+        "LOG_BUFFER_WAIT_TM","LOG_DISK_WAIT_TM","LOG_DISK_WAITS"
+      ],
+      "graph_item_texts": [
+        "log buffer wait time","log disk wait time","log disk waits total"
+      ],
+      "chart_style": "line1",
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - Log Activity"
+    },
+    {
+      "graph_template": "Db2 - DB MonGetDatabase - CPU Activity",
+      "graph_tree": "/Db2/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - CPU Activity",
+      "legend_max": 10,
+      "upper_limit": 0.0000001,
+      "graph_items": [
+        "TOTAL_CPU_TM","TOTAL_WAIT_TM"
+      ],
+      "graph_item_texts": [
+        "total cpu time","total wait time"
+      ],
+      "chart_style": "line1",
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - CPU Activity"
+    },
+    {
+      "graph_template": "Db2 - DB MonGetDatabase - CF Activity",
+      "graph_tree": "/Db2/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - CF Activity",
+      "legend_max": 10,
+      "upper_limit": 0.0000001,
+      "graph_items": [
+        "CF_WAITS", "CF_WAIT_TM"
+      ],
+      "graph_item_texts": [
+        "cf waits","cf wait time"
+      ],
+      "chart_style": "line1",
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - CF Activity"
+    },
+    {
+      "graph_template": "Db2 - DB MonGetDatabase - Latch Activity",
+      "graph_tree": "/Db2/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Latch Activity",
+      "legend_max": 10,
+      "upper_limit": 0.0000001,
+      "graph_items": [
+        "EXT_LATCH_WAIT_TM", "EXT_LATCH_WAITS"
+      ],
+      "graph_item_texts": [
+        "total extended latch wait time", "total extended latch waits"
+      ],
+      "chart_style": "line1",
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - Latch Activity"
+    },
+    {
+      "graph_template": "Db2 - DB MonGetDatabase - RunStats Activity",
+      "graph_tree": "/Db2/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - RunStats Activity",
+      "legend_max": 10,
+      "upper_limit": 0.0000001,
+      "graph_items": [
+        "RUNSTATS_TM", "RUNSTATS_PROC_TM", "RUNSTATS"
+      ],
+      "graph_item_texts": [
+        "total sync runstats time","total sync runstats proc time","total sync runstats"
+      ],
+      "chart_style": "line1",
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - RunStats Activity"
+    }
+  ]
+}

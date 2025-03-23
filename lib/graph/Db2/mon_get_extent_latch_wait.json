@@ -1,0 +1,33 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 41,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Stats - MON_GET_EXENT_LATCH_WAIT - <devn> cols",
+      "graph_tree": "/Db2/Stat/<node_path>/Latch/Event/",
+      "graph_title": "Db2 - <node> - Latch Wait Event",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": [
+        "LATCH_WAITS"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Latch Wait Event - <device>"
+    },
+    {
+      "graph_template": "Db2 - Stats - TOTAL_EXTENDED_LATCH_WAIT_TIME - <devn> cols",
+      "graph_tree": "/Db2/Stat/<node_path>/Latch/Time/",
+      "graph_title": "Db2 - <node> - Latch Wait Time",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": [
+        "LATCH_WAIT_TIME"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Latch Wait Time - <device>"
+    }
+  ]
+}

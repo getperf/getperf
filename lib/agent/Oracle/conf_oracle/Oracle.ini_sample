@@ -1,0 +1,24 @@
+;---------- Monitor command config (Oracle) -----------------------------------
+STAT_ENABLE.Oracle   = true
+STAT_INTERVAL.Oracle = 600
+STAT_TIMEOUT.Oracle  = 500
+STAT_MODE.Oracle     = serial
+
+; Oracle 監視設定前処理
+STAT_CMD.Oracle = 'chmod a+wrx _odir_'
+
+; Oracle Statspack 版監視設定 
+;STAT_CMD.Oracle = "sudo su - oracle -c '_script_/oracle_awr_batch_collector.sh -l _odir_ -u perfstat/perfstat@ORCL -d ora12c -i ORAW'"
+STAT_CMD.Oracle = "sudo su - oracle -c '_script_/oracle_statspack_batch_collector.sh -l _odir_ -u perfstat/perfstat@ORCL -d ora12c -i ORSP'"
+
+
+; Oracle 監視設定後処理
+STAT_CMD.Oracle = 'sudo chmod -R a+wrx _odir_'
+
+;---------- Monitor command config (Oracle Config) -----------------------------------
+;STAT_ENABLE.OracleConfig   = true
+;STAT_INTERVAL.OracleConfig = 86400
+;STAT_TIMEOUT.OracleConfig  = 400
+;STAT_MODE.OracleConfig     = serial
+;
+;STAT_CMD.OracleConfig = '_script_/chcsv.sh -u perfstat/perfstat -i orcl -l _odir_ -d ora12c -f ora_param'

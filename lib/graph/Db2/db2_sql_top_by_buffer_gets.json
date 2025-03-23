@@ -1,0 +1,19 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - SQL - <node>",
+  "priority": 9,
+  "graphs": [
+    {
+      "graph_template": "Oracle - SQL Buffer Get Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLRank/<node>/Buffer",
+      "graph_title": "Oracle - <node> - SQL Buffer Get Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["buffer_gets"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "buffers",
+      "datasource_title": "Oracle - <node> - SQL Buffer Get Ranking - <device>"
+    }
+  ]
+}

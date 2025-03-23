@@ -1,0 +1,16 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 6,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Session",
+      "graph_tree": "/Db2/<node_path>/Session",
+      "graph_title": "Db2 - <node> - Session",
+      "graph_items": ["applsCurCons"],
+      "vertical_label": "session",
+      "upper_limit": 100,
+      "datasource_title": "Db2 - <node> - Session"
+    }
+  ]
+}

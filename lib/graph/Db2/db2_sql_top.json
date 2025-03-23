@@ -1,0 +1,18 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - SQL - <node>",
+  "priority": 8,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Sql statistics by STMTID",
+      "graph_tree": "/Db2/<node_path>/STMTID/<node>/",
+      "graph_title": "Db2 - <node> - Sql statistics by STMTID - <device>",
+      "graph_items": [
+        "ACT_WAIT_TIME","CPU_TIME","DISK_READ_TIME","DISK_WRITE_TIME",
+        "EXEC_TIME","FED_WAIT_TIME","LOCK_WAITS","LOCK_WAIT_TIME",
+        "NUM_EXEC","ROWS_MODIFIED","ROWS_READ"],
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - Sql statistics by STMTID - <device>"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
---Х\Ч╠ИцЧШЧpПєЛ╡
+--шбищаШхЯЯхИйчФичК╢ц│Б
 
 col RTIME format a20
 col NAME format a30

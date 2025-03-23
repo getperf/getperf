@@ -1,0 +1,12 @@
+SELECT /*+ ORDERED USE_hash(a b) */
+b.TABLESPACE_NAME,
+sum(b.BYTES)/1024/1024 "total_mb",
+round(sum(b.BYTES)/(1024*1024) - sum(a.BYTES)/ (1024*1024),2) "used_mb",
+round((sum(b.BYTES)/(1024*1024) - sum(a.BYTES)/(1024*1024))/ (sum(b.BYTES)/1024/1024)*100,2) "usage",
+round(sum(a.BYTES)/(1024*1024),2) "available_mb"
+FROM
+(select FILE_ID,sum(BYTES) AS "BYTES" FROM dba_free_space
+group by FILE_ID) a,dba_data_files b
+where a.FILE_ID = b.FILE_ID
+group by b.TABLESPACE_NAME
+;

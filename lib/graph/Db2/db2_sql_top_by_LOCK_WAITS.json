@@ -1,0 +1,19 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - SQL - <node>",
+  "priority": 86,
+  "graphs": [
+    {
+      "graph_template": "Db2 - SQL Lock Wait Ranking - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/SQLRank/<node>/Lock",
+      "graph_title": "Db2 - <node> - SQL Lock Wait Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["LOCK_WAITS"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "exec",
+      "datasource_title": "Db2 - <node> - SQL Lock Wait Ranking - <device>"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node> - Database3",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Database - Total Connection Request - <devn> cols",
+      "graph_tree": "/Db2/Stat/<node_path>/Connection/Request",
+      "graph_title": "Db2 - <node> - Database - Total Connection Request/sec",
+      "graph_type": "multi",
+      "total_data_source": "Total All Data Sources",
+      "legend_max": 15,
+      "graph_items": [
+        "ConnectReq"
+      ],
+      "vertical_label": "tps",
+      "chart_style": "stack",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Database - Total Connection Request - <device>"
+    }
+  ]
+}

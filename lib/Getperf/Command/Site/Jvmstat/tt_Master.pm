@@ -16,13 +16,15 @@ sub alias_instance {
     my ($args) = @_;
 
     my ($id, $text);
-    if ($args=~m|-Dcatalina\.base=(.*?) -| || 
+    if ($args=~m|-Dcatalina\.base=(.*?) -| || $args=~m|config.file=(.*?)/conf| || 
         $args=~m|-Dcatalina\.home=(.*?) -|) {
         # catalina.home=C:\Apache Group\tomcat\7\Tomcat7_101
         my $catalina_path = $1;
+        print "CATALINA_PATH:${catalina_path}\n";
         my @paths = split(/\/|\\/, $catalina_path);
         my $catalina_base = pop(@paths);
         $text = "Apache Tomcat - ${catalina_base}";
+        print "TEXT:$text\n";
         $catalina_base =~ s/(?:_|\/|-)(.)/\U$1/g;
         $catalina_base =~ s/\s+/_/g;
         $id   = "tomcat.${catalina_base}";

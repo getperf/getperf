@@ -1,0 +1,19 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - SQL - <node>",
+  "priority": 81,
+  "graphs": [
+    {
+      "graph_template": "Db2 - SQL Exec Ranking - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/SQLRank/<node>/Exec",
+      "graph_title": "Db2 - <node> - SQL Exec Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["NUM_EXEC"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "exec",
+      "datasource_title": "Db2 - <node> - SQL Exec Ranking - <device>"
+    }
+  ]
+}

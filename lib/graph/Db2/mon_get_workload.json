@@ -1,0 +1,33 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 43,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Stats - MON_GET_WORKLOAD - 1",
+      "graph_tree": "/Db2/Stat/<node_path>/LockActivity/<node>",
+      "graph_title": "Db2 - <node> - Lock Deadlock - <device>",
+      "graph_items": [
+        "DEADLOCKS"        ,
+        "LOCK_ESCALS"      ,
+        "LOCK_TIMEOUTS"      
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Lock Deadlock - <device>"
+    },
+    {
+      "graph_template": "Db2 - Stats - MON_GET_WORKLOAD - <devn> cols",
+      "graph_tree": "/Db2/Stat/<node_path>/Commit/<node>",
+      "graph_title": "Db2 - <node> - Commit Count",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": [
+        "TOTAL_APP_COMMITS"      
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Commit Count - <device>"
+    }
+  ]
+}

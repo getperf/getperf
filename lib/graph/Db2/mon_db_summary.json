@@ -1,0 +1,17 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - DB Summary - <node>",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - DB Summary - db total app commits",
+      "graph_tree": "/Db2/<node_path>/Summary/Activity/<node>",
+      "graph_title": "Db2 - <node> - db total app commits",
+      "legend_max": 10,
+      "graph_items": ["APP_COMMITS"],
+      "chart_style": "stack",
+      "vertical_label": "count",
+      "datasource_title": "Db2 - <node> - db total app commits"
+    }
+  ]
+}
