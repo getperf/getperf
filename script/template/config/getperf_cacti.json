@@ -5,6 +5,6 @@
 	"GETPERF_CACTI_HOME":             "[% COMPONENT_ROOT %]/lib/cacti",
 	"GETPERF_CACTI_TEMPLATE_DIR":     "template/1.2.24",
 	"GETPERF_CACTI_DUMP":             "template/1.2.24/cacti.dmp",
-	"GETPERF_CACTI_DOMAIN_TEMPLATES": ["Linux","Windows"],
+	"GETPERF_CACTI_DOMAIN_TEMPLATES": ["Linux","Windows","Solaris","AIX","Oracle","Db2","Jvmstat"],
 	"GETPERF_CACTI_CONFIG":           "template/1.2.24/config.php.tpl"
 }

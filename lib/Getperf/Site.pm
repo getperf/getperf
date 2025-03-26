@@ -328,6 +328,8 @@ sub create_sumup_command_skel {
 	#                      /color/...                                      (step.2)
 	#                /agent/{domain}/...                                   (step.2)
 	#                      /Zabbix/...                                     (step.2)
+	#                /test/{domain}/...                                    (step.2)
+	#                /docs/{domain}/...                                    (step.2)
 	#
 	#                /cacti/template/0.8.8e/cacti.dmp                      (step.3)
 	#                               /0.8.8e/cacti_templates-{domain}.xml   (step.3)
@@ -347,7 +349,7 @@ sub create_sumup_command_skel {
     # step.2
     # Copy Linux, a Windows domain directory under '{getperf_home}/lib'
     if ($self->{command} eq 'init_site') {
-		for my $lib_base('Getperf/Command/Site', 'graph', 'agent', 'zabbix') {
+		for my $lib_base('Getperf/Command/Site', 'graph', 'agent', 'zabbix', 'test', 'docs', 'script') {
 			my @domains = @{$self->{domain_templates}};
 			push(@domains, 'SystemInfo') if ($lib_base ne 'zabbix');
 			push(@domains, 'color') if ($lib_base eq 'graph');
@@ -460,7 +462,6 @@ sub create_cacti_repository_db {
 		$dbh = undef;
 	}
 	if (!$dbh) {
-		print "TEST1\n";
 		# $drh->func('createdb', $sitekey, 'localhost', 'root', $rootpass, 'admin');
 		my $cmd = "mysql -uroot -p${rootpass} -e \"create database ${sitekey};\"";
 		print "CMD: $cmd\n";

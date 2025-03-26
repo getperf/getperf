@@ -1,0 +1,69 @@
+schedule:
+  start: 2025/03/07 08:02:00
+  end: 2025/03/07 08:07:30
+jobs:
+  - id: 1
+    out: vmstat.txt
+    cmd: LANG=C /usr/bin/vmstat 5 63
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:07:10
+    pid: 16323
+    rc: 0
+  - id: 2
+    out: uptime.txt
+    cmd: LANG=C /usr/bin/uptime
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:07:00
+    pid: 18230
+    rc: 0
+  - id: 3
+    out: swap_s.txt
+    cmd: LANG=C /usr/sbin/swap -s
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:07:00
+    pid: 18234
+    rc: 0
+  - id: 4
+    out: iostat.txt
+    cmd: LANG=C /usr/bin/iostat -xn 30 12
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:07:30
+    pid: 16325
+    rc: 0
+  - id: 5
+    out: kstat.txt
+    cmd: _script_/get_kstat.pl 30 12
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:02:01
+    pid: 16324
+    rc: 1
+    errormsg: |
+      Died at /export/home/zabbix/ptune/script/get_kstat.pl line 16.
+  - id: 6
+    out: df_k.txt
+    cmd: LANG=C /bin/df -k -l
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:02:00
+    pid: 16329
+    rc: 0
+  - id: 7
+    out: (null)
+    cmd: _script_/getnetstat.sh -i 30 -n 12 >> _odir_/netstats.txt
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:07:30
+    pid: 16326
+    rc: 0
+  - id: 8
+    out: (null)
+    cmd: _script_/getpsutil.sh -i 30 -n 12 -l _odir_
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:07:30
+    pid: 16328
+    rc: 0
+  - id: 9
+    out: (null)
+    cmd: sudo _script_/get_pmap_heap.pl 30 10 > _odir_/pmap_heap.txt
+    start: 2025/03/07 08:02:00
+    end: 2025/03/07 08:06:31
+    pid: 16327
+    rc: 0

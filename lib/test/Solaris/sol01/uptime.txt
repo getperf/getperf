@@ -1,0 +1,10 @@
+  8:02am  up 106 day(s), 16:07,  0 users,  load average: 1.07, 1.07, 1.06
+  8:03am  up 106 day(s), 16:08,  0 users,  load average: 1.08, 1.07, 1.06
+  8:03am  up 106 day(s), 16:08,  0 users,  load average: 1.05, 1.06, 1.06
+  8:04am  up 106 day(s), 16:09,  0 users,  load average: 1.06, 1.06, 1.06
+  8:04am  up 106 day(s), 16:09,  0 users,  load average: 1.04, 1.06, 1.06
+  8:05am  up 106 day(s), 16:10,  0 users,  load average: 1.04, 1.05, 1.05
+  8:05am  up 106 day(s), 16:10,  0 users,  load average: 1.02, 1.05, 1.05
+  8:06am  up 106 day(s), 16:11,  0 users,  load average: 1.09, 1.06, 1.06
+  8:06am  up 106 day(s), 16:11,  0 users,  load average: 1.11, 1.07, 1.06
+  8:07am  up 106 day(s), 16:12,  0 users,  load average: 1.09, 1.07, 1.06
