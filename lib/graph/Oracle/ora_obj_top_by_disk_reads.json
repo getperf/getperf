@@ -1,7 +1,7 @@
 {
   "host_template": "Oracle",
   "host_title": "Oracle - SQL - <node>",
-  "priority": 12,
+  "priority": 195,
   "graphs": [
     {
       "graph_template": "Oracle - Object Disk Read Ranking - <devn> cols",

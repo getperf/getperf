@@ -79,6 +79,8 @@ sub run {
 		return $self->config_axis2;
 	} elsif ($command eq 'php') {
 		return $self->config_php;
+	} elsif ($command=~/^cacti/) {
+		return $self->config_cacti($command);
 	} elsif ($command eq 'epel_repo') {
 		return $self->config_epel_repo;
 	} elsif ($command eq 'epel_repo') {
@@ -151,13 +153,127 @@ sub parse_command_option_package {
 	}
 	$self->{command} = shift(@ARGV);
 
- 	if ($self->{command}!~/(php|epel_repo)/) {
+ 	if ($self->{command}!~/(php|epel_repo|cacti)/) {
 		print "invalid command\n" . $usage;
 		return;
 	}
 
 	return 1;
 }
+
+sub config_cacti {
+	my ($self, $command) = @_;
+	print ("Config Cacti source : $command\n");
+	if ($command eq 'cacti12') {
+		$self->config_cacti12;
+	} elsif ($command eq 'cacti08') {
+		$self->config_cacti08;
+	} else {
+		print "unkown cacti patch $command\n";
+		return;
+	}
+	return 1;
+}
+
+sub config_cacti12 {
+	my $self = shift;
+	return $self->config_cacti12_api_tree() && $self->config_cacti12_template();
+}
+
+sub config_cacti12_api_tree {
+	my $self = shift;
+	my $patch = 'lib/api_tree.php';
+	if (!-f $patch) {
+		die "cacti patch file not found $patch\n";
+	}
+	eval {
+		my $config_file = file($patch);
+		LOG->notice("patch $config_file");
+		my @lines = $config_file->slurp or die $!;
+		my @out;
+		for my $line(@lines) {
+			chomp($line);
+			if ($line=~/order_by = 'ORDER BY position'/) {
+				$line=~s/'ORDER BY position'/'ORDER BY position IS NULL ASC, position'/g;
+				push @out, $line;
+			} else {
+				push @out, $line;
+			}
+		}
+		my $writer = $config_file->open('w') or die $!;
+		$writer->print(join("\n", @out));
+		$writer->close;
+	};
+	if ($@) {
+		LOG->error($@);
+		return;
+	}
+	return 1;
+}
+
+sub config_cacti12_template {
+	my $self = shift;
+	my $patch = 'lib/template.php';
+	if (!-f $patch) {
+		die "cacti patch file not found $patch\n";
+	}
+	eval {
+		my $config_file = file($patch);
+		LOG->notice("patch $config_file");
+		my @lines = $config_file->slurp or die $!;
+		my @out;
+		for my $line(@lines) {
+			chomp($line);
+			next if ($line=~/Getperf patch/);
+			if ($line=~m|if \(cacti_sizeof\(\$previous_data_source\) && \$use_previous_data\)|) {
+				push @out, "			\$use_previous_data = false;  // Getperf patch : Patch to avoid data source deduplication";
+			}
+			push @out, $line;
+		}
+		my $writer = $config_file->open('w') or die $!;
+		$writer->print(join("\n", @out));
+		$writer->close;
+	};
+	if ($@) {
+		LOG->error($@);
+		return;
+	}
+	return 1;
+}
+
+sub config_cacti08 {
+	my $self = shift;
+	my @config_files = qw|graph_image.php graph_xport.php|;
+	for my $config_file(@config_files) {
+		next if (!-f $config_file);
+		LOG->notice("patch $config_file");
+	 	eval {
+			$config_file = file($config_file);
+	     	my @lines = $config_file->slurp or die $!;
+	     	my @out;
+	 		for my $line(@lines) {
+	 			chomp($line);
+	 			if ($line=~/1600000000/) {
+	 				$line=~s/1600000000/2600000000/g;
+	 				push @out, $line;
+	 			} else {
+	 				push @out, $line;
+	 			}
+	 		}
+
+	 		my $writer = $config_file->open('w') or die $!;
+	 		$writer->print(join("\n", @out));
+	 		$writer->close;
+	 	};
+	 	if ($@) {
+	 		LOG->error($@);
+	 		return;
+	 	}
+	}
+
+	return 1;
+}
+
 
 sub config_php {
 	my $self = shift;
@@ -253,8 +369,16 @@ sub config_apache_httpd {
  			#CustomLog "logs/access_log" common
  			} elsif ($line=~/^\s*CustomLog "logs\/access_log" common/) {
  				push @out, '#CustomLog "logs/access_log" common';
- 			# } elsif ($line=~/LoadModule socache_shmcb_module modules\/mod_socache_shmcb\.so/) {
- 			# 	push @out, "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so";
+ 			} elsif ($line=~m|LoadModule proxy_module modules/mod_proxy\.so|) {
+ 				push @out, "LoadModule proxy_module modules/mod_proxy.so";
+ 			} elsif ($line=~m|LoadModule proxy_connect_module modules/mod_proxy_connect\.so|) {
+ 				push @out, "LoadModule proxy_connect_module modules/mod_proxy_connect.so";
+ 			} elsif ($line=~m|LoadModule proxy_http_module modules/mod_proxy_http\.so|) {
+ 				push @out, "LoadModule proxy_http_module modules/mod_proxy_http.so";
+ 			} elsif ($line=~m|LoadModule proxy_ajp_module modules/mod_proxy_ajp\.so|) {
+ 				push @out, "LoadModule proxy_ajp_module modules/mod_proxy_ajp.so";
+ 			} elsif ($line=~m|LoadModule socache_shmcb_module modules/mod_socache_shmcb\.so|) {
+ 				push @out, "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so";
  			# } elsif ($line=~/LoadModule slotmem_shm_module/) {
  			# 	push @out, "LoadModule slotmem_shm_module modules/mod_slotmem_shm.so";
 
@@ -296,7 +420,7 @@ sub config_apache_ajp {
 
 	my @out = (
 		'<Location / >',
-		'  ProxyPass ajp://localhost:' . $self->{ws_port_ajp} . '/',
+		'  ProxyPass ajp://localhost:' . $self->{ws_port_ajp} . '/ secret=getperf',
 		'</Location>',
 		'',
 	);
@@ -435,62 +559,87 @@ sub config_apache_tomcat {
  	my $config_file = file($self->{ws_tomcat_home}, 'conf/server.xml');
 	LOG->notice("patch $config_file");
  	eval {
-     	my @lines = $config_file->slurp or die $!;
-     	my @out;
-     	my $first_patch = 1;
- 		while (my $line = shift(@lines)) {
- 			chomp($line);
-
-			# @Comment out 8080 port
-			# +<!--
-		    # <Connector port="8080" protocol="HTTP/1.1"
-		    #            connectionTimeout="20000"
-		    #            redirectPort="8443" />
-			# +-->
- 			if ($line=~m|<Connector port="\d+" protocol="HTTP/1.1"|) {
- 				if ($line=~/patched/) {
- 					$first_patch = 0;
- 					push @out, $line;
- 				} else {
- 					push @out, '<!--';
- 					push @out, $line . ' patched';
- 					while (my $line = shift(@lines)) {
- 						chomp($line);
- 						push @out, $line;
- 						last if ($line=~m|/>|);
- 					}
- 					push @out, '-->';
- 				}
-
-			# @@ -20,7 +22,7 @@
-			# - <Server port="8005" shutdown="SHUTDOWN">
-			# + <Server port="58005" shutdown="SHUTDOWN">
-			} elsif ($line=~m|<Server port="\d+" shutdown="SHUTDOWN"|) {
- 				push @out, '<Server port="' . $self->{ws_port_run} . '" shutdown="SHUTDOWN">';
-
-			# @@ -90,7 +92,7 @@
-			#      <!-- Define an AJP 1.3 Connector on port 8009 -->
-			# -    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
-			# +    <Connector port="57009" protocol="AJP/1.3" redirectPort="8443" />
- 			} elsif ($line=~m|<Connector port="\d+" protocol="AJP/1.3" redirectPort="\d+"|) {
- 				push @out, '    <Connector port="' . $self->{ws_port_ajp} . 
- 					'" protocol="AJP/1.3" redirectPort="' . $self->{ws_port_ssl} . '" />';
-
- 			} else {
- 				push @out, $line;
- 			}
- 		}
+# 		$config_file->parent->mkpath;
  		my $writer = $config_file->open('w') or die $!;
-
- 		$writer->print(join("\n", @out));
- 		$writer->close;
- 		$self->change_owner($self->{ws_tomcat_owner}, $config_file);
+		unless ($writer) {
+	        LOG->crit("Could not write $config_file: $!");
+	        return;
+		}
+		chdir($self->{home});
+		my $config_template =  'script/template/axis2-server-8.5.88-xml.tpl';
+		my $tt = Template->new;
+		my $vars = { 
+			ws_port_run => $self->{ws_port_run},
+		   ws_port_ajp => $self->{ws_port_ajp}, 
+		   ws_port_ssl => $self->{ws_port_ssl}, 
+		};
+		$tt->process($config_template, $vars, \my $output) || die $tt->error;
+		$writer->print($output);
+		$writer->close;
  	};
  	if ($@) {
  		LOG->error($@);
  		return;
  	}
 	return 1;
+
+ 	# eval {
+   #   	my @lines = $config_file->slurp or die $!;
+   #   	my @out;
+   #   	my $first_patch = 1;
+ 	# 	while (my $line = shift(@lines)) {
+ 	# 		chomp($line);
+
+	# 		# @Comment out 8080 port
+	# 		# +<!--
+	# 	    # <Connector port="8080" protocol="HTTP/1.1"
+	# 	    #            connectionTimeout="20000"
+	# 	    #            redirectPort="8443" />
+	# 		# +-->
+ 	# 		if ($line=~m|<Connector port="\d+" protocol="HTTP/1.1"|) {
+ 	# 			if ($line=~/patched/) {
+ 	# 				$first_patch = 0;
+ 	# 				push @out, $line;
+ 	# 			} else {
+ 	# 				push @out, '<!--';
+ 	# 				push @out, $line . ' patched';
+ 	# 				while (my $line = shift(@lines)) {
+ 	# 					chomp($line);
+ 	# 					push @out, $line;
+ 	# 					last if ($line=~m|/>|);
+ 	# 				}
+ 	# 				push @out, '-->';
+ 	# 			}
+
+	# 		# @@ -20,7 +22,7 @@
+	# 		# - <Server port="8005" shutdown="SHUTDOWN">
+	# 		# + <Server port="58005" shutdown="SHUTDOWN">
+	# 		} elsif ($line=~m|<Server port="\d+" shutdown="SHUTDOWN"|) {
+ 	# 			push @out, '<Server port="' . $self->{ws_port_run} . '" shutdown="SHUTDOWN">';
+
+	# 		# @@ -90,7 +92,7 @@
+	# 		#      <!-- Define an AJP 1.3 Connector on port 8009 -->
+	# 		# -    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+	# 		# +    <Connector port="57009" protocol="AJP/1.3" redirectPort="8443" />
+ 	# 		} elsif ($line=~m|<Connector port="\d+" protocol="AJP/1.3" redirectPort="\d+"|) {
+ 	# 			push @out, '    <Connector port="' . $self->{ws_port_ajp} . 
+ 	# 				'" protocol="AJP/1.3" redirectPort="' . $self->{ws_port_ssl} . '" />';
+
+ 	# 		} else {
+ 	# 			push @out, $line;
+ 	# 		}
+ 	# 	}
+ 	# 	my $writer = $config_file->open('w') or die $!;
+
+ 	# 	$writer->print(join("\n", @out));
+ 	# 	$writer->close;
+ 	# 	$self->change_owner($self->{ws_tomcat_owner}, $config_file);
+ 	# };
+ 	# if ($@) {
+ 	# 	LOG->error($@);
+ 	# 	return;
+ 	# }
+	# return 1;
 }
 
 sub change_owner {
@@ -558,7 +707,7 @@ sub config_apache_tomcat_init_script {
 		chdir($self->{home});
 		my $osname = `lsb_release -i -s`;
 		chomp($osname);
-		if ($osname!~/(CentOS|Ubuntu|Raspbian|RedHatEnterprise)/) {
+		if ($osname!~/(CentOS|Ubuntu|Raspbian|RedHatEnterprise|AlmaLinux|OracleServer)/) {
 	        LOG->crit("Can't find script/template/tomcat-$osname.tpl");
 	        return;		
 		}
@@ -611,6 +760,34 @@ sub config_apache_axis2 {
 	return 1;
 }
 
+sub config_apache_axis2_web {
+	my $self = shift;
+
+ 	my $config_file = file($self->{ws_tomcat_home}, 'webapps/axis2/WEB-INF/web.xml');
+	LOG->notice("patch $config_file");
+ 	eval {
+# 		$config_file->parent->mkpath;
+ 		my $writer = $config_file->open('w') or die $!;
+		unless ($writer) {
+	        LOG->crit("Could not write $config_file: $!");
+	        return;
+		}
+		chdir($self->{home});
+		my $config_template =  'script/template/axis2-web-1.5.6-xml.tpl';
+		my $tt = Template->new;
+		my $vars = { 
+        	ws_tomcat_dir => $self->{ws_tomcat_home},
+		};
+		$tt->process($config_template, $vars, \my $output) || die $tt->error;
+		$writer->print($output);
+		$writer->close;
+ 	};
+ 	if ($@) {
+ 		LOG->error($@);
+ 		return;
+ 	}
+	return 1;
+}
 
 
 sub create_zabbix_repository_db {
@@ -656,7 +833,9 @@ sub create_zabbix_repository_db {
 		$drh->func('createdb', $zabbixdb, 'localhost', 'root', $rootpass, 'admin');
 		$dbh = DBI->connect("dbi:mysql:mysql", 'root', $rootpass);
 		$dbh->do("ALTER DATABASE $zabbixdb DEFAULT CHARACTER SET=utf8");
-		$dbh->do("GRANT ALL ON $zabbixdb.* TO $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
+		# $dbh->do("GRANT ALL ON $zabbixdb.* TO $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
+        $dbh->do("CREATE USER $zabbixdb\@localhost IDENTIFIED BY '${rootpass}'");
+        $dbh->do("GRANT ALL PRIVILEGES ON $zabbixdb.* TO $zabbixdb\@localhost WITH GRANT OPTION");
 		$dbh->disconnect();
 		if ($zabbix_sql_dir) {
 			for my $sql(qw/schema.sql images.sql data.sql/) {
@@ -1079,6 +1258,7 @@ sub config_tomcat {
 sub config_axis2 {
 	my $self = shift;
 	$self->config_apache_axis2  || return;
+	$self->config_apache_axis2_web  || return;
 	return 1;
 }
 

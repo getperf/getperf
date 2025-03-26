@@ -1,0 +1,31 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 44,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Stats - MON_GET_INDEX - 1",
+      "graph_tree": "/Db2/Stat/<node_path>/Index/Scan",
+      "graph_title": "Db2 - <node> - Index Scan - <device>",
+      "graph_items": [
+        "INDEX_SCANS"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Index Scan - <device>"
+    },
+    {
+      "graph_template": "Db2 - Stats - MON_GET_INDEX - 2",
+      "graph_tree": "/Db2/Stat/<node_path>/Index/Update",
+      "graph_title": "Db2 - <node> - Index Update - <device>",
+      "graph_items": [
+        "KEY_UPDATES",     
+        "PSEUDO_DELETES",  
+        "DEL_KEYS_CLEANED"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Index Update - <device>"
+    }
+  ]
+}

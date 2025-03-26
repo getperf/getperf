@@ -20,22 +20,29 @@ sub read_java_vm_list {
 	my %jvms = ();
     for my $jvms_file(qw/java_vm_list.yaml jvm.txt/) {
 		my $jvms_path = file($input_dir, $jvms_file);
+		# print $jvms_path . "\n";
 		next if (! -f $jvms_path);
 		my ($pid, $args);
 		my @jvms_lines = $jvms_path->slurp;
+		# print Dumper \@jvms_lines;
 		for my $line(@jvms_lines) {
+		# print "LN:${line}\n";
 			if ($line=~/pid: (\d+)/) {
 				$pid = $1;
+		# print "PID:${pid}\n";
 			}
 			if ($line=~/hotspot\.vm\.args: (.+)$/ ||
 				$line=~/java\.rt\.vmArgs: (.+)$/) {
 				my $java_info = $1;
+		# print "JAVA_INFO:${java_info}\n";
 			    if (my $info = alias_instance($java_info)) {
+			    	
 				    $jvms{$pid} = $info;
 			    }
 			}
 		}
     }
+    # print Dumper \%jvms;
 	return \%jvms;
 }
 
@@ -46,7 +53,7 @@ sub read_java_vm_list {
 
 sub parse {
     my ($self, $data_info) = @_;
-
+print "TEST\n";
 	my %results;
 	my $step = 60;
 	my @headers = qw/eu ou pu ygc:COUNTER fgc:COUNTER ygct:COUNTER fgct:COUNTER thread/;

@@ -1,6 +1,7 @@
 requires 'Class::Accessor::Fast';
 requires 'Crypt::Blowfish';
 requires 'Crypt::CBC';
+requires 'DateTime';
 requires 'Daemon::Control';
 requires 'DBI';
 requires 'Digest::SHA1';
@@ -41,7 +42,7 @@ requires 'Time::Piece', '>= 1.30';
 requires 'Time::Seconds';
 requires 'YAML::Tiny';
 requires 'Zabbix::API';
-requires 'JSON::RPC::Client';
+requires 'JSON::RPC';
 requires 'parent';
 requires 'perl', '5.008_005';
 

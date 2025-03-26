@@ -1,0 +1,21 @@
+#export ORACLE_BASE=/u01/app/oracle # /opt/oracle/app                         # ※
+#export ORACLE_HOME=/u01/app/oracle/12.2.0.1/db1 # ${ORACLE_BASE}/product/12.2.0/dbhome_1  # ※
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=/u01/app/oracle/product/12.2.0/dbhome_1
+
+export ORA_NLS10=${ORACLE_HOME}/nls/data
+export NLS_LANG=JAPANESE_JAPAN.JA16EUC
+export TNS_ADMIN=${ORACLE_HOME}/network/admin
+export PATH=/bin:/usr/bin:/usr/ccs/bin:/usr/openwin/bin:/usr/ucb:/usr/sbin:/usr/local/bin:.
+export LD_LIBRARY_PATH=${ORACLE_HOME}/lib32:/usr/lib:/usr/openwin/lib
+export LD_LIBRARY_PATH_64=${ORACLE_HOME}/lib
+export PATH=${ORACLE_HOME}/bin:${PATH}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ORACLE_HOME}/ctx/lib
+export XMLHOME=${ORACLE_HOME}
+export CLASSPATH=${XMLHOME}/lib/xmlparserv2.jar
+export CLASSPATH=${CLASSPATH}:${XMLHOME}/lib/classgen.jar
+export LANGUAGE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_TYPE=en_US.UTF-8
+

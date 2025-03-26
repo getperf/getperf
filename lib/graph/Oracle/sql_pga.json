@@ -1,0 +1,21 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 201,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Total PGA size",
+      "graph_tree": "/Oracle/<node_path>/PGA/total",
+      "graph_items": [
+        "allocated",
+        "limit",
+        "inuse"
+      ],
+      "chart_style": "line2",
+      "vertical_label": "Byte",
+      "upper_limit": 1000,
+      "graph_title": "Oracle - <node> - Total PGA size",
+      "datasource_title": "Oracle - <node> - PGA size"
+    }
+  ]
+}

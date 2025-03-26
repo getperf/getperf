@@ -1,0 +1,45 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Time Model - Main",
+      "graph_tree": "/Oracle/<node_path>/Event/Main",
+      "chart_style": "line1",
+      "graph_items": [
+        "DBCPU",
+        "DBEla"
+      ],
+      "graph_item_texts": [
+        "DB CPU",
+        "SQL Ela"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "Oracle - <node> - Time Model - Main",
+      "datasource_title": "Oracle - <node> - Time Model - Main"
+    },
+    {
+      "graph_template": "Oracle - Time Model - Etc",
+      "graph_tree": "/Oracle/<node_path>/Event/Others",
+      "chart_style": "stack",
+      "graph_items": [
+        "SQLParse",
+        "HardParseEla",
+        "HardParsePLSQL",
+        "HardParseJava",
+        "bgCPU"
+      ],
+      "graph_item_texts": [
+        "SQL Parse Ela",
+        "Hard Parse Ela",
+        "Hard Parse PL/SQL Ela",
+        "Hard Parse Java Ela",
+        "bg CPU"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "Oracle - <node> - Time Model - Etc",
+      "datasource_title": "Oracle - <node> - Time Model - Etc"
+    }
+  ]
+}

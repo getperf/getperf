@@ -1,7 +1,7 @@
 {
   "host_template": "Oracle",
   "host_title": "Oracle - <node>",
-  "priority": 4,
+  "priority": 110,
   "graphs": [
     {
       "graph_template": "Oracle - Tablespace util% - <devn> cols",

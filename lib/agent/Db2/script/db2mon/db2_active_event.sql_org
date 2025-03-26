@@ -1,0 +1,19 @@
+select substr(act.appl_id,1,24) as APPL_ID,
+mt.uow_id,
+act.activity_id,
+act.time_started,
+mt.total_cpu_time,
+mt.total_act_time,
+varchar(st.stmt_text,64) as STMT_TEXT
+from ACTIVITY_EVMONACT act,
+ACTIVITYMETRICS_EVMONACT mt,
+ACTIVITYSTMT_EVMONACT st
+where act.activity_id = mt.activity_id
+and act.uow_id = mt.uow_id
+and act.appl_id = mt.appl_id
+and act.activity_id = st.activity_id
+and act.uow_id = st.uow_id
+and act.appl_id = st.appl_id
+and act.time_started > current_timestamp - 1 hour
+order by mt.total_cpu_time desc
+with ur;

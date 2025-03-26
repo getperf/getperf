@@ -1,0 +1,24 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 152,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Undo size",
+      "graph_tree": "/Oracle/<node_path>/Undo",
+      "graph_items": [
+        "active",
+        "expired",
+        "undo_alloc",
+        "undo_define",
+        "unexpired"
+      ],
+      "chart_style": "line2",
+      "vertical_label": "MByte",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "graph_title": "Oracle - <node> - Undo size",
+      "datasource_title": "Oracle - <node> - Undo size"
+    }
+  ]
+}

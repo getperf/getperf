@@ -1,0 +1,17 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 17,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Cluster - Background Timed Events - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Event/BackGround/Cluster",
+      "graph_title": "Oracle - <node> - Cluster - Background Timed Events",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["elapse"],
+      "vertical_label": "sec",
+      "datasource_title": "Oracle - <node> - Cluster - Background Timed Events - <device>"
+    }
+  ]
+}

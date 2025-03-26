@@ -1,0 +1,37 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 43,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Stats - MON_GET_WORKLOAD_v2 - select - <devn> cols",
+      "graph_tree": "/Db2/Stat/<node_path>/SelectSQL/",
+      "graph_title": "Db2 - <node> - SELECT Count",
+      "graph_type": "multi",
+      "chart_style": "stack",
+      "legend_max": 15,
+      "total_data_source": "Total All Data Sources",
+      "graph_items": [
+        "SELECT_SQL_STMTS"      
+      ],
+      "vertical_label": "sql/sec",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Select Count - <device>"
+    },
+    {
+        "graph_template": "Db2 - Stats - MON_GET_WORKLOAD_v2 - uid - <devn> cols",
+        "graph_tree": "/Db2/Stat/<node_path>/UpdateSQL/",
+        "graph_title": "Db2 - <node> - INSERT,DELETE,UPDATE Count",
+        "graph_type": "multi",
+        "chart_style": "stack",
+        "legend_max": 15,
+        "total_data_source": "Total All Data Sources",
+        "graph_items": [
+          "UID_SQL_STMTS"      
+        ],
+        "vertical_label": "sql/sec",
+        "upper_limit": 0.001,
+        "datasource_title": "Db2 - <node> - INSERT,DELETE,UPDATE Count - <device>"
+      }
+    ]
+}

@@ -32,7 +32,6 @@ sub parse {
 		my ($path, $usage, $free_space, $used_space, $capacity, $filesystem) = reverse @cols;
 		$usage =~s/\%//g;
 		my $device = alias_df_k($host, $path) || '';
-print "$host,$path,$device\n";
 		if ($device) {
 			$data_info->regist_device($host, 'Solaris', 'diskutil', $device, $path, \@headers);
 	 		$results{$device}{$sec} = join(' ', ($capacity, $free_space, $used_space, $usage));

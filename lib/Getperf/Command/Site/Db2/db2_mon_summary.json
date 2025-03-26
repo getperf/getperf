@@ -1,0 +1,83 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Activity",
+      "graph_tree": "/Db2/<node_path>/Statistics/Activity/",
+      "graph_title": "Db2 - <node> - Activity",
+      "graph_items": ["APP_COMMITS", "APP_ROLLBACKS", "ACT_COMPLETED",
+        "APP_RQSTS_COMPLETED"],
+      "graph_item_texts": ["total app commits", "total app rollbacks", "act completed total",
+          "app rqsts completed total"],
+        "vertical_label": "count",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - Activity"
+    },
+    {
+      "graph_template": "Db2 - CPU",
+      "graph_tree": "/Db2/<node_path>/Statistics/CPU/",
+      "graph_title": "Db2 - <node> - CPU",
+      "graph_items": ["AVG_RQST_CPU_TIME"],
+      "graph_item_texts": ["avg rqst cpu time"],
+        "vertical_label": "count",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - CPU"
+    },
+    {
+      "graph_template": "Db2 - Wait 1",
+      "graph_tree": "/Db2/<node_path>/Statistics/Wait/",
+      "graph_title": "Db2 - <node> - Wait 1",
+      "graph_items": ["ROUTINE_RQST_PCT", "RQST_WAIT_PCT", "ACT_WAIT_PCT",
+        "IO_WAIT_PCT", "LOCK_WAIT_PCT", "AGENT_WAIT_PCT"],
+      "graph_item_texts": ["routine time rqst percent", "rqst wait time percent", "act wait time percent",
+          "io wait time percent", "lock wait time percent", "agent wait time percent"],
+        "vertical_label": "percent",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - Wait 1"
+    },
+    {
+      "graph_template": "Db2 - Wait 2",
+      "graph_tree": "/Db2/<node_path>/Statistics/Net/",
+      "graph_title": "Db2 - <node> - Wait 2",
+      "graph_items": ["NETWORK_WAIT_PCT", "SECTION_PCT", "SECTION_SORT_PCT",
+        "COMPILE_PCT", "TRANSACT_END_PCT", "UTILS_PCT"],
+      "graph_item_texts": ["network wait time percent", "section proc time percent", "section sort proc time percent",
+          "compile proc time percent", "transact end proc time percent", "utils proc time percent"],
+        "vertical_label": "percent",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - Wait 2"
+    },
+    {
+      "graph_template": "Db2 - Reclaim",
+      "graph_tree": "/Db2/<node_path>/Statistics/Reclaim/",
+      "graph_title": "Db2 - <node> - Reclaim",
+      "graph_items": ["CF_WAIT_PCT", "RECLAIM_WAIT_PCT", "SPACE_RECLAIM_PCT"],
+      "graph_item_texts": ["cf wait time percent", "reclaim wait time percent", "spacemappage reclaim wait time percent"],
+        "vertical_label": "percent",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - Reclaim"
+    },
+    {
+      "graph_template": "Db2 - Lock",
+      "graph_tree": "/Db2/<node_path>/Statistics/Lock/",
+      "graph_title": "Db2 - <node> - Lock",
+      "graph_items": ["AVG_LOCK_WAITS", "AVG_LOCK_TIMEOUTS", "AVG_DEADLOCKS", "AVG_LOCK_ESCALS"],
+      "graph_item_texts": ["avg lock waits per act", "avg lock timeouts per act", "avg deadlocks per act", "avg lock escals per act"],
+        "vertical_label": "count",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - Lock"
+    },
+    {
+      "graph_template": "Db2 - Cache",
+      "graph_tree": "/Db2/<node_path>/Statistics/Cache/",
+      "graph_title": "Db2 - <node> - Cache",
+      "graph_items": ["TOTAL_BP_HIT", "TOTAL_GBP_HIT", "TOTAL_CACHING_HIT"],
+      "graph_item_texts": ["total bp hit ratio percent", "total gbp hit ratio percent", "total caching tier hit ratio percent"],
+        "vertical_label": "percent",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - Cache"
+    }
+  ]
+}

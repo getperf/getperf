@@ -26,6 +26,19 @@ sub update_cacti_graph_item {
 	$data_info->cacti_db_dml($update_rrd);
 }
 
+sub initialize_dummy_rrd_file {
+	my ($self, $data_info, $instance, $object_source) = @_;
+	my $storage_dir = $data_info->{absolute_storage_dir};
+	my $src = "${storage_dir}/Oracle/${instance}/device/ora_obj_top__${object_source}.rrd";
+	my $target = "${storage_dir}/Oracle/${instance}/device/ora_obj_top__dummy.rrd";
+	my $rrd_cli = "~/getperf/script/rrd-cli";
+	my $cmd = "${rrd_cli} --create ${target} --from ${src}";
+   	if (! -f $target) {
+	   	print "initialize dummy file : $target\n";
+		system($cmd);
+   	}
+}
+
 sub purge_object_rank_rrd_data {
 	my ($self, $data_info, $instance) = @_;
 
@@ -34,7 +47,7 @@ sub purge_object_rank_rrd_data {
 
 	# purge storage/Oracle/{sid}/device/ora_obj_top__*.rrd
 	my $rrdfile_filter = "$storage_dir/Oracle/$instance/device/ora_obj_top__\*.rrd";
-	open (my $in, "ls $rrdfile_filter |") || die "can't find '$rrdfile_filter' : $!";
+	open (my $in, "ls $rrdfile_filter |grep -v dummy |") || die "can't find '$rrdfile_filter' : $!";
 	while (my $rrdfile = <$in>) {
 		chomp $rrdfile;
 		my $updated = (stat($rrdfile))[8];
@@ -104,6 +117,7 @@ sub parse {
 		"    AND g.title_cache = '__graph_title__' " .
 		"ORDER BY gi.sequence";
 
+	my $last_obj_key = '';
 	for my $sort_key(qw/logical_reads physical_reads physical_writes/) {
 		my @obj_ranks = sort { $obj_stats{$b}{$sort_key} <=> $obj_stats{$a}{$sort_key} } keys %obj_stats;
 		my $rank = 1;
@@ -112,6 +126,7 @@ sub parse {
 			my $output = "Oracle/${instance}/device/ora_obj_top__${obj_key}.txt";
 			$data_info->pivot_report($output, $results{$obj_key}, \@headers);
 			$rank ++;
+			$last_obj_key = $obj_key;
 			last if ($n_top < $rank);
 		}
 		my $ranks_n = scalar(@obj_ranks);
@@ -148,7 +163,7 @@ sub parse {
 			}
 		}
 	}
-
+	$self->initialize_dummy_rrd_file($data_info, $instance, $last_obj_key);
 	return 1;
 }
 

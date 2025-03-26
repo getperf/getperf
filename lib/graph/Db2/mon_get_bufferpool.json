@@ -1,0 +1,59 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 41,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Stats - MON_GET_BUFFERPOOL - 1",
+      "graph_tree": "/Db2/Stat/<node_path>/BufferPool/LogicalRead/<node>/",
+      "graph_title": "Db2 - <node> - BufferPool LogicalRead - <device>",
+      "graph_items": [
+        "Data_Logical_Rds",
+        "Idx_Logical_Rds",
+        "Temp_D_Log_Rds"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - BufferPool LogicalRead - <device>"
+    },
+    {
+      "graph_template": "Db2 - Stats - MON_GET_BUFFERPOOL - 2",
+      "graph_tree": "/Db2/Stat/<node_path>/BufferPool/PysicalRead/<node>/",
+      "graph_title": "Db2 - <node> - BufferPool PysicalRead - <device>",
+      "graph_items": [
+        "Data_Physical_Rds",
+        "Idx_Physical_Rds",
+        "Temp_D_Phy_Rds"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - BufferPool PysicalRead - <device>"
+    },
+    {
+      "graph_template": "Db2 - Stats - MON_GET_BUFFERPOOL - 3",
+      "graph_tree": "/Db2/Stat/<node_path>/BufferPool/DicectIO/<node>/",
+      "graph_title": "Db2 - <node> - BufferPool DicectIO - <device>",
+      "graph_items": [
+        "Direct_Rds",
+        "Direct_Wri",
+        "Direct_Rd_Req",
+        "Direct_Wri_Req"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - BufferPool DicectIO - <device>"
+    },
+    {
+      "graph_template": "Db2 - Stats - MON_GET_BUFFERPOOL - 4",
+      "graph_tree": "/Db2/Stat/<node_path>/BufferPool/DicectIOTime/<node>/",
+      "graph_title": "Db2 - <node> - BufferPool DicectIOTime - <device>",
+      "graph_items": [
+        "Direct_Rd_Tm",
+        "Direct_Wri_Tm"
+      ],
+      "vertical_label": "tps",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - BufferPool DicectIOTime - <device>"
+    }
+  ]
+}

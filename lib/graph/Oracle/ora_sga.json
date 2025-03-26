@@ -1,0 +1,18 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 151,
+  "graphs": [
+    {
+      "graph_template": "Oracle - SGA Memory Size - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Memory/SGA",
+      "graph_title": "Oracle - <node> - SGA Memory Size",
+      "graph_type": "multi",
+      "chart_style": "line2",
+      "legend_max": 10,
+      "graph_items": ["byte"],
+      "vertical_label": "byte",
+      "datasource_title": "Oracle - <node> - SGA Memory Size - <device>"
+    }
+  ]
+}

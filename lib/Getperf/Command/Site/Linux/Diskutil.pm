@@ -37,7 +37,7 @@ sub parse {
 		my ($path, $usage, $free_space, $used_space, $capacity, $filesystem) = reverse @cols;
 		$usage =~s/\%//g;
 		my $device = alias_diskutil($host, $path);
-		if ($device) {
+		if ($device!~/\/run\/user/) {
 			$data_info->regist_device($host, 'Linux', 'diskutil', $device, $path, \@headers);
 	 		$results{$device}{$sec} = join(' ', ($capacity, $free_space, $used_space, $usage));
 		}

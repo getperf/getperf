@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ksh
 #
 # This procedure execute Oracle statspack snapshot and report.
 #
@@ -91,7 +91,7 @@ if [ ! -x ${SQLPLUS} ]; then
     exit 1
 fi
 
-DIR=$(cd $(dirname "${LOG_DIR}/tmp") && pwd)
+DIR=$(cd $(dirname "${LOG_DIR}/.") && pwd)
 
 # Check Oracle process
 if [ "YES" = "${CHECK_PROCESS}" ]; then
@@ -252,7 +252,7 @@ EOF6
     PURGEN=`expr $NSNAPID - $PURGE_LEVEL`
     eval PURGE_ID=\$SNAP_$PURGEN
 
-    if [ "${OLDEST_ID}" -ge "${PURGE_ID}" ]; then
+    if [ "${PURGE_ID}" -eq "0" -o "${OLDEST_ID}" -ge "${PURGE_ID}" ]; then
         echo "No target of purge snapshot."
     else
     {

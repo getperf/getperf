@@ -1,0 +1,1 @@
+tar cvf - lib/test/Db2/db2_obj_mon/db2_obj_num__* lib/Getperf/Command/Site/Db2/Db2ObjNum.pm lib/Getperf/Command/Master/Db2.pm lib/graph/Db2/db2_obj_num.json lib/agent/Db2/db2_obj_mon/ | gzip > lib_db2_obj_num.tar.gz

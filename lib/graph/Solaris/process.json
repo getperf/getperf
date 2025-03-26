@@ -1,0 +1,19 @@
+{
+  "host_template": "Process",
+  "host_title": "Process - <node>",
+  "priority": 5,
+  "graphs": [
+    {
+      "graph_template": "Process Solaris - CPU - <devn> cols",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["cpu"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "process cpu%",
+      "graph_tree": "/HW/<node_path>/Process",
+      "graph_title": "Process - <node> - CPU Util%",
+      "datasource_title": "Process - <node> - CPU Util% - <device>"
+    }
+  ]
+}

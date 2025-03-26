@@ -1,0 +1,17 @@
+Date:25/03/21 07:08:20
+
+DATE               |   INST_ID|NAME                                              |               VALUE
+2025/02/24 13:49:56|         1|pga_aggregate_limit                               |       2,147,483,648
+2025/02/24 13:49:56|         1|aggregate PGA target parameter                    |         385,875,968
+2025/02/24 13:49:56|         1|maximum PGA allocated                             |         282,118,144
+2025/02/24 13:49:56|         1|aggregate PGA auto target                         |         269,429,760
+2025/02/24 13:49:56|         1|total PGA allocated                               |         125,522,944
+2025/02/24 13:49:56|         1|total PGA inuse                                   |          89,001,984
+2025/02/24 13:49:56|         1|global memory bound                               |          77,174,784
+2025/02/24 13:49:56|         1|maximum PGA used for auto workareas               |          56,569,856
+2025/02/24 13:49:56|         1|total freeable PGA memory                         |           9,043,968
+2025/02/24 13:49:56|         1|maximum PGA used for manual workareas             |           2,117,632
+2025/02/24 13:49:56|         1|recompute count (total)                           |           1,074,216
+2025/02/24 13:49:56|         1|cache hit percentage                              |                 100
+2025/02/24 13:49:56|         1|max processes count                               |                  66
+2025/02/24 13:49:56|         1|process count                                     |                  46

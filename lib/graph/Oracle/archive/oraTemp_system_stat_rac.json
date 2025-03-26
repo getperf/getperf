@@ -1,0 +1,101 @@
+{
+  "host_template": "OracleRAC",
+  "host_title": "OracleRACTemp - <node>",
+  "priority": 5,
+  "graphs": [
+    {
+      "graph_template": "OracleRACTemp - System Statistics - Load",
+      "graph_tree": "/OracleRACTemp/<node_path>/Load",
+      "chart_style": "stack",
+      "graph_items": [
+        "LogicalReads",
+        "PhysicalReads",
+        "PhysicalWrites",
+        "BlockChanges"
+      ],
+      "graph_item_texts": [
+        "Logical Reads/s",
+        "Physical Reads/s",
+        "Physical Writes/s",
+        "BlockChanges/s"
+      ],
+      "vertical_label": "block/sec",
+      "graph_title": "OracleRACTemp - <node> - System Statistics - Load",
+      "datasource_title": "OracleRACTemp - <node> - System Statistics - Load"
+    },
+    {
+      "graph_template": "OracleRACTemp - System Statistics - Disk Load",
+      "graph_tree": "/OracleRACTemp/<node_path>/Load/Disk",
+      "chart_style": "line1",
+      "graph_items": [
+        "PhysicalReads",
+        "PhysicalWrites"
+      ],
+      "graph_item_texts": [
+        "Physical Reads/s",
+        "Physical Writes/s"
+      ],
+      "vertical_label": "block/sec",
+      "graph_title": "OracleRACTemp - <node> - System Statistics - Disk Load",
+      "datasource_title": "OracleRACTemp - <node> - System Statistics - Disk Load"
+    },
+    {
+      "graph_template": "OracleRACTemp - System Statistics - Redo",
+      "graph_tree": "/OracleRACTemp/<node_path>/Redo",
+      "chart_style": "stack",
+      "graph_items": [
+        "RedoSize"
+      ],
+      "graph_item_texts": [
+        "Redo Size (k)/s"
+      ],
+      "vertical_label": "KB/s",
+      "graph_title": "OracleRACTemp - <node> - System Statistics - Redo",
+      "datasource_title": "OracleRACTemp - <node> - System Statistics - Redo"
+    },
+    {
+      "graph_template": "OracleRACTemp - System Statistics - Txns",
+      "graph_tree": "/OracleRACTemp/<node_path>/Txns",
+      "chart_style": "line1",
+      "graph_items": [
+        "Txns"
+      ],
+      "graph_item_texts": [
+        "Txns/s"
+      ],
+      "vertical_label": "cnt/sec",
+      "graph_title": "OracleRACTemp - <node> - System Statistics - Txns",
+      "datasource_title": "OracleRACTemp - <node> - System Statistics - Txns"
+    },
+    {
+      "graph_template": "OracleRACTemp - System Statistics - Execs",
+      "graph_tree": "/OracleRACTemp/<node_path>/Execs",
+      "chart_style": "line1",
+      "graph_items": [
+        "Execs",
+        "Calls"
+      ],
+      "graph_item_texts": [
+        "Execs/s",
+        "Calls/s"
+      ],
+      "vertical_label": "cnt/sec",
+      "graph_title": "OracleRACTemp - <node> - System Statistics - Exec",
+      "datasource_title": "OracleRACTemp - <node> - System Statistics - Exec"
+    },
+    {
+      "graph_template": "OracleRACTemp - System Statistics - Logons",
+      "graph_tree": "/OracleRACTemp/<node_path>/Logons",
+      "chart_style": "line1",
+      "graph_items": [
+        "Logons"
+      ],
+      "graph_item_texts": [
+        "Logons/s"
+      ],
+      "vertical_label": "cnt/sec",
+      "graph_title": "OracleRACTemp - <node> - System Statistics - Logons",
+      "datasource_title": "OracleRACTemp - <node> - System Statistics - Logons"
+    }
+  ]
+}

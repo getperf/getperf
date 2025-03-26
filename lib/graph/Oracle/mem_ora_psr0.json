@@ -1,0 +1,18 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 141,
+  "graphs": [
+    {
+      "graph_template": "Oracle - ora_psr0 Memory Usage - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/ora_psr0/Detail",
+      "chart_style": "stack",
+      "graph_title": "Oracle - <node> - ora_psr0 Memory Usage",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["kb"],
+      "vertical_label": "kb",
+      "datasource_title": "Oracle - <node> - ora_psr0 Memory Usage - <device>"
+    }
+  ]
+}

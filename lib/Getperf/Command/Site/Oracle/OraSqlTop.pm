@@ -75,7 +75,7 @@ sub parse {
 			next;
 		}
 		my ($timestamp, $sql_hash, @values) = split(/\s*\|\s*/, $line);
-		next if (!defined($timestamp) || $timestamp =~ /TIME/);
+		next if (!defined($timestamp) || $timestamp eq 'TIME');
 		my $col = 0;
 		map {
 			my $header = $headers[$col];

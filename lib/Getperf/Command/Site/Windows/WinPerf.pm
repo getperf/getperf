@@ -123,6 +123,7 @@ sub parse_counter {
 						$data_info->regist_metric($host, 'Windows', $output, $output_header);
 						$output_file = "${output}.txt";
 					} else {
+						$instance =~s/イーサネットアダプタ//g;
 						$data_info->regist_device($host, 'Windows', $output, $instance, undef, $output_header);
 						$output_file = "device/${output}__${instance}.txt";
 					}			

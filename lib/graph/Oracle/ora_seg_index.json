@@ -1,7 +1,7 @@
 {
   "host_template": "Oracle",
   "host_title": "Oracle - <node>",
-  "priority": 6,
+  "priority": 104,
   "graphs": [
     {
       "graph_template": "Oracle - Segment Size - Index - <devn> cols",

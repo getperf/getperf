@@ -70,10 +70,21 @@ sub read_stat_file {
 		# In the case of Mac using the CR, it will malfunction. 
 		my $stat_yaml_text_original = $stat_path->slurp || die $@;
 		$stat_yaml_text_original=~s/\x0D.+\n?/\n/g;
+
+		# Avoid errormsg for multiple lines.
+		my @stat_yaml_text_lines = split(/\n/, $stat_yaml_text_original);
+		my $is_error_part = 0;
+		my @stat_yaml_text_filterd = ();
+		for my $stat_yaml_line(@stat_yaml_text_lines) {
+			$is_error_part = 1 if ($stat_yaml_line =~/\s+error: /);
+			$is_error_part = 0 if ($stat_yaml_line =~/\s+status: /);
+			# print "LINE:$stat_yaml_line\n" if ($is_error_part);
+			push(@stat_yaml_text_filterd, $stat_yaml_line) if !($is_error_part);
+		}
+
 		# Avoid errormsg for multibyte encode error.
 		#   errormsg: |
  		#     Sqlcmd: <83>t<83>@<83>C<83><8b><96>?<82>a<96>3<8c>o<82>A<82>・<81>B
-		my @stat_yaml_text_filterd = split(/\n/, $stat_yaml_text_original);
 		my @stat_yaml_texts = map { ($_=~/^(\s+errormsg|\s{6})/)?'':$_; } @stat_yaml_text_filterd;
 		my $stat_yaml_text = join("\n", @stat_yaml_texts);
 		my $stat_yaml = YAML::Tiny->read_string($stat_yaml_text);
@@ -233,6 +244,7 @@ sub start_time_sec {
 
 	my $start_timestamp = $self->start_timestamp;
 	return if (!$start_timestamp);
+	$start_timestamp =~s/\..+//g; # 小数点を除く
 	return localtime(Time::Piece->strptime($start_timestamp, '%Y-%m-%dT%H:%M:%S'));
 }
 
@@ -480,6 +492,34 @@ sub cacti_db_dml {
 	my ($self, @params) = @_;
 
 	container('cacti_db')->do(@params);
+}
+
+sub cacti_site_db_query {
+	my ($self, $sitekey, @params) = @_;
+	my $site_info = Getperf::Data::SiteInfo->instance($sitekey);
+    my $passwd = $site_info->{site_mysql_passwd};
+    print "TEST:cacti_site_db_query\n";
+	# container('cacti_site_db')->selectall_arrayref(@params);
+    my $db = DBI->connect("dbi:mysql:$sitekey", $sitekey, $passwd, {
+        RaiseError        => 1,
+        PrintError        => 0,
+        mysql_enable_utf8 => 1,
+    });
+    $db->selectall_arrayref(@params);
+}
+
+sub cacti_site_db_dml {
+	my ($self, $sitekey, @params) = @_;
+    print "TEST:cacti_site_db_dml\n";
+	my $site_info = Getperf::Data::SiteInfo->instance($sitekey);
+    my $passwd = $site_info->{site_mysql_passwd};
+    # print "SITE_PASS:$sitekey,$passwd\n";
+    my $db = DBI->connect("dbi:mysql:$sitekey", $sitekey, $passwd, {
+        RaiseError        => 1,
+        PrintError        => 0,
+        mysql_enable_utf8 => 1,
+    });
+ 	$db->do(@params);
 }
 
 sub update_node_view {

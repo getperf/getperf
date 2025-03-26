@@ -1,0 +1,19 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - SQL - <node>",
+  "priority": 90,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Read Rows Ranking - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/SQLRank/<node>/RowRead",
+      "graph_title": "Db2 - <node> - Read Rows Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["ROWS_READ"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "rows",
+      "datasource_title": "Db2 - <node> - Read Rows Ranking - <device>"
+    }
+  ]
+}

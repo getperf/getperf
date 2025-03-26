@@ -1,0 +1,18 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 3,
+  "graphs": [
+    {
+      "graph_template": "Db2 QRepl - Resource - <devn> cols",
+      "graph_tree": "/QRepl/<node_path>/<node>",
+      "graph_title": "Db2 QRepl - <node> - Resource",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["value"],
+      "vertical_label": "count/sec",
+      "upper_limit": 1,
+      "datasource_title": "Db2 QRepl - <node> - Resource - <device>"
+    }
+  ]
+}

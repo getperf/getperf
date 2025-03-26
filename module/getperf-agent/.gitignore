@@ -8,7 +8,6 @@ src/*.obj
 *.exe
 child.out
 src/*.exe
-src/.deps/*
 src/dist/*
 src/getperf
 src/getperfctl
@@ -30,7 +29,6 @@ test/_log/*
 Agent.pm
 src/conf/ssl/*
 test/test_config.h
-var/*/*
 
 win32/bin/*
 win32/ssl/**

@@ -1,0 +1,29 @@
+Date:25/03/21 07:08:19
+
+TODAY
+20250321
+top_n_eventsに値を入力してください:     SPOOL OFF
+
+               |          |          |Top     SPOOL OFF Timed Events           |            |           |   Avg|%Total|
+               |          |          |~~~~~~~~~~~~~~~~~~                       |            |           |  wait|  Call|
+INSTANCE_NUMBER|  START_ID|    END_ID|Event                                    |       Waits|   Time (s)|  (ms)|  Time|WAIT_CLASS
+              1|      2794|      2795|pman timer                               |         201|        603|  3000|  33.4|Idle
+              1|      2794|      2795|Data Guard: Gap Manager                  |          10|        600| 60000|  33.2|Idle
+              1|      2794|      2795|Data Guard: Timer                        |           1|        600|######|  33.2|Idle
+              1|      2794|      2795|CPU TIME                                 |            |          2|      |    .1|DB CPU
+              1|      2794|      2795|oracle thread bootstrap                  |          39|          1|    30|    .1|Other
+              1|      2794|      2795|acknowledge over PGA limit               |          90|          1|    10|    .1|Scheduler
+              1|      2794|      2795|os thread creation                       |          39|          0|     6|    .0|Other
+              1|      2794|      2795|control file parallel write              |         240|          0|     0|    .0|System I/O
+              1|      2794|      2795|db file async I/O submit                 |         412|          0|     0|    .0|System I/O
+              1|      2794|      2795|PGA memory operation                     |       2,595|          0|     0|    .0|Other
+              1|      2794|      2795|log file parallel write                  |          54|          0|     1|    .0|System I/O
+              1|      2794|      2795|control file sequential read             |       2,444|          0|     0|    .0|System I/O
+              1|      2794|      2795|db file sequential read                  |         318|          0|     0|    .0|User I/O
+              1|      2794|      2795|log file sync                            |           3|          0|     1|    .0|Commit
+              1|      2794|      2795|Disk file operations I/O                 |          31|          0|     0|    .0|User I/O
+              1|      2794|      2795|reliable message                         |           3|          0|     0|    .0|Other
+              1|      2794|      2795|SQL*Net more data to client              |           2|          0|     0|    .0|Network
+              1|      2794|      2795|asynch descriptor resize                 |          19|          0|     0|    .0|Other
+              1|      2794|      2795|buffer busy waits                        |           1|          0|     0|    .0|Concurrency
+              1|      2794|      2795|latch: redo allocation                   |           1|          0|     0|    .0|Other

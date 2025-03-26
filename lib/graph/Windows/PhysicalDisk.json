@@ -13,6 +13,7 @@
       "chart_style": "line2",
       "vertical_label": "Disk idle %",
       "upper_limit": 100,
+      "disable_auto_scale": true,
       "unit_exponent_value": 1,
       "datasource_title": "Windows - <node> - Disk Busy% - <device>"
     },

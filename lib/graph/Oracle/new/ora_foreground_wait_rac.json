@@ -1,0 +1,39 @@
+{
+  "host_template": "Oracle",
+  "host_title": "OracleRAC - <node>",
+  "priority": 11,
+  "graphs": [
+    {
+      "graph_template": "OracleRAC - Foreground Wait Classes",
+      "graph_tree": "/Oracle/<node_path>/WaitClass/Summary",
+      "chart_style": "stack",
+      "graph_items": [
+        "DBCPU",
+        "UserIO",
+        "SysIO",
+        "Other",
+        "Applic",
+        "Commit",
+        "Network",
+        "Concurcy",
+        "Config",
+        "Cluster"
+      ],
+      "graph_item_texts": [
+        "DB CPU (s)",
+        "User I/O(s)",
+        "Sys I/O(s)",
+        "Other(s)",
+        "Applic (s)",
+        "Commit (s)",
+        "Network (s)",
+        "Concurcy (s)",
+        "Config (s)",
+        "Cluster (s)"
+      ],
+      "vertical_label": "sec",
+      "graph_title": "OracleRAC - <node> - Foreground Wait Classes",
+      "datasource_title": "OracleRAC - <node> - Foreground Wait Classes"
+    }
+  ]
+}

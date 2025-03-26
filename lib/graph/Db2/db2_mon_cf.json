@@ -1,0 +1,91 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node> - CF",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - CF - Current Usage",
+      "graph_tree": "/Db2/Stat/<node_path>/CF/",
+      "graph_title": "Db2 - <node> - CF - Current Usage",
+      "graph_items": [
+        "CURRENT_CF_GBP", "CURRENT_CF_LOCK", "CURRENT_CF_SCA"
+      ],
+      "graph_item_texts": [
+          "GBP Size", 
+          "LOCK Size", 
+          "SCA Size"
+        ],
+        "vertical_label": "byte",
+        "chart_style": "line2",
+        "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - CF - Current Usage"
+    },
+    {
+      "graph_template": "Db2 - CF - GBP Size",
+      "graph_tree": "/Db2/Stat/<node_path>/CF/Detail/",
+      "graph_title": "Db2 - <node> - CF - GBP Size",
+      "graph_items": [
+        "CURRENT_CF_GBP", "CONFIGURED_CF_GBP", "TARGET_CF_GBP"
+      ],
+      "graph_item_texts": [
+          "current", 
+          "configured", 
+          "target"
+        ],
+        "vertical_label": "byte",
+        "chart_style": "line2",
+        "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - CF - GBP Size"
+    },
+    {
+      "graph_template": "Db2 - CF - Lock Size",
+      "graph_tree": "/Db2/Stat/<node_path>/CF/Detail/",
+      "graph_title": "Db2 - <node> - CF - Lock Size",
+      "graph_items": [
+        "CURRENT_CF_LOCK", "CONFIGURED_CF_LOCK", "TARGET_CF_LOCK"
+      ],
+      "graph_item_texts": [
+        "current", 
+        "configured", 
+        "target"
+      ],
+      "chart_style": "line2",
+      "vertical_label": "byte",
+      "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - CF - Lock Size"
+    },
+    {
+      "graph_template": "Db2 - CF - SCA Size",
+      "graph_tree": "/Db2/Stat/<node_path>/CF/Detail/",
+      "graph_title": "Db2 - <node> - CF - SCA Size",
+      "graph_items": [
+        "CURRENT_CF_SCA", "CONFIGURED_CF_SCA", "TARGET_CF_SCA"
+      ],
+      "graph_item_texts": [
+          "current", 
+          "configured", 
+          "target"
+        ],
+        "vertical_label": "byte",
+        "chart_style": "line2",
+        "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - CF - SCA Size"
+    },
+    {
+      "graph_template": "Db2 - CF - Memory Size",
+      "graph_tree": "/Db2/Stat/<node_path>/CF/Detail/",
+      "graph_title": "Db2 - <node> - CF - Memory Size",
+      "graph_items": [
+        "CURRENT_CF_MEM", "CONFIGURED_CF_MEM"
+      ],
+      "graph_item_texts": [
+          "current", 
+          "configured"
+        ],
+        "vertical_label": "byte",
+        "chart_style": "line2",
+        "upper_limit": 10,
+      "datasource_title": "Db2 - <node> - CF - Memory Size"
+    }
+  ]
+}

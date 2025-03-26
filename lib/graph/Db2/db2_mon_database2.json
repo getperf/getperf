@@ -1,0 +1,22 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node> - Database2",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Database - DeadLock Activity",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - DeadLock Activity",
+      "graph_items": [
+        "DEADLOCKS"
+      ],
+      "graph_item_texts": [
+          "Deadlocks"
+        ],
+        "vertical_label": "count",
+        "chart_style": "line2",
+      "upper_limit": 0.001,
+      "datasource_title": "Db2 - <node> - Database - DeadLock Activity"
+    }
+  ]
+}

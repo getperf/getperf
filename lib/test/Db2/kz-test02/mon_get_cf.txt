@@ -1,0 +1,1 @@
+Saving all output to "/home/db2inst1/ptune/log/Db2/20230129/070000/mon_get_cf.txt". Enter "record" with no arguments to stop it.

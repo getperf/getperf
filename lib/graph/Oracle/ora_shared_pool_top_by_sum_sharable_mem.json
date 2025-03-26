@@ -1,0 +1,19 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - SQL - <node>",
+  "priority": 196,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Shared Memory Usage Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SharedMem/<node>/",
+      "graph_title": "Oracle - <node> - Shared Memory Usage Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["sum_sharable_mem"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "block",
+      "datasource_title": "Oracle - <node> - Shared Memory Usage Ranking - <device>"
+    }
+  ]
+}

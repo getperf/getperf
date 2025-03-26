@@ -12,8 +12,20 @@
       "chart_style": "stack",
       "vertical_label": "Byte",
       "graph_borderline": "<MemTotal>",
+      "base_value": 1024,
       "graph_comment": "Memory : <MemTotal>, Swap : <SwapTotal>",
       "datasource_title": "Windows - <node> - Memory Usage"
+    },
+    {
+      "graph_template": "WIN - Memory Available",
+      "graph_tree": "/HW/<node_path>/Memory/Available",
+      "graph_title": "Windows - <node> - Memory Available",
+      "graph_items": ["AvailableBytes"],
+      "graph_item_texts": ["Available"],
+      "chart_style": "stack",
+      "vertical_label": "Byte",
+      "base_value": 1024,
+      "datasource_title": "Windows - <node> - Memory Available"
     }
   ]
 }

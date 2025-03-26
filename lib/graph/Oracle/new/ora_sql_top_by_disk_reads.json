@@ -1,0 +1,19 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - SQL - <node>",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Oracle - SQL Disk Read Ranking - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/SQLRank/<node>/Disk",
+      "graph_title": "Oracle - <node> - SQL Disk Read Ranking",
+      "graph_type": "multi",
+      "legend_max": 10,
+      "graph_items": ["disk_reads"],
+      "chart_style": "stack",
+      "total_data_source": "Total All Data Sources",
+      "vertical_label": "disk reads",
+      "datasource_title": "Oracle - <node> - SQL Disk Read Ranking - <device>"
+    }
+  ]
+}

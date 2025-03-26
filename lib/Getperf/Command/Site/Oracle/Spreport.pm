@@ -27,6 +27,11 @@ sub parse_loadprof {
 			$loadprof{$key} = 0;
 		}
 	}
+	# RAC 関連のレポート集計の修正パッチ.Redo と Logons を交換する
+	my $tmp = $loadprof{'Logons'};
+	$loadprof{'Logons'} = $loadprof{'Redo'};
+	$loadprof{'Redo'} = $tmp;
+
 	return %loadprof;
 }
 
@@ -81,7 +86,7 @@ sub parse {
 	my $event_flg = 0;
 	my $event_str;
 
-	my $step = 3600;
+	my $step = 600;
 
 	$data_info->step($step);
 	my $sec  = $data_info->start_time_sec->epoch;
@@ -105,7 +110,7 @@ sub parse {
 		# ロードプロファイル読込
 		if ($line=~/^Load Profile/) {
 			$loadprof_flg = 1;
-		} elsif ($line=~/^  % Blocks changed per Read:/) {
+		} elsif ($line=~/^\s*% Blocks changed per Read:/) {
 			$loadprof_flg = 0;
 		}
 		if ($loadprof_flg == 1) {
@@ -113,7 +118,7 @@ sub parse {
 		}
 
 		# ヒット率読込
-		if ($line=~/^Instance Efficiency Indicators/) {
+		if ($line=~/^Instance Efficiency/) {
 			$hit_flg = 1;
 		} elsif ($line=~/^Top \d+ Timed Events/) {
 			$hit_flg = 0;
@@ -141,7 +146,6 @@ sub parse {
 			$sec = timelocal($ss, $mm, $hh, $DD, $MM, $YY-1900+2000);
 		}
 	}
-
 	# 各ブロックのレポートをデータに変換
 	my %loadprof = parse_loadprof($loadprof_str);
 	my %hit = parse_hit($hit_str);

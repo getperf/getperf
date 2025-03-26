@@ -105,7 +105,11 @@ sub _service_ctl {
       for my $service(@$services) {
         if ($controll=~/^(start|stop|restart)$/) {
           Rex::Logger::info("$controll : $service");
-          _sudo("/etc/init.d/$service $controll");
+          if (-f "/etc/init.d/$service") {
+            _sudo("/etc/init.d/$service $controll");
+          } else {
+            _sudo("service $service $controll");
+          }
         } elsif ($controll eq 'ensure') {
           Rex::Logger::info("Regist : $service");
           service $service => ensure => "started";
@@ -126,7 +130,9 @@ sub _restart_ws {
   my $tomcat_home = $config->{ws_tomcat_dir} . '-' . $ws_suffix;
   my $apache_home = $config->{ws_apache_dir} . '-' . $ws_suffix;
    _sudo "/etc/init.d/tomcat-${ws_suffix} stop";
+   sleep 5;
    _sudo "/etc/init.d/tomcat-${ws_suffix} start";
+   sleep 30;
    _sudo "$apache_home/bin/apachectl restart";
 }
 
@@ -335,17 +341,23 @@ task "prepare_mysql", sub {
 
 desc "Need to run sudo. Install Apache HTTPD";
 task "prepare_apache", sub {
-  my $version = '2.2.34';
-  my $module  = 'httpd-2.2.34';
+  # my $version = '2.2.34';
+  # my $module  = 'httpd-2.2.34';
+  # my $archive = "${module}.tar.gz";
+  # my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
+
+  my $version = '2.4.57';
+  my $module  = 'httpd-2.4.57';
   my $archive = "${module}.tar.gz";
-  my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.2.34.tar.gz';
+  my $download = 'http://ftp.riken.jp/net/apache//httpd/httpd-2.4.57.tar.gz';
 
   # Parse Apache download page, and check version.
   # Source:
   # <a href="http://ftp.riken.jp/net/apache//httpd/httpd-2.2.29.tar.gz">
   #   httpd-2.2.29.tar.gz</a>
   my $download_page = run 'curl -sSL http://httpd.apache.org/download.cgi';
-  if ($download_page=~m|Source: <a href="(.+?)/(httpd-)(2.2.\d+)(\.tar\.gz?)">|) {
+  if ($download_page=~m|Source: <a href="(.+?)/(httpd-)(2.4.\d+)(\.tar\.gz?)">|) {
+  # if ($download_page=~m|Source: <a href="(.+?)/(httpd-)(2.2.\d+)(\.tar\.gz?)">|) {
     $version = $3;
     $module  = "httpd-${version}";
     $archive = "${module}.tar.gz";
@@ -362,14 +374,23 @@ task "prepare_apache", sub {
   my $apache_dir = $config->{ws_apache_dir} || die;
   my $src_dir = "/tmp/rex/${module}";
 
+  # for my $ws_suffix($config->{ws_admin_suffix}) {
   for my $ws_suffix($config->{ws_admin_suffix}, $config->{ws_data_suffix}) {
     my $apache_home = $apache_dir . '-' . $ws_suffix;
     if (!-x "$apache_home/bin/httpd") {
       cd $src_dir;
       _run 'make distclean';
       _run './configure --prefix=' . $apache_home .
-        ' -enable-modules=all --with-included-apr --enable-mpm=event' .
+        ' -enable-modules=all --enable-mpm=event' .
         ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl';
+
+      # CentOS7.x 環境の場合、個別に/usr/local にコンパイルインストール
+      # したOpenSSL のホームを指定する。OpenSSL 1.1.1k 以上が必要。
+      # _run './configure --prefix=' . $apache_home .
+      #   ' -enable-modules=all --enable-mpm=event' .
+      #   ' --enable-suexec --enable-rewrite --enable-proxy --enable-ssl' .
+      #   ' --with-ssl=/usr/local/openssl-1.1.1k/';
+
       _run 'make';
       _sudo 'make install';
     }
@@ -385,19 +406,33 @@ task "prepare_apache", sub {
 desc "Need to run sudo. Install Apache Tomcat";
 task "prepare_tomcat", sub {
 
-  my $version  = '7.0.105';
+  my $version  = '8.5.88';
   my $url = 'https://archive.apache.org/dist/tomcat';
 #  my $check_ver = run 'curl -sSL http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
-  my $check_ver = run "curl -sSL $url/tomcat-7";
+  my $check_ver = run "curl -sSL $url/tomcat-8";
 
 #  if ($check_ver=~/href="v(7.*?)\/"/) {
 #    $version = $1;
 #  }
-  my $download = "$url/tomcat-7";
+  my $download = "$url/tomcat-8";
   my $module   = "apache-tomcat-${version}";
   my $config = config('base');
   my $osname = operating_system;
   my $tomcat_dir = $config->{ws_tomcat_dir} || die;
+
+#   my $version  = '7.0.105';
+#   my $url = 'https://archive.apache.org/dist/tomcat';
+# #  my $check_ver = run 'curl -sSL http://ftp.riken.jp/net/apache/tomcat/tomcat-7';
+#   my $check_ver = run "curl -sSL $url/tomcat-7";
+
+# #  if ($check_ver=~/href="v(7.*?)\/"/) {
+# #    $version = $1;
+# #  }
+#   my $download = "$url/tomcat-7";
+#   my $module   = "apache-tomcat-${version}";
+#   my $config = config('base');
+#   my $osname = operating_system;
+#   my $tomcat_dir = $config->{ws_tomcat_dir} || die;
 
   # download tomcat binary
   if (!-f "/tmp/rex/${module}.tar.gz") {
@@ -443,119 +478,118 @@ desc "Need to run sudo. Install Zabbix";
 task "prepare_zabbix", sub {
   my $config = config('base');
   my $zabbix_config = config('zabbix');
+  # sudo {
+  #   command => sub {
+  #     if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
+  #       my $url     = $zabbix_config->{ZABBIX_REPOSITORY_URL};
+  #       my $url_dir = $url;
+  #       $url_dir =~s/zabbix-release.*//g;
+  #       _install_yum_repository(
+  #         'zabbix',
+  #         $url,    # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/x86_64/zabbix-release-2.2-1.el6.noarch.rpm',
+  #         'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX',
+  #         $url_dir # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/$basearch/'
+  #       );
+  #     }
 
-  sudo {
-    command => sub {
-      if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
-        my $url     = $zabbix_config->{ZABBIX_REPOSITORY_URL};
-        my $url_dir = $url;
-        $url_dir =~s/zabbix-release.*//g;
-        _install_yum_repository(
-          'zabbix',
-          $url,    # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/x86_64/zabbix-release-2.2-1.el6.noarch.rpm',
-          'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX',
-          $url_dir # 'http://repo.zabbix.com/zabbix/2.2/rhel/6/$basearch/'
-        );
-      }
+  #     my $base_package = case operating_system, {
+  #       Ubuntu  => [ qw/
+  #         language-pack-ja php5-mysql zabbix-server-mysql
+  #         zabbix-frontend-php zabbix-agent fonts-vlgothic
+  #       /],
+  #       default => [ qw/
+  #         zabbix-server zabbix-web
+  #         zabbix-server-mysql zabbix-web-mysql zabbix-web-japanese
+  #         zabbix-get zabbix-sender
+  #       /],
+  #     };
+  #     if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
+  #       _sudo "yum -y install --enablerepo=zabbix,epel,remi @{$base_package}"
+  #     } else {
+  #       say install package => $base_package;
+  #     }
 
-      my $base_package = case operating_system, {
-        Ubuntu  => [ qw/
-          language-pack-ja php5-mysql zabbix-server-mysql
-          zabbix-frontend-php zabbix-agent fonts-vlgothic
-        /],
-        default => [ qw/
-          zabbix-server zabbix-web
-          zabbix-server-mysql zabbix-web-mysql zabbix-web-japanese
-          zabbix-get zabbix-sender
-        /],
-      };
-      if (operating_system =~/(CentOS|RedHatEnterpriseServer)/) {
-        _sudo "yum -y install --enablerepo=zabbix,epel,remi @{$base_package}"
-      } else {
-        say install package => $base_package;
-      }
+  #     _sudo $config->{home} . '/script/deploy-zabbix.pl';
 
-      _sudo $config->{home} . '/script/deploy-zabbix.pl';
+  #     if (-f '/etc/yum.repos.d/zabbix.repo') {
+  #       _sudo 'sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/zabbix.repo';
+  #     }
 
-      if (-f '/etc/yum.repos.d/zabbix.repo') {
-        _sudo 'sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/zabbix.repo';
-      }
+  #     my $mysql_passwd =     $config->{mysql_passwd};
+  #     if (-f '/etc/zabbix/zabbix_server.conf') {
+  #       _sudo 'sed -i -e "s/^.*DBPassword=.*$/DBPassword=' . $mysql_passwd . '/g" /etc/zabbix/zabbix_server.conf';
+  #     }
 
-      my $mysql_passwd =     $config->{mysql_passwd};
-      if (-f '/etc/zabbix/zabbix_server.conf') {
-        _sudo 'sed -i -e "s/^.*DBPassword=.*$/DBPassword=' . $mysql_passwd . '/g" /etc/zabbix/zabbix_server.conf';
-      }
+  #     if (operating_system eq 'Ubuntu') {
+  #       # _sudo 'service zabbix-server restart';
+  #       # _sudo 'chkconfig zabbix-server on';
+  #       _sudo 'sed -i -e "s/^START=no$/START=yes/g" /etc/default/zabbix-server';
+  #       _sudo 'sudo service zabbix-server restart';
+  #       file "/etc/apache2/conf-available/zabbix.conf",
+  #         content => template("script/template/zabbix.conf.apache2.tpl");
+  #       _sudo 'a2enconf zabbix';
+  #       _sudo 'service apache2 restart';
+  #       file "/etc/zabbix/zabbix.conf.php",
+  #         content   => template("script/template/zabbix.conf.php.tpl",
+  #           mysql_admin_password => $config->{mysql_passwd});
+  #     } else {
+  #       _sudo 'service zabbix-server restart';
+  #       _sudo 'chkconfig zabbix-server on';
+  #       _sudo 'service httpd restart';
+  #       file "/etc/zabbix/web/zabbix.conf.php",
+  #         content   => template("script/template/zabbix.conf.php.tpl",
+  #           mysql_admin_password => $config->{mysql_passwd});
+  #     }
 
-      if (operating_system eq 'Ubuntu') {
-        # _sudo 'service zabbix-server restart';
-        # _sudo 'chkconfig zabbix-server on';
-        _sudo 'sed -i -e "s/^START=no$/START=yes/g" /etc/default/zabbix-server';
-        _sudo 'sudo service zabbix-server restart';
-        file "/etc/apache2/conf-available/zabbix.conf",
-          content => template("script/template/zabbix.conf.apache2.tpl");
-        _sudo 'a2enconf zabbix';
-        _sudo 'service apache2 restart';
-        file "/etc/zabbix/zabbix.conf.php",
-          content   => template("script/template/zabbix.conf.php.tpl",
-            mysql_admin_password => $config->{mysql_passwd});
-      } else {
-        _sudo 'service zabbix-server restart';
-        _sudo 'chkconfig zabbix-server on';
-        _sudo 'service httpd restart';
-        file "/etc/zabbix/web/zabbix.conf.php",
-          content   => template("script/template/zabbix.conf.php.tpl",
-            mysql_admin_password => $config->{mysql_passwd});
-      }
-
-    },
-    user => 'root'
-  };
+  #   },
+  #   user => 'root'
+  # };
 
   # Download agent binary
-  {
-    my $current_dir      = getcwd;
-    my $agent_module_var = $config->{home} . '/module/getperf-agent/var';
-    my $zabbix_agent_var = $agent_module_var . '/zabbix';
-    my $agent_script_dir = $config->{lib_dir} . '/agent/Zabbix';
-    my $agent_ver        = $zabbix_config->{ZABBIX_AGENT_VERSION};
-    my $base_url         = "http://www.zabbix.com/downloads/${agent_ver}/";
-    my $download_dir     = $zabbix_config->{ZABBIX_AGENT_DOWNLOAD_DIR};
+  # {
+  #   my $current_dir      = getcwd;
+  #   my $agent_module_var = $config->{home} . '/module/getperf-agent/var';
+  #   my $zabbix_agent_var = $agent_module_var . '/zabbix';
+  #   my $agent_script_dir = $config->{lib_dir} . '/agent/Zabbix';
+  #   my $agent_ver        = $zabbix_config->{ZABBIX_AGENT_VERSION};
+  #   my $base_url         = "http://www.zabbix.com/downloads/${agent_ver}/";
+  #   my $download_dir     = $zabbix_config->{ZABBIX_AGENT_DOWNLOAD_DIR};
 
-    for my $target_dir($agent_module_var, $zabbix_agent_var, $download_dir) {
-      if (!-d $target_dir) {
-        _run "mkdir -p ${target_dir}";
-      }
-    }
+  #   for my $target_dir($agent_module_var, $zabbix_agent_var, $download_dir) {
+  #     if (!-d $target_dir) {
+  #       _run "mkdir -p ${target_dir}";
+  #     }
+  #   }
 
-    chdir $download_dir;
-    my @md5sum_outputs = ();
-    for my $arch(@{$zabbix_config->{DOWNLOAD_AGENT_PLATFORMS}}) {
-      # zabbix_agents_2.2.9.linux2_4.i386.tar.gz
-      my $suffix = ($arch eq 'win') ? 'zip' : 'tar.gz';
-      my $base_name = "zabbix_agents_${agent_ver}.${arch}.${suffix}";
-      if (! -f "$download_dir/$base_name" ) {
-        _run "wget --quiet ${base_url}${base_name}";
-      }
-      if (! -f "${zabbix_agent_var}/${base_name}" ) {
-        _run "cp -p ${download_dir}/${base_name} ${zabbix_agent_var}";
-      }
-      my $md5sum_output = `md5sum $download_dir/$base_name`;
-      if ($? != 0) {
-        Rex::Logger::info("md5sum check error '$base_name' : $@", "error");
-      } else {
-        $md5sum_output =~s/ .*(\r|\n)*//g;
-        push (@md5sum_outputs, "$md5sum_output : $base_name");
-      }
-    }
-    if (@md5sum_outputs) {
-      print "\nZabbix Agent module files downloaded. Please check md5 in ";
-      print "'http://www.zabbix.com/download.php'\n\n";
-      print join("\n", @md5sum_outputs) . "\n";
-    }
-    # Copy zabbix script
-    _run "cp -rp ${agent_script_dir}/* ${agent_module_var}";
-    chdir $current_dir;
-  }
+  #   chdir $download_dir;
+  #   my @md5sum_outputs = ();
+  #   for my $arch(@{$zabbix_config->{DOWNLOAD_AGENT_PLATFORMS}}) {
+  #     # zabbix_agents_2.2.9.linux2_4.i386.tar.gz
+  #     my $suffix = ($arch eq 'win') ? 'zip' : 'tar.gz';
+  #     my $base_name = "zabbix_agents_${agent_ver}.${arch}.${suffix}";
+  #     if (! -f "$download_dir/$base_name" ) {
+  #       _run "wget --quiet ${base_url}${base_name}";
+  #     }
+  #     if (! -f "${zabbix_agent_var}/${base_name}" ) {
+  #       _run "cp -p ${download_dir}/${base_name} ${zabbix_agent_var}";
+  #     }
+  #     my $md5sum_output = `md5sum $download_dir/$base_name`;
+  #     if ($? != 0) {
+  #       Rex::Logger::info("md5sum check error '$base_name' : $@", "error");
+  #     } else {
+  #       $md5sum_output =~s/ .*(\r|\n)*//g;
+  #       push (@md5sum_outputs, "$md5sum_output : $base_name");
+  #     }
+  #   }
+  #   if (@md5sum_outputs) {
+  #     print "\nZabbix Agent module files downloaded. Please check md5 in ";
+  #     print "'http://www.zabbix.com/download.php'\n\n";
+  #     print join("\n", @md5sum_outputs) . "\n";
+  #   }
+  #   # Copy zabbix script
+  #   _run "cp -rp ${agent_script_dir}/* ${agent_module_var}";
+  #   chdir $current_dir;
+  # }
 
   # Create recipe file
   {
@@ -565,11 +599,13 @@ task "prepare_zabbix", sub {
     $buf .= '  "ZABBIX_SERVER_VERSION"    => "' . $zabbix_config->{ZABBIX_SERVER_VERSION} . '",' . "\n";
     $buf .= '  "ZABBIX_AGENT_VERSION"     => "' . $zabbix_config->{ZABBIX_AGENT_VERSION} . '",' . "\n";
     $buf .= '  "ZABBIX_SERVER_IP"         => "' . $zabbix_config->{ZABBIX_SERVER_IP} . '",' . "\n";
+    $buf .= '  "ZABBIX_SERVER_ACTIVE_IP"  => "' . $zabbix_config->{ZABBIX_SERVER_ACTIVE_IP} . '",' . "\n";
     $buf .= '  "GETPERF_AGENT_USE_ZABBIX" => ' . $zabbix_config->{GETPERF_AGENT_USE_ZABBIX} . ',' . "\n";
     $buf .= '}' . "\n";
     open(OUT, ">$recipe") || die "$@";
     print OUT $buf;
     close(OUT);
+    print "patch $recipe\n";
   }
 };
 
@@ -670,18 +706,27 @@ task "prepare_agent_download_site", sub {
 desc "Download Cacti source";
 task "prepare_cacti", sub {
   my $cacti_config = config('cacti');
-  my $archive = $cacti_config->{GETPERF_CACTI_ARCHIVE};
-
-  my $version  = '0.8.8e';
+  my $version  = '0.8.8g';
+  my $archive  = $cacti_config->{GETPERF_CACTI_ARCHIVE} || 
+    "cacti-${version}.tar.gz";
   $version = $1 if ($archive=~/cacti-(.+?)\.tar\.gz/);
-  my $download = 'http://www.cacti.net/downloads';
-  my $archive  = "cacti-${version}.tar.gz";
+
   my $config = config('base');
   my $cacti_dir = $config->{home} . '/var/cacti' || die;
   my $archive_path = "$cacti_dir/$archive";
-  print $archive_path . "\n";
+
   if (!-f $archive_path) {
-    download "$download/${archive}", $archive_path;
+    my $download = $cacti_config->{GETPERF_CACTI_DOWNLOAD_SITE} || 
+      'http://www.cacti.net/downloads';
+    _run "wget --no-check-certificate $download/${archive} -P ${cacti_dir}";
+  }
+  _run "cd ${cacti_dir}; tar xf ${archive}";
+
+  {
+    my $deploy = $config->{home} . '/script/config-pkg.pl';
+    my $command = ($version=~/^1\.2/) ? 'cacti12' : 'cacti08';
+    my $module = "cacti-${version}";
+    _run "cd ${cacti_dir}/${module}; perl $deploy $command; cd ..; tar cf - ${module} | gzip > ${archive}";
   }
 };
 

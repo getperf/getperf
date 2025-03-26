@@ -1,0 +1,16 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 5,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Read Row",
+      "graph_tree": "/Db2/<node_path>/ReadRow",
+      "graph_title": "Db2 - <node> - Read Row",
+      "graph_items": ["rowsRead"],
+      "vertical_label": "row/s",
+      "upper_limit": 100,
+      "datasource_title": "Db2 - <node> - Read Row"
+    }
+  ]
+}

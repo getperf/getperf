@@ -1,0 +1,22 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 155,
+  "graphs": [
+    {
+      "graph_template": "Oracle - PGA Memory Cache Hit - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Memory/PGA/CacheHit",
+      "graph_title": "Oracle - <node> - PGA Memory Cache Hit",
+      "graph_type": "multi",
+      "chart_style": "line1",
+      "legend_max": 4,
+      "graph_items": [
+        "byte"
+      ],
+      "disable_auto_scale": true,
+      "upper_limit": 100,
+      "vertical_label": "percent",
+      "datasource_title": "Oracle - <node> - PGA Memory Cache Hit - <device>"
+    }
+  ]
+}

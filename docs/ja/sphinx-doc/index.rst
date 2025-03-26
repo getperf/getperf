@@ -13,7 +13,7 @@ Contents:
 
    01_GettingStarted/index
    02_SystemConfiguration/index
-   03_Installation/index
+   03_Install/index
    04_Tutorial/index
    05_MonitoringSetup/index
    06_MonitoringCustomize/index

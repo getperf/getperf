@@ -1,0 +1,21 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 43,
+  "graphs": [
+    {
+        "graph_template": "Db2 - Rtdgrp Process Time sec - Summary - <devn> cols",
+        "graph_tree": "/AP/<node_path>/Rtdgrp/Summary",
+        "graph_title": "Db2 - <node> - Rtdgrp Process Time sec - Summary",
+        "graph_type": "multi",
+        "legend_max": 10,
+        "graph_items": [
+        "create_time"
+        ],
+        "vertical_label": "sec",
+        "unit_exponent_value": 1,
+        "upper_limit":10,
+        "datasource_title": "Db2 - <node> - Rtdgrp Process Time sec - Summary - <device>"
+    }
+  ]
+}

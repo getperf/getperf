@@ -1,0 +1,9 @@
+#!/bin/sh
+# 0,5,10,15,20,25,30,35,40,45,50,55 * * * * (/home/psadmin/site/site1/script/cron_sumup.sh > /dev/null 2>&1) &
+SYTESYNC="/home/psadmin/getperf/script/sitesync"
+OPT="-i 300 -t 1 -p"
+(
+cd /home/psadmin/site/site1
+$SYTESYNC rsync://localhost/archive_site1      $OPT 1> /dev/null 2> /dev/null
+)
+

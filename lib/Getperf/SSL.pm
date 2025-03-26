@@ -429,12 +429,14 @@ sub create_ca_cross_root {
 
 sub create_server_certificate {
 	my $self = shift;
+	my $disableSAN = shift || 0;
 
 	# Generate Server certificate directory
 	my $root = dir($self->server_cert);
 	my $server_key  = "$root/server.key";
 	my $server_csr  = "$root/server.csr";
 	my $server_crt  = "$root/server.crt";
+	my $server_san = file("$root/san.txt");
 	if (!-d $root) {
 		LOG->notice("create dir : $root");
 		if (!dir($root)->mkpath) {
@@ -442,6 +444,12 @@ sub create_server_certificate {
 			return;
 		}
 	}
+
+	my $server_name = $self->{server_name};
+	my $is_ip = ($server_name=~/^([0-9]{1,3}\.){3}[0-9]{1,3}/)?1:0;
+	my $san_text = "subjectAltName = DNS:${server_name}";
+	$san_text .= ", IP:${server_name}" if ($is_ip);
+	print "SERVER:${server_name},${san_text}\n";
 
 	# Generate private key
 	{
@@ -451,18 +459,31 @@ sub create_server_certificate {
 
 	# Create Certificate Signing Request
 	{
-		my $server_name = $self->{server_name};
 		my $subject = "\"/commonName=${server_name}\"";
 	    my $command = "req -new -sha256 -key $server_key -out $server_csr -subj $subject";
+		if (!$disableSAN) {
+			# $command .= " -addext \"subjectAltName = DNS:${server_name}, IP:${server_name}\"";
+			$command .= " -addext \"${san_text}\"";
+		}
 	    $self->openssl_command($command) || return;
     }    
-
+    sleep(1);
+	# Create SAN (X509v3 Subject Alternative Name) config file
+	{
+		my $writer = $server_san->openw || die "write error $server_san : $!";
+		# $writer->print("subjectAltName = DNS:${server_name}, IP:${server_name}");
+		$writer->print($san_text);
+		$writer->close;
+	}
 	# Create self-signed certificate
 	{
 		my $ca_config = $self->{ca_config};
 		my $options = "-config $ca_config -batch";
 		my $command = "ca -in $server_csr -out $server_crt";
-
+		my $server_name = $self->{server_name};
+		if (!$disableSAN) {
+			$command .= " -extfile ${server_san}";
+		}
 	    $self->openssl_command("$command $options") || return;
 	}
 
@@ -635,7 +656,7 @@ sub create_client_server_certificate {
 	$inter_ca->reset_server_certificate;
 
 	# print "CA_CONFIG: " . $inter_ca->ca_config . "\n";
-	return $inter_ca->create_server_certificate;
+	return $inter_ca->create_server_certificate();
 }
 
 sub create_client_certificate {

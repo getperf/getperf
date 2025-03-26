@@ -11,9 +11,23 @@
       "chart_style": "stack",
       "vertical_label": "Byte",
       "cdef": "Multiply by 1024",
+      "base_value": 1024,
       "graph_comment": "Memory : <total>, Swap : <swap>",
       "graph_borderline": "<total>",
       "datasource_title": "Linux - <node> - Memory Usage"
+    },
+    {
+      "graph_template": "Linux - Memory Available - Linux",
+      "graph_tree": "/HW/<node_path>/Memory/Available",
+      "graph_title": "Linux - <node> - Memory Available",
+      "graph_item_texts": ["shared", "cached", "buffers", "free"],
+      "graph_items": ["shared", "cached", "buffers", "free"],
+      "total_data_source": "Total All Data Sources, Multiply by 1024",
+      "chart_style": "stack",
+      "vertical_label": "Byte",
+      "cdef": "Multiply by 1024",
+      "base_value": 1024,
+      "datasource_title": "Linux - <node> - Memory Available"
     },
     {
       "graph_template": "Linux - Memory Detail - Linux",
@@ -22,6 +36,7 @@
       "graph_items": ["used"],
       "vertical_label": "Byte",
       "cdef": "Multiply by 1024",
+      "base_value": 1024,
       "datasource_title": "Linux - <node> - Memory Detail"
     }
   ]

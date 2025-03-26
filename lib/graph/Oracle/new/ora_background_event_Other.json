@@ -1,0 +1,17 @@
+{
+  "host_template": "Oracle",
+  "host_title": "OracleRAC - <node>",
+  "priority": 11,
+  "graphs": [
+    {
+      "graph_template": "OracleRAC - Other - Background Timed Events - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/WaitClass/BackGround/Other",
+      "graph_title": "OracleRAC - <node> - Other - Background Timed Events",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["elapse"],
+      "vertical_label": "sec",
+      "datasource_title": "OracleRAC - <node> - Other - Background Timed Events - <device>"
+    }
+  ]
+}

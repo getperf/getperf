@@ -1,0 +1,18 @@
+{
+  "host_template": "Jvmstat",
+  "host_title": "Jvmstat - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Jvmstat - Java VM - Heap usage",
+      "graph_items": ["pu","ou","eu"],
+      "graph_item_texts": ["Permanent", "Old", "Eden"],
+      "chart_style": "stack",
+      "vertical_label": "MB",
+      "total_data_source": "Total All Data Sources",
+      "graph_tree": "/JVM/<node_path>/<node>/Heap",
+      "graph_title": "Jvmstat - <node> - Heap usage - <device>",
+      "datasource_title": "Jvmstat - <node> - Heap usage - <device>"
+    }
+  ]
+}

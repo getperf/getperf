@@ -1,0 +1,29 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 60,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Tablespace util% - temp",
+      "graph_tree": "/Oracle/<node_path>/Storage/Tablespace/tmp/Percent",
+      "graph_title": "Oracle - <node> - Tablespace util% - <device>",
+      "legend_max": 30,
+      "graph_items": ["usage"],
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "vertical_label": "percent",
+      "datasource_title": "Oracle - <node> - Tablespace util% - <device>"
+    },
+    {
+      "graph_template": "Oracle - Tablespace size - temp",
+      "graph_tree": "/Oracle/<node_path>/Storage/Tablespace/tmp/Usage",
+      "graph_title": "Oracle - <node> - Tablespace size - <device>",
+      "chart_style": "line2",
+      "graph_items": ["total_gb", "max_gb", "used_gb"],
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "vertical_label": "GB",
+      "datasource_title": "Oracle - <node> - Tablespace size - <device>"
+    }
+  ]
+}

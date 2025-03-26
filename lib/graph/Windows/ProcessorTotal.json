@@ -14,6 +14,7 @@
       "vertical_label": "CPU %",
       "upper_limit": 100,
       "unit_exponent_value": 1,
+      "disable_auto_scale": true,
       "graph_comment": "<os> <model> <core_cpu>/<logical_cpu>",
       "datasource_title": "Windows - <node> - CPU Util%"
     }

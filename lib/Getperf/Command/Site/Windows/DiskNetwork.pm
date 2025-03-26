@@ -18,6 +18,13 @@ sub check_instance {
 sub parse {
     my ($self, $data_info) = @_;
 
+	# Windows の場合はUTF,改行コードを変更する
+	my $infile = $data_info->input_file;
+	my $cmd = "nkf -w -Lu --overwrite $infile";
+	if (system($cmd) != 0) {
+		die "nkf error: $cmd\n";
+	} 
+
 	$data_info->step(30);
 
 	my %headers = (

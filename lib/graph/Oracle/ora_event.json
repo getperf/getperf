@@ -1,11 +1,11 @@
 {
   "host_template": "Oracle",
   "host_title": "Oracle - <node>",
-  "priority": 1,
+  "priority": 4,
   "graphs": [
     {
       "graph_template": "Oracle - Events",
-      "graph_tree": "/Oracle/<node_path>/Event",
+      "graph_tree": "/Oracle/<node_path>/Load/Event",
       "chart_style": "stack",
       "legend_type": "show_average",
       "graph_item_cols": 2,

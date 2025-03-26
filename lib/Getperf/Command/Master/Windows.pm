@@ -64,7 +64,7 @@ sub alias_disk_network {
 	# ネットワーク関連インスタンス
 	} elsif ($object =~ /Network Interface/) {
 		$instance =~ s/(?:^|_|-| )(.)/\U$1/g;
-    	$instance =~ s/\.{.*}//g;	# Isatap
+    	$instance =~ s/\.\{.*\}//g;	# Isatap
 		$label = $instance;
 	}
 	return $label;

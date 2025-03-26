@@ -22,7 +22,7 @@ sub reform_mount_name {
 	} elsif ($mount=~/\/(.*)$/) {
 		$mount = $1;
 		$mount =~s/\s+/_/g;
-		$mount =~s/\//_/g;
+		$mount =~s/[\/\(\)]/_/g;
 		return $mount;
 	} elsif ($mount=~/^(\w+):$/) {
 		return $1;

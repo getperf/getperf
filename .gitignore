@@ -13,17 +13,19 @@ cpanfile.*
 /config/*.json
 /config/site/*.json
 /log/*
-/var/cacti/*
 /var/zabbix/*
 /var/agent/*
 /var/docs/*
 /var/site/*
+/var/cacti/*
 /var/template/*
 /module/getperf-ws/build/
 /module/getperf-ws/lib/
+/module/getperf-agent/var/zabbix/zabbix*
 **/*.rrd
 docs/html.zip
 docs/ja/docs/_build/
+.vstags
 
 !.gitkeep
 /config/ssl/
@@ -31,5 +33,4 @@ docs/ja/docs/_build/
 /t/rrd/storage/
 /module/getperf-ws/.gradle/
 /var/update/
-*/.deps/
 **/_*/

@@ -1,0 +1,49 @@
+schedule:
+  start: 2025-03-21T07:07:17.5834751+09:00
+  end: 2025-03-21T07:09:17.584566877+09:00
+jobs:
+- id: 1
+  out: ""
+  cmd: chmod a+wrx /home/psadmin/ptune/log/Oracle/20250321/070000
+  start: 2025-03-21T07:07:17.583681396+09:00
+  end: 2025-03-21T07:07:17.657977626+09:00
+  pid: 38501
+  rc: 0
+  error: ""
+  status: exit status 0
+- id: 2
+  out: ""
+  cmd: sudo su - oracle -c '/home/psadmin/ptune/script/oracle_awr_batch_collector.sh -l /home/psadmin/ptune/log/Oracle/20250321/070000 -u perfstat/perfstat@ORCL -d ora12c -i ORAW'
+  start: 2025-03-21T07:07:17.65799182+09:00
+  end: 2025-03-21T07:08:18.723155791+09:00
+  pid: 38510
+  rc: 0
+  error: |
+    ORAW
+    EXEC ORAW ora_ses
+    EXEC ORAW ora_seg
+    EXEC ORAW ora_tbs
+    EXEC ORAW get_awrunit
+    EXEC ORAW awr_ora_mem
+    EXEC ORAW awr_ora_pga
+    EXEC ORAW awr_ora_sga
+    EXEC ORAW awr_ora_shared_pool
+  status: exit status 0
+- id: 3
+  out: ""
+  cmd: sudo su - oracle -c '/home/psadmin/ptune/script/oracle_statspack_batch_collector_test.sh -l /home/psadmin/ptune/log/Oracle/20250321/070000 -u perfstat/perfstat@ORCL -d ora12c -i ORSP'
+  start: 2025-03-21T07:08:18.723215135+09:00
+  end: 0001-01-01T00:00:00Z
+  pid: 0
+  rc: 0
+  error: ""
+  status: ""
+- id: 4
+  out: ""
+  cmd: sudo chmod -R a+wrx /home/psadmin/ptune/log/Oracle/20250321/070000
+  start: 0001-01-01T00:00:00Z
+  end: 0001-01-01T00:00:00Z
+  pid: 0
+  rc: 0
+  error: ""
+  status: ""

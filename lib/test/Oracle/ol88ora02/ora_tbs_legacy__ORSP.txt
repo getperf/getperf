@@ -1,0 +1,9 @@
+Date:25/03/21 07:08:19
+
+NAME                                                                                      |     USAGE
+SYSAUX                                                                                    |       4.1
+UNDOTBS1                                                                                  |         0
+USERS                                                                                     |         0
+SYSTEM                                                                                    |       2.6
+PERFSTAT                                                                                  |      44.7
+TEMP                                                                                      |       1.5

@@ -1,7 +1,7 @@
 {
   "host_template": "Oracle",
   "host_title": "Oracle - SQL - <node>",
-  "priority": 8,
+  "priority": 181,
   "graphs": [
     {
       "graph_template": "Oracle - SQL CPU Time Ranking - <devn> cols",

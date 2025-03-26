@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 #
 # This procedure execute Oracle statspack snap and report.
 #

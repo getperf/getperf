@@ -1,0 +1,11 @@
+schedule:
+  start: 2024/11/08 14:33:35
+  end: 2024/11/08 14:37:40
+jobs:
+  - id: 1
+    out: (null)
+    cmd: sudo _script_/jstatm.sh -p _odir_/java_vm_list.yaml -o _odir_/jstatm.txt 60 5
+    start: 2024/11/08 14:33:35
+    end: 2024/11/08 14:37:36
+    pid: 13804
+    rc: 0

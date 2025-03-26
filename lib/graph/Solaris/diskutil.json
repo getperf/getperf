@@ -12,6 +12,7 @@
       "graph_items": ["usage"],
       "chart_style": "line2",
       "vertical_label": "Disk util %",
+      "disable_auto_scale": true,
       "upper_limit": 100,
       "unit_exponent_value": 1,
       "datasource_title": "Solaris - <node> - Disk Util% - <device>"

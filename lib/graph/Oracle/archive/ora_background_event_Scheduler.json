@@ -1,0 +1,17 @@
+{
+  "host_template": "Oracle",
+  "host_title": "Oracle - <node>",
+  "priority": 11,
+  "graphs": [
+    {
+      "graph_template": "Oracle - Scheduler - Background Timed Events - <devn> cols",
+      "graph_tree": "/Oracle/<node_path>/Event/BackGround/Scheduler",
+      "graph_title": "Oracle - <node> - Scheduler - Background Timed Events",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["elapse"],
+      "vertical_label": "sec",
+      "datasource_title": "Oracle - <node> - Scheduler - Background Timed Events - <device>"
+    }
+  ]
+}

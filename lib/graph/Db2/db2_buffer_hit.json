@@ -1,0 +1,30 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Buffer Hit% - <devn> cols",
+      "graph_tree": "/Db2/<node_path>/BufferHit/",
+      "graph_title": "Db2 - <node> - Buffer Hit%",
+      "graph_type": "multi",
+      "legend_max": 15,
+      "graph_items": ["hit"],
+      "vertical_label": "%",
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "Db2 - <node> - Buffer Hit% - <device>"
+    },
+    {
+      "graph_template": "Db2 - Logical Read",
+      "graph_tree": "/Db2/<node_path>/BlockGets",
+      "graph_title": "Db2 - <node> - Logical Read - <device>",
+      "graph_items": ["logicalRd", "physicalRd"],
+      "graph_item_texts": ["Logical Reads", "Physical Read"],
+      "vertical_label": "IO/sec",
+      "upper_limit": 1000,
+      "unit_exponent_value": 1,
+      "datasource_title": "Db2 - <node> - Logical Read - <device>"
+    }
+  ]
+}

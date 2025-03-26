@@ -1,11 +1,11 @@
 {
   "host_template": "Oracle",
   "host_title": "Oracle - <node>",
-  "priority": 2,
+  "priority": 3,
   "graphs": [
     {
       "graph_template": "Oracle - Efficiency",
-      "graph_tree": "/Oracle/<node_path>/Efficiency",
+      "graph_tree": "/Oracle/<node_path>/Load/Efficiency",
       "graph_title": "Oracle - <node> - Efficiency",
       "chart_style": "line1",
       "legend_type": "show_average",
@@ -36,6 +36,7 @@
       ],
       "vertical_label": "hit %",
       "upper_limit": 100,
+      "disable_auto_scale": true,
       "unit_exponent_value": 1,
       "datasource_title": "Oracle - <node> - Efficiency"
     }

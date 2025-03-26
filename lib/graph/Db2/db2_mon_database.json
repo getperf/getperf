@@ -1,0 +1,174 @@
+{
+  "host_template": "Db2",
+  "host_title": "Db2 - <node> - Database",
+  "priority": 10,
+  "graphs": [
+    {
+      "graph_template": "Db2 - Database - CPU Time",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - CPU Time",
+      "graph_items": [
+        "CPU_TM"
+      ],
+      "graph_item_texts": [
+          "total cpu time"
+        ],
+        "vertical_label": "sec",
+        "chart_style": "line2",
+        "cdef" : "Devide by 1000",
+        "upper_limit": 0.0001,
+        "datasource_title": "Db2 - <node> - Database - CPU Time"
+    },
+    {
+      "graph_template": "Db2 - Database - Wait Time Summary",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Wait Time Summary",
+      "graph_items": [
+        "WAIT_TM",
+        "CF_WAIT_TM"
+      ],
+      "graph_item_texts": [
+          "total wait time",
+          "cf wait time"
+        ],
+        "vertical_label": "sec",
+        "chart_style": "line2",
+        "cdef" : "Devide by 1000",
+        "upper_limit": 0.0001,
+        "datasource_title": "Db2 - <node> - Database - Wait Time Summary"
+    },
+    {
+      "graph_template": "Db2 - Database - Lock Activity",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Lock Activity",
+      "graph_items": [
+        "LOCK_ESCALS",
+        "LOCK_TMOUTS",
+        "LOCK_WAITS"
+      ],
+      "graph_item_texts": [
+          "lock escals", 
+          "lock timeouts", 
+          "lock waits"
+        ],
+        "vertical_label": "count",
+        "chart_style": "line2",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - Lock Activity"
+    },
+    {
+      "graph_template": "Db2 - Database - Lock Wait Time",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Lock Wait Time",
+      "graph_items": [
+        "LOCK_WAIT_TM"
+      ],
+      "graph_item_texts": [
+          "lock wait time"
+        ],
+        "vertical_label": "sec",
+        "cdef" : "Devide by 1000",
+        "chart_style": "line2",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - Lock Wait Time"
+    },
+    {
+      "graph_template": "Db2 - Database - Log Buffer Wait Time",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Log Buffer Wait Time",
+      "graph_items": [
+        "LOG_BUFFER_WAIT_TM",
+        "LOG_DISKWAIT_TM"
+      ],
+      "graph_item_texts": [
+          "log buffer wait time",
+          "log disk wait time"
+        ],
+        "vertical_label": "sec",
+        "cdef" : "Devide by 1000",
+        "chart_style": "line2",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - Log Buffer Wait Time"
+    },
+    {
+      "graph_template": "Db2 - Database - Log IO Time",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Log IO Time",
+      "graph_items": [
+        "LOG_DISKWAIT_TOTAL"
+      ],
+      "graph_item_texts": [
+          "log disk waits total"
+        ],
+        "vertical_label": "count",
+        "chart_style": "line2",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - Log IO Time"
+    },
+    {
+      "graph_template": "Db2 - Database - CF Wait Activity",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - CF Wait Activity",
+      "graph_items": [
+        "CF_WAITS"
+      ],
+      "graph_item_texts": [
+          "cf waits"
+        ],
+        "vertical_label": "count",
+        "chart_style": "line2",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - CF Wait Activity"
+    },
+    {
+      "graph_template": "Db2 - Database - Latch Wait Time",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Latch Wait Time",
+      "graph_items": [
+        "EXTLATCH_WAIT_TM"
+      ],
+      "graph_item_texts": [
+          "total extended latch wait time"
+        ],
+        "vertical_label": "sec",
+        "chart_style": "line2",
+        "cdef" : "Devide by 1000",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - Latch Wait Time"
+    },
+    {
+      "graph_template": "Db2 - Database - Latch Activity",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Latch Activity",
+      "graph_items": [
+        "EXTLATCH_WAITS"
+      ],
+      "graph_item_texts": [
+          "total extended latch waits"
+        ],
+        "vertical_label": "count",
+        "chart_style": "line2",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - Latch Activity"
+    },
+    {
+      "graph_template": "Db2 - Database - Runstat",
+      "graph_tree": "/Db2/Stat/<node_path>/Database/<node>",
+      "graph_title": "Db2 - <node> - Database - Runstat",
+      "graph_items": [
+        "RUNSTATS_TM",
+        "RUNSTATS_PROC_TM",
+        "RUNSTATS"
+      ],
+      "graph_item_texts": [
+          "total sync runstats time",
+          "total sync runstats proc time",
+          "total sync runstats"
+        ],
+        "vertical_label": "count",
+        "chart_style": "line2",
+        "upper_limit": 0.0001,
+      "datasource_title": "Db2 - <node> - Database - Runstat"
+    }
+  ]
+}

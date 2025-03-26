@@ -48,9 +48,9 @@
       "graph_template": "Solaris - Network Error - net_dev",
       "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
       "graph_title": "Solaris - <node> - Network Error - <device>",
-      "graph_items": ["ierrors", "oerrors", "collisions"],
-      "chart_style": "line2",
-      "vertical_label": "Errors/sec",
+      "graph_items": ["ierrors", "oerrors"],
+      "graph_item_texts": ["inErrors", "outErrors"],
+      "vertical_label": "Packet/sec",
       "unit_exponent_value": 1,
       "datasource_title": "Solaris - <node> - Network Error - <device>"
     }

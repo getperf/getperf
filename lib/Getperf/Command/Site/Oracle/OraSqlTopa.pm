@@ -27,6 +27,19 @@ sub update_cacti_graph_item {
 	$data_info->cacti_db_dml($update_rrd);
 }
 
+sub initialize_dummy_rrd_file {
+	my ($self, $data_info, $instance, $sql_hash) = @_;
+	my $storage_dir = $data_info->{absolute_storage_dir};
+	my $src = "${storage_dir}/Oracle/${instance}/device/ora_sql_top__${sql_hash}.rrd";
+	my $target = "${storage_dir}/Oracle/${instance}/device/ora_sql_top__dummy.rrd";
+	my $rrd_cli = "~/getperf/script/rrd-cli";
+	my $cmd = "${rrd_cli} --create ${target} --from ${src}";
+   	if (! -f $target) {
+	   	print "initialize dummy file : $target\n";
+		system($cmd);
+   	}
+}
+
 sub purge_sql_hash_rrd_data {
 	my ($self, $data_info, $instance) = @_;
 
@@ -35,7 +48,7 @@ sub purge_sql_hash_rrd_data {
 
 	# purge storage/Oracle/{sid}/device/ora_sql_top__*.rrd
 	my $rrdfile_filter = "$storage_dir/Oracle/$instance/device/ora_sql_top__\*.rrd";
-	open (my $in, "ls $rrdfile_filter |") || die "can't find '$rrdfile_filter' : $!";
+	open (my $in, "ls $rrdfile_filter | grep -v dummy|") || die "can't find '$rrdfile_filter' : $!";
 	while (my $rrdfile = <$in>) {
 		chomp $rrdfile;
 		my $updated = (stat($rrdfile))[8];
@@ -78,9 +91,10 @@ sub parse {
 
 	$data_info->step($step);
 	$data_info->is_remote(1);
-	# my $instance = $data_info->file_suffix;
-    my $instance = $data_info->file_suffix;
-    # $instance=~s/^.+_//g;
+	my $instance = $data_info->file_suffix;
+	#    my $instance = $data_info->file_name;
+	#    $instance=~s/^.+_//g;
+	# print "INSTANCE $instance\n";
     my $sec  = $data_info->start_time_sec->epoch;
 	if (!$sec) {
 		return;
@@ -94,12 +108,15 @@ sub parse {
 			next;
 		}
 		my ($timestamp, $plan_hash, $sql_hash, $sql_hash2, @values) = split(/\s*[\|,]\s*/, $line);
+		# print "($timestamp, $plan_hash, $sql_hash, $sql_hash2)\n";
 		next if (!defined($timestamp) || $timestamp eq 'TIME');
 		for my $col (0..5) {
 			my $header = $headers[$col];
 			my $value = $values[$col];
-			$results{$sql_hash}{$sec}{$header} = $value || 0;
-			$sql_stats{$sql_hash}{$header}    += $value || 0;
+			# $results{$sql_hash}{$sec}{$header} = $value || 0;
+			# $sql_stats{$sql_hash}{$header}    += $value || 0;
+			$results{$plan_hash}{$sec}{$header} = $value || 0;
+			$sql_stats{$plan_hash}{$header}    += $value || 0;
 		}
 
 	}
@@ -115,11 +132,12 @@ sub parse {
 		"WHERE gi.local_graph_id = g.local_graph_id " .
 		"    AND gi.task_item_id = dr.id " .
 		"    AND dr.local_data_id = dd.local_data_id " .
-		"    AND gi.graph_type_id in (7, 8) " .
+		"    AND gi.graph_type_id in (7,8) " .
 		"    AND g.title_cache = '__graph_title__' " .
 		"ORDER BY gi.sequence";
 
 	my %registered_sql_hash = ();
+	my $last_sql_hash = '';
 	for my $sort_key(qw/cpu_time buffer_gets disk_reads/) {
 		my @sql_ranks = sort { $sql_stats{$b}{$sort_key} <=> $sql_stats{$a}{$sort_key} } keys %sql_stats;
 		my $rank = 1;
@@ -130,6 +148,7 @@ sub parse {
 			$data_info->pivot_report($output, $results{$sql_hash}, \@headers);
 			$rank ++;
 			$registered_sql_hash{$sql_hash} = 1;
+			$last_sql_hash = $sql_hash;
 			last if ($n_top < $rank);
 		}
 		my $ranks_n = scalar(@sql_ranks);
@@ -148,8 +167,10 @@ sub parse {
 			my $graph_title = "Oracle - ${instance} - " . $graph_header . $graph_title_suffix;
 			my $query = $query_items;
 			$query=~s/__graph_title__/${graph_title}/g;
+#print $query . "\n";
 			if (my $rows = $data_info->cacti_db_query($query)) {
 				for my $row(@$rows) {
+#print Dumper $row;
 					my $graph_templates_item_id = $row->[2] || 0;
 					my $data_template_data_id   = $row->[4] || 0;
 					my $sql_hash = shift(@sql_ranks);
@@ -166,6 +187,8 @@ sub parse {
 			}
 		}
 	}
+	$self->initialize_dummy_rrd_file($data_info, $instance, $last_sql_hash);
+
 
 	return 1;
 }
