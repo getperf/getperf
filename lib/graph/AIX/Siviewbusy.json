@@ -1,0 +1,18 @@
+{
+  "host_template": "ITCIM",
+  "host_title": "ITCIM - <node>",
+  "priority": 99,
+  "graphs": [
+    {
+      "graph_template": "ITCIM - SiView busy percent",
+      "graph_tree": "/APL/Siview/",
+      "graph_items": ["pct"],
+      "chart_style": "stack",
+      "vertical_label": "percent",
+      "disable_auto_scale": true,
+      "upper_limit": 100,
+      "graph_title": "APL - <node> - SiView Busy%",
+      "datasource_title": "APL - <node> - SiView Busy%"
+    }
+  ]
+}

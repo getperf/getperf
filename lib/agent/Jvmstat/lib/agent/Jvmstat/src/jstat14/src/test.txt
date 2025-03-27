@@ -1,0 +1,5 @@
+
+- pid: 973
+  java.vm.version: 1.4.2_19-b04
+  sun.java.command: JStatm -p test.txt
+  hotspot.vm.args: 

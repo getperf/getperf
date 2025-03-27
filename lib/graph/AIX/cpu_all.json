@@ -1,0 +1,21 @@
+{
+  "host_template": "AIX",
+  "host_title": "AIX - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "AIX - CPU Util% - vm",
+      "graph_tree": "/HW/<node_path>/CPU/",
+      "graph_title": "AIX - <node> - CPU Util%",
+      "graph_comment": "<MachineType> <os> <hardware> <cpus>",
+      "graph_items": ["User","Sys","Wait"],
+      "total_data_source": "Total All Data Sources",
+      "chart_style": "stack",
+      "vertical_label": "CPU %",
+      "disable_auto_scale": true,
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "AIX - <node> - CPU Util%"
+    }
+  ]
+}

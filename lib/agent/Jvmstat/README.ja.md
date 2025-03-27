@@ -17,7 +17,7 @@ Jvmstat モニタリング
 |-----------------------------------|--------------------------|---------------------------------------|
 | lib/agent/Jvmstat/conf/           | iniファイル              | エージェント採取設定ファイル          |
 | lib/agent/Jvmstat/script/         | jstatmモジュール         | エージェント採取スクリプト            |
-| lib/Getperf/Command/Site/Jvmstat/ | pmファイル               | データ集計スクリプト                  |
+| lib/Getperf/Command/Site/Jvmstat/ | perlスクリプト           | データ集計スクリプト                  |
 | lib/graph/Jvmstat/                | jsonファイル             | グラフテンプレート登録ルール          |
 | lib/cacti/template/0.8.8g/        | xmlファイル              | Cactiテンプレートエクスポートファイル |
 | script/                           | create_graph_template.sh | グラフテンプレート登録スクリプト      |
@@ -41,7 +41,7 @@ Jvmstat テンプレートのビルド
 Git Hub からプロジェクトをクローンします。
 
 ```
-(git clone してプロジェクト複製)
+git clone https://github.com/getperf/t_Jvmstat
 ```
 
 プロジェクトディレクトリに移動して、--template オプション付きでサイトの初期化をします。
@@ -93,7 +93,7 @@ sumup restart
 ```
 
 jstatmコンパイル
---------------------
+----------------
 
 jvmstat API を用いた、Java アプリを使用します。Java 実行環境に応じて、Javaアプリをコンパイルしてください。
 コンパイルの詳細は、jstatm ソースディレクトリ下の [README](lib/agent/Jvmstat/src/jstat/README.md) を参照してください。

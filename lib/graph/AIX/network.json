@@ -1,0 +1,47 @@
+{
+  "host_template": "AIX",
+  "host_title": "AIX - <node>",
+  "priority": 4,
+  "graphs": [
+    {
+      "graph_template": "AIX - Network Recieve Traffic - nmon - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "AIX - <node> - Network Recieve Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["read_KB_s"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "AIX - <node> - Recieve Bytes/sec"
+    },
+    {
+      "graph_template": "AIX - Network Transfer Traffic - nmon - <devn> cols",
+      "graph_tree": "/HW/<node_path>/Network",
+      "graph_title": "AIX - <node> - Network Transfer Bytes/sec",
+      "graph_type": "multi",
+      "legend_max": 5,
+      "chart_style": "stack",
+      "graph_items": ["write_KB_s"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "AIX - <node> - Transfer Bytes/sec"
+    },
+    {
+      "graph_template": "AIX - Network Traffic - nmon",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "AIX - <node> - Network Bytes/sec - <device>",
+      "graph_items": ["read_KB_s", "write_KB_s"],
+      "vertical_label": "Byte/sec",
+      "datasource_title": "AIX - <node> - Network Bytes/sec - <device>"
+    },
+    {
+      "graph_template": "AIX - Network Error - nmon",
+      "graph_tree": "/HW/<node_path>/Network/<node>/<device>",
+      "graph_title": "AIX - <node> - Network Error - <device>",
+      "graph_items": ["ierrs","oerrs","collisions"],
+      "chart_style": "line2",
+      "vertical_label": "Errors/sec",
+      "unit_exponent_value": 1,
+      "datasource_title": "AIX - <node> - Network Error - <device>"
+    }
+  ]
+}
