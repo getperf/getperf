@@ -22,6 +22,15 @@ Necessary configuration files to the template is as follows.
 | lib/cacti/template/0.8.8g/        | xml file                 | Cacti template export file          |
 | Script /                          | create_graph_template.sh | graph template registration script  |
 
+Metric
+-----------
+Monitoring item definitions such as performance statistics graph is as follows.
+
+|            Key             |                        Description                         |
+|----------------------------|------------------------------------------------------------|
+| **Performance Statistics** | **JavaVM statistics graph**                                |
+| jstat                      | **Heap/GC usage**<br> Heap usage / GC count / GC busy rate |
+
 Install
 =====
 
@@ -31,7 +40,7 @@ Build Jvmstat template
 Clone the project from Git Hub
 
 ```
-(Git clone to project replication)
+git clone https://github.com/getperf/t_Jvmstat
 ```
 
 Go to the project directory, - and the initialization of the site with the template option

@@ -1,0 +1,27 @@
+Date:2024/05/28 15:30:00
+Filesystem    1024-blocks      Free %Used    Iused %Iused Mounted on
+/dev/hd4          2097152   2015540    4%     3143     1% /
+/dev/hd2         12582912   8533492   33%    60474     4% /usr
+/dev/hd9var       8388608   8124348    4%     1409     1% /var
+/dev/hd3         16777216  16452964    2%      183     1% /tmp
+/dev/hd1          8388608   8357588    1%      557     1% /home
+/dev/hd11admin     1048576   1048056    1%        5     1% /admin
+/proc                   -         -    -        -      - /proc
+/dev/hd10opt     31457280  21178768   33%   154682     4% /opt
+/dev/livedump     1048576   1048088    1%        4     1% /var/adm/ras/livedump
+/dev/rootlv       1048576   1038888    1%       23     1% /home/root
+/dev/corelv      10485760  10442872    1%        4     1% /corepath
+/dev/hacmplv      4194304   4176952    1%        4     1% /var/hacmp
+/dev/locallv      4194304   4145912    2%      476     1% /usr/local
+/dev/logslv       4194304   3824308    9%     1006     1% /logs
+/dev/mqmlv        4194304   4176952    1%        4     1% /var/mqm
+/dev/userslv      1048576    489180   54%      506     1% /home/users
+/dev/worklv       8388608   8334784    1%       72     1% /work
+/dev/ncoadmlv     8388608   5797280   31%     5451     1% /home/ncoadmin
+/dev/itmsvclv     4194304   4176952    1%        4     1% /usr/tivoli/ITM_svc
+/dev/omnbkuplv    16777216   8627324   49%     1192     1% /omnbackup
+/dev/omnrepolv    16777216  16708800    1%        4     1% /omnrepository
+/dev/sivcorelv     1048576   1039896    1%        4     1% /siview/core
+/dev/siviewlv     1048576   1039892    1%        5     1% /home/siview
+/dev/sivloglv     8388608   7220376   14%       11     1% /siview/log
+/dev/sivmodlv     1048576   1039896    1%        4     1% /siview/modules

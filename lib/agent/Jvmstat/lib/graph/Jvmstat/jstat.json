@@ -1,0 +1,40 @@
+{
+  "host_template": "Jvmstat",
+  "host_title": "Jvmstat - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "Jvmstat - Java VM - Heap usage",
+      "graph_items": ["pu","ou","eu"],
+      "graph_item_texts": ["Permanent", "Old", "Eden"],
+      "chart_style": "stack",
+      "vertical_label": "MB",
+      "total_data_source": "Total All Data Sources",
+      "graph_tree": "/JVM/<node_path>/<node>/Heap",
+      "graph_title": "Jvmstat - <node> - Heap usage - <device>",
+      "datasource_title": "Jvmstat - <node> - Heap usage - <device>"
+    },
+    {
+      "graph_template": "Jvmstat - Java VM - GC",
+      "graph_items": ["ygc","fgc"],
+      "graph_item_texts": ["Young generation GC", "Full GC"],
+      "chart_style": "line1",
+      "vertical_label": "count/sec",
+      "unit_exponent_value": 1,
+      "graph_tree": "/JVM/<node_path>/<node>/GC",
+      "graph_title": "Jvmstat - <node> - GC - <device>",
+      "datasource_title": "Jvmstat - <node> - GC - <device>"
+    },
+    {
+      "graph_template": "Jvmstat - Java VM - GC Util",
+      "graph_items": ["ygct","fgct"],
+      "graph_item_texts": ["Young generation GC", "Full GC"],
+      "chart_style": "line1",
+      "vertical_label": "usec",
+      "unit_exponent_value": 1,
+      "graph_tree": "/JVM/<node_path>/<node>/GC Util",
+      "graph_title": "Jvmstat - <node> - GC Util - <device>",
+      "datasource_title": "Jvmstat - <node> - GC Util - <device>"
+    }
+  ]
+}

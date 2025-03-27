@@ -8,35 +8,36 @@ use POSIX qw(strftime);
 
 openlog("mysql_zbx_part", "ndelay,pid", LOG_LOCAL0);
 
-my $db_schema = 'JIDOUKA';
+my $db_schema = 'site1';
 my $dsn = 'DBI:mysql:'.$db_schema.':mysql_socket=/var/lib/mysql/mysql.sock';
 my $db_user_name = 'root';
-my $db_password = 'getperf';
+my $db_password = 'P@ssw0rd';
 my $tables = {
-	# 'mon_get_appl_lockwait' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_bufferpool' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_cf' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_connection' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_container' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_database' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_extent_movement_status' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_index' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_service_subclass' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_table' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_tablespace' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_unit_of_work' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_workload' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_extent_latch_wait' => { 'period' => 'day', 'keep_history' => '1'},
-	# 'mon_get_memory_pool' => { 'period' => 'day', 'keep_history' => '3'},
-	# 'mon_get_connection' => { 'period' => 'day', 'keep_history' => '3'},
-	# 'mon_get_irs' => { 'period' => 'day', 'keep_history' => '7'},
+	'db2_sql_rank' => { 'period' => 'day', 'keep_history' => '7'},
+	'mon_get_appl_lockwait' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_bufferpool' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_cf' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_connection' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_container' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_database' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_extent_movement_status' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_index' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_service_subclass' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_table' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_tablespace' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_unit_of_work' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_workload' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_extent_latch_wait' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_memory_pool' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_connection' => { 'period' => 'day', 'keep_history' => '3'},
+	'mon_get_irs' => { 'period' => 'day', 'keep_history' => '7'},
 	'obj_num' => { 'period' => 'day', 'keep_history' => '7'},
 
 		# 'history_log' => { 'period' => 'day', 'keep_history' => '60'},
 		# 'history_str' => { 'period' => 'day', 'keep_history' => '60'},
 		# 'history_text' => { 'period' => 'day', 'keep_history' => '60'},
 		# 'history_uint' => { 'period' => 'day', 'keep_history' => '60'},
-		# 'trends' => { 'period' => 'month', 'keep_history' => '12'},
+		# 'trends' => { 'period' => 'month', 'keep_history' => '32'},
 		# 'trends_uint' => { 'period' => 'month', 'keep_history' => '12'},
 
 # comment next 5 lines if you partition zabbix database starting from 2.2

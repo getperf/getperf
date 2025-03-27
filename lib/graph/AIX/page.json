@@ -1,0 +1,19 @@
+{
+  "host_template": "AIX",
+  "host_title": "AIX - <node>",
+  "priority": 2,
+  "graphs": [
+    {
+      "graph_template": "AIX - Memory - paging rate",
+      "graph_tree": "/HW/<node_path>/Memory/paging",
+      "graph_title": "AIX - <node> - Memory Paging Rate",
+      "graph_items": ["pgsin", "pgsout"],
+      "graph_item_texts": ["page in", "page out"],
+      "upper_limit": 100,
+      "vertical_label": "Page/sec",
+      "unit_exponent_value": 1,
+      "chart_style": "line1",
+      "datasource_title": "AIX - <node> - Memory Paging Rate"
+    }
+  ]
+}

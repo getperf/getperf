@@ -1,0 +1,19 @@
+{
+  "host_template": "AIX",
+  "host_title": "AIX - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "AIX - File Cache Util%",
+      "graph_tree": "/HW/<node_path>/Memory/",
+      "graph_title": "AIX - <node> - File Cache Util%",
+      "graph_items": ["maxperm","minperm","numperm"],
+      "chart_style": "line2",
+      "vertical_label": "Percent",
+      "disable_auto_scale": true,
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "AIX - <node> - File Cache Util%"
+    }
+  ]
+}

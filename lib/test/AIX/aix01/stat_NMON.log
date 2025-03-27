@@ -1,0 +1,11 @@
+schedule:
+  start: 2024/11/08 14:31:13
+  end: 2024/11/08 14:36:23
+jobs:
+  - id: 1
+    out: 
+    cmd: _script_/run_nmon.sh  -c 30 -t 10 -d _odir_
+    start: 2024/11/08 14:31:13
+    end: 2024/11/08 14:36:19
+    pid: 42337398
+    rc: 0

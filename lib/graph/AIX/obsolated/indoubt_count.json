@@ -1,0 +1,16 @@
+{
+  "host_template": "AIX",
+  "host_title": "Db2 - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "AIX - Db2 - Indoubt transaction",
+      "graph_tree": "/Db2/<node_path>/<node>",
+      "graph_items": ["count"],
+      "chart_style": "line2",
+      "vertical_label": "count/s",
+      "graph_title": "Db2 - <node> - Indoubt transaction",
+      "datasource_title": "Db2 - <node> - Indoubt transaction"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+<project name="jstatm" basedir="." default="generate.jar">
+
+	<path id="classpath">
+		<fileset dir="${env.JAVA_HOME}/lib" includes="tools.jar"/>
+	</path>
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dest"/>
+    </target>
+
+    <target name="generate.jar" depends="clean">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes" source="1.5" target="1.5" debug="on" optimize="off"/>
+        <mkdir dir="dest/lib"/>
+        <jar destfile="dest/lib/JStatm.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="com.getperf.perf.jvmstat.JStatm"/>
+            </manifest>
+        </jar>
+        <copy  file="src/jstatm.sh"  todir="dest" />
+        <copy  file="src/jstatm.bat"  todir="dest" />
+        <chmod file="dest/jstatm.sh" perm="a+rx" />
+    </target>
+
+    <target name="run">
+        <java jar="build/jar/JStatm.jar" fork="true"/>
+    </target>
+
+</project>

@@ -1,0 +1,19 @@
+{
+  "host_template": "AIX",
+  "host_title": "AIX - <node>",
+  "priority": 1,
+  "graphs": [
+    {
+      "graph_template": "AIX - Memory Usage",
+      "graph_tree": "/HW/<node_path>/Memory/",
+      "graph_title": "AIX - <node> - Memory Usage",
+      "graph_items": ["System","Process","FScache"],
+      "chart_style": "stack",
+      "vertical_label": "MEM %",
+      "disable_auto_scale": true,
+      "upper_limit": 100,
+      "unit_exponent_value": 1,
+      "datasource_title": "AIX - <node> - Memory Usage"
+    }
+  ]
+}
